@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.pantallasaxel1.ui.theme.BlueTEC
 
+//Login
 
 @Composable
 fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
