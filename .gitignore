@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Incluir archivos de configuración importantes
+!/.idea/modules.xml
+!/.idea/assetWizardSettings.xml
+
+# Asegúrate de que estos archivos existan en el repositorio
+!/settings.gradle
+!/build.gradle
