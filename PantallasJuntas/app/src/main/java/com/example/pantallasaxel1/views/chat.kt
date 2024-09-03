@@ -71,7 +71,7 @@ fun MessagingView(navController: NavHostController) {
         ) {
             items(messages.size) { index ->
                 val (message, color) = messages[index]
-                MessageItem(message = message, color = color)
+                MessageItem(message = message, color = BlueTEC)
             }
         }
 
