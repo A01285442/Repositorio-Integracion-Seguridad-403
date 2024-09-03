@@ -9,7 +9,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="db2137d8-4466-4cd8-936d-58d909776502" name="Changes" comment="" />
+    <list default="true" id="db2137d8-4466-4cd8-936d-58d909776502" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/views/Calendario.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/ui/theme/Theme.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/ui/theme/Theme.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/views/DetallesDeCaso.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/views/DetallesDeCaso.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/views/casos.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/views/casos.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/views/login.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/pantallasaxel1/views/login.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

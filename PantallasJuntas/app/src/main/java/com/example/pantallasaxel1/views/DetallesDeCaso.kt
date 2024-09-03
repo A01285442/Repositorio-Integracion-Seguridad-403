@@ -43,7 +43,9 @@ fun DetallesDeCaso(navController: NavController, modifier: Modifier = Modifier) 
             MyTopAppBar(
                 title = "Detalles",
                 navigationIcon = Icons.Default.Clear,
-                onNavigationClick = { /* Navegar hacia atrás */ }
+                onNavigationClick = {
+                    navController.popBackStack()
+                }
             )
         },
         content = { innerPadding ->
