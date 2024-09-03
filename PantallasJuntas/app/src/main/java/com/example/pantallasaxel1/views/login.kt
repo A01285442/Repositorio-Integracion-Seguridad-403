@@ -2,6 +2,7 @@ package com.example.pantallasaxel1.views
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,8 +28,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.composable
 import com.example.pantallasaxel1.R
 import com.example.pantallasaxel1.ui.theme.BlueTEC
+import androidx.navigation.compose.composable
+
 
 //Login
 
@@ -55,8 +59,6 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
 
         )
 
-
-
         Image(
             painter = painterResource(id = R.drawable.casaazul),
             contentDescription = "LogoAxel",
@@ -72,6 +74,7 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
+
         TextField(
             value = password,
             onValueChange = { password = it },
@@ -82,13 +85,24 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
 
         if (loginError) {
-            Text(text = "Invalid credentials", color = Color.Red)
+            Text(text = "No valido", color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
         Button(
             onClick = {
-                navController.navigate("categories")
+                println("Username entered: $username")
+                when {
+                    username.endsWith("abogado@tec.mx") -> {
+                        navController.navigate("categories")
+                    }
+                    username.endsWith("cliente@tec.mx") -> {
+                        navController.navigate("Cliente")
+                    }
+                    else -> {
+                        loginError = true
+                    }
+                }
 
             },
             colors = ButtonDefaults.buttonColors(
@@ -102,7 +116,17 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(text = "¿No tienes una cuenta?", color = Color.Black)
-        Text(text = "Registrate", color = BlueTEC)
+        Text(
+            text = "Regístrate",
+            color = BlueTEC,
+            modifier = Modifier
+                .clickable {
+                    navController.navigate("Registro")
+                }
+        )
+
+
+
         Spacer(modifier = Modifier.height(8.dp))
     }
 

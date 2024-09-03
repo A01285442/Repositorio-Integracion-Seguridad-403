@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pantallasaxel1.ui.theme.BlueTEC
 
+//Vistas Abogado
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
