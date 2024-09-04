@@ -70,14 +70,14 @@ fun Casos(navController: NavController, modifier: Modifier = Modifier) {
                         overflow = TextOverflow.Ellipsis
                     )
                 },
-                navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
+//                navigationIcon = {
+//                    IconButton(onClick = { /* do something */ }) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                            contentDescription = "Localized description"
+//                        )
+//                    }
+//                },
                 actions = {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(
@@ -129,11 +129,11 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavController) {
 fun CaseScrollCard(navController: NavController){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 10.dp
         ),
 
         modifier = Modifier
-            .size(width = 350.dp, height = 120.dp)
+            .size(width = 350.dp, height = 200.dp)
             .padding(6.dp),
         onClick = {
             navController.navigate("DetallesDeCaso")

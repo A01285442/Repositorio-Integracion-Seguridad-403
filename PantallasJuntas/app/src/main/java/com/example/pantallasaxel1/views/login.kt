@@ -94,7 +94,7 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
                 println("Username entered: $username")
                 when {
                     username.endsWith("abogado@tec.mx") -> {
-                        navController.navigate("categories")
+                        navController.navigate("casos")
                     }
                     username.endsWith("cliente@tec.mx") -> {
                         navController.navigate("Cliente")

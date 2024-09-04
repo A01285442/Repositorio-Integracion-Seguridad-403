@@ -25,6 +25,7 @@ import com.example.pantallasaxel1.views.DetallesDeCaso
 import com.example.pantallasaxel1.views.LoginScreen
 import com.example.pantallasaxel1.views.RegisterScreen
 import com.example.pantallasaxel1.views.ClientView
+import com.example.pantallasaxel1.views.MessagingViewAbogado
 import com.example.vistasproyecto.vistas.Casos
 
 
@@ -64,6 +65,10 @@ class MainActivity : ComponentActivity() {
 
                         composable("Cliente"){
                             ClientView(navController = navController)
+                        }
+
+                        composable ("ChatAbogado"){
+                            MessagingViewAbogado(navController = navController)
                         }
                     }
                 }

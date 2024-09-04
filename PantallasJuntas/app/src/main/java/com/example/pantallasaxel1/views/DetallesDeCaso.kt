@@ -43,7 +43,7 @@ fun DetallesDeCaso(navController: NavController, modifier: Modifier = Modifier) 
             MyTopAppBar(
                 title = "Detalles",
                 navigationIcon = Icons.Default.Clear,
-                onNavigationClick = { /* Navegar hacia atrás */ }
+                onNavigationClick = {navController.popBackStack()}
             )
         },
         content = { innerPadding ->
@@ -116,7 +116,7 @@ fun DetallesDeCaso(navController: NavController, modifier: Modifier = Modifier) 
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = {
-                        navController.navigate("MessagingView")
+                        navController.navigate("chatAbogado")
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = BlueTEC,
