@@ -145,7 +145,7 @@ fun RegisterTemplate(
                 painter = painterResource(id = R.drawable.casaazul),
                 contentDescription = "Logo",
                 modifier = Modifier
-                    .size(300.dp)
+                    .size(200.dp)
                     .padding(16.dp)
             )
 
@@ -166,7 +166,7 @@ fun RegisterTemplate(
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(20.dp)
                             .clip(CircleShape)
                             .background(if (index < progress) Color.Blue else Color.Gray) // Colorea según progreso
                     ) {
