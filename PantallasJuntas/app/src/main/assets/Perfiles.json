@@ -1,0 +1,11 @@
+{
+    "abogado@tec.mx": {
+      "nombre": "Juan Pérez",
+      "telefono": "123-456-7890"
+    },
+    "cliente@tec.mx": {
+      "nombre": "Ana Gómez",
+      "telefono": "098-765-4321"
+    }
+  }
+  

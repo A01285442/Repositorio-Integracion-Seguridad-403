@@ -28,7 +28,7 @@ import com.example.pantallasaxel1.views.LoginScreen
 import com.example.pantallasaxel1.views.RegisterScreen
 import com.example.pantallasaxel1.views.ClientView
 import com.example.pantallasaxel1.views.MessagingViewAbogado
-import com.example.vistadeperfil.ProfileScreen
+import com.example.pantallasaxel1.views.ProfileScreen
 import com.example.vistasproyecto.vistas.Casos
 
 
@@ -75,9 +75,11 @@ class MainActivity : ComponentActivity() {
                             MessagingViewAbogado(navController = navController)
                         }
 
-                        composable("Perfil"){
-                            ProfileScreen(navController = navController)
+                        composable("perfil/{email}") { backStackEntry ->
+                            val email = backStackEntry.arguments?.getString("email") ?: ""
+                            ProfileScreen(navController = navController, email = email)
                         }
+
                     }
                 }
             }

@@ -129,7 +129,7 @@ fun ClientView(navController: NavController, modifier: Modifier = Modifier) {
                             DropdownMenuItem(
                                 text = { Text("Perfil") },
                                 onClick = {
-                                    navController.navigate("Perfil")
+                                    navController.navigate("perfil/{email}")
                                     expanded = false
 
                                 }
