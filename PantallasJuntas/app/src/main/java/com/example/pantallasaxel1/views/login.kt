@@ -93,10 +93,10 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
             onClick = {
                 println("Username entered: $username")
                 when {
-                    username.endsWith("abogado@tec.mx") -> {
+                    username.endsWith("abogado@tec.mx") && password.endsWith("123")-> {
                         navController.navigate("casos")
                     }
-                    username.endsWith("cliente@tec.mx") -> {
+                    username.endsWith("cliente@tec.mx") && password.endsWith("123")-> {
                         navController.navigate("Cliente")
                     }
                     else -> {

@@ -85,11 +85,11 @@ fun CategoryItem(category: String, onClick: () -> Unit) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .height(120.dp)  // Tamaño del recuadro
+            .height(120.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White)
             .border(width = 2.dp, color = GrayTEC, shape = RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick) // Hacer clic en el recuadro
+            .clickable(onClick = onClick)
     ) {
         Text(
             text = category,
