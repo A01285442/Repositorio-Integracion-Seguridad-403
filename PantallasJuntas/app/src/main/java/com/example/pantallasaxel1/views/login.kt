@@ -96,7 +96,7 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
                     username.endsWith("abogado@tec.mx") -> {
                         navController.navigate("casos")
                     }
-                    username.endsWith("cliente@tec.mx") -> {
+                    username.endsWith("cliente@tec.mx") && password.endsWith("123")-> {
                         navController.navigate("Cliente")
                     }
                     else -> {

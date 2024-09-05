@@ -217,7 +217,7 @@ fun RegisterTemplate(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Texto de inicio de sesión
-            TextButton(onClick = { /* Acción para iniciar sesión */ }) {
+            TextButton(onClick = { }) {
                 Text("I already have an account Log in", color = BlueTEC)
             }
         }

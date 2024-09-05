@@ -2,6 +2,7 @@
 
 package com.example.pantallasaxel1.views
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,11 +30,57 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pantallasaxel1.R
 import com.example.pantallasaxel1.ui.theme.ClienteViewsTheme
 
+//.json
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.AlertDialogDefaults.containerColor
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import com.example.pantallasaxel1.models.caseCliente
+import com.example.pantallasaxel1.ui.theme.BlueTEC
+import com.example.pantallasaxel1.ui.theme.WhiteTEC
+
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.InputStreamReader
+import java.time.LocalDateTime
+
+//cosas del calendario
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import androidx.compose.ui.text.style.TextOverflow
+import java.util.Calendar
+
+//No le muevan a caseRepository es para manejar los .json
+class CaseRepository(private val context: Context) {
+
+    fun loadCases(): List<caseCliente> {
+        return try {
+            val jsonFile = "cases.json"
+            val inputStream = context.assets.open(jsonFile)
+            val reader = InputStreamReader(inputStream)
+            val type = object : TypeToken<List<caseCliente>>() {}.type
+            Gson().fromJson(reader, type)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+}
+
+
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientView(navController: NavHostController) {
+fun ClientView(navController: NavController, modifier: Modifier = Modifier) {
     ClienteViewsTheme {
-        val navController = rememberNavController()
+//        val navController = rememberNavController()
+        val onSchedule: (LocalDateTime) -> Unit = { selectedDateTime ->}
+        var expanded by remember { mutableStateOf(false) }
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -68,93 +115,216 @@ fun ClientView(navController: NavHostController) {
                                 contentDescription = "Search",
                             )
                         }
-                        IconButton(onClick = { /* TODO: Settings action */ }) {
+                        IconButton(onClick = { expanded = true }) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
                                 tint = Color.White,
                                 contentDescription = "Settings"
                             )
                         }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Perfil") },
+                                onClick = {
+                                    navController.navigate("perfil/{email}")
+                                    expanded = false
+
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Salir") },
+                                onClick = {
+                                    navController.navigate("login")
+                                    expanded = false
+                                }
+                            )
+                        }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
                 )
             }
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "home",
-                modifier = Modifier.padding(innerPadding)
+        ) {
+
+            innerPadding ->
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
             ) {
-                composable("home") { ContentWithBoxes() }
-                composable("add") { MessagingView(navController = navController) }
+                ContentWithBoxes(onSchedule = {}, navController = navController)
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ContentWithBoxes(modifier: Modifier = Modifier) {
+fun ContentWithBoxes(
+    onSchedule: (LocalDateTime) -> Unit,
+    navController: NavController
+) {
+    val context = LocalContext.current
+    val caseRepository = remember { CaseRepository(context) }
+    var cases by remember { mutableStateOf(emptyList<caseCliente>()) }
+    var selectedCase by remember { mutableStateOf<caseCliente?>(null) }
+    var showDialog by remember { mutableStateOf(false) } //No le muevan es para el pop up
+
+    //Variables que utiliza el calendario
+    var selectedDateTime by remember { mutableStateOf(LocalDateTime.now()) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        try {
+            val loadedCases = caseRepository.loadCases()
+            cases = loadedCases
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ContentBox(
-            title = "Divorcio",
-            date = "21/07/2023",
-            description = "Después de años de conflictos, mi pareja y yo decidimos divorciarnos. Presentamos los papeles y comenzamos el proceso legal para la separación de bienes y la custodia de nuestros hijos."
-        )
-        ContentBox(
-            title = "Violencia Familiar",
-            date = "17/04/2024",
-            description = "Mi pareja me insulta y me amenaza cada vez que se enfada. Sus ataques verbales y físicos me dejan aterrorizada, sin saber cuándo o cómo se desatará la próxima agresión."
-        )
-        ContentBox(
-            title = "Robo de bicicleta",
-            date = "02/02/2024",
-            description = "Dejé mi bicicleta asegurada en el parque y, al volver, ya no estaba. La bicicleta fue robada y no hay señales de su paradero. Tengo sospechas del culpable, pero no tengo pruebas."
-        )
+        cases.forEach { case ->
+            ContentBox(
+                title = case.title,
+                date = case.date,
+                description = case.description,
+                onClick = {
+                    selectedCase = case
+                    showDialog = true
+                }
+
+            )
+        }
+
+        //Pop UP
+        if (showDialog && selectedCase != null) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text(text = selectedCase!!.title) },
+                text = { Text(text = selectedCase!!.description) },
+                confirmButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("Cerrar")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showDatePicker = true
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = BlueTEC,
+                            contentColor = WhiteTEC
+                        ),
+                        modifier = Modifier
+                            .padding(5.dp)
+
+                    ){
+                        Text(
+                            text = "Agendar cita",
+                            color = WhiteTEC,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            )
+            if (showDatePicker) {
+                DatePickerDialog(
+                    context,
+                    { _, year, month, dayOfMonth ->
+                        selectedDateTime = selectedDateTime
+                            .withYear(year)
+                            .withMonth(month + 1)
+                            .withDayOfMonth(dayOfMonth)
+                        showDatePicker = false
+                        showTimePicker = true
+                    },
+                    selectedDateTime.year,
+                    selectedDateTime.monthValue - 1,
+                    selectedDateTime.dayOfMonth
+                ).show()
+            }
+
+            if (showTimePicker) {
+                val calendar = Calendar.getInstance()
+                TimePickerDialog(
+                    context,
+                    { _, hourOfDay, minute ->
+                        selectedDateTime = selectedDateTime
+                            .withHour(hourOfDay)
+                            .withMinute(minute)
+                        showTimePicker = false
+                        // Llamar fecha y hora
+                        onSchedule(selectedDateTime)
+                    },
+                    selectedDateTime.hour,
+                    selectedDateTime.minute,
+                    true
+                ).show()
+            }
+        }
     }
 }
 
+
 @Composable
-fun ContentBox(title: String, date: String, description: String) {
+fun ContentBox(title: String, date: String, description: String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(8.dp),
-
+            .padding(8.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(12.dp)
+                .wrapContentSize()
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = title,
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = date,
                     fontSize = 14.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    modifier = Modifier
+
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = description,
-                fontSize = 14.sp,
-                color = Color.Gray
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .weight(1f)
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = description,
+                    fontSize = 14.sp,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis, // Esto nos muestra los .....
+                    modifier = Modifier.padding(4.dp)
+
+                )
+            }
         }
     }
 }
@@ -164,7 +334,6 @@ fun MessagingView(navController: NavHostController) {
     var messageText by remember { mutableStateOf("") }
     val messages = remember { mutableStateListOf<Pair<String, Color>>() }
 
-    // Automatically send a message from someone else when the view opens
     LaunchedEffect(Unit) {
         messages.add("Buenas tardes, soy el sistema automatizado de registro de Casos de Legal-Match. \n Cuéntame tu caso" to Color(android.graphics.Color.parseColor("#495D92")))
     }
@@ -207,7 +376,7 @@ fun MessagingView(navController: NavHostController) {
                 value = messageText,
                 onValueChange = { messageText = it },
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Type a message...") }
+                placeholder = { Text("Dame tu mensaje....") }
             )
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = {
@@ -216,7 +385,7 @@ fun MessagingView(navController: NavHostController) {
                     messageText = ""
                 }
             }) {
-                Text("Send")
+                Text("Enviar")
             }
         }
     }

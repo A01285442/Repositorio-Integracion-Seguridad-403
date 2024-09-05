@@ -64,7 +64,7 @@ fun Casos(navController: NavController, modifier: Modifier = Modifier) {
                 ),
                 title = {
                     Text(
-                        text = "Disputas de Propiedad",
+                        text = "Casos",
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -129,11 +129,11 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavController) {
 fun CaseScrollCard(navController: NavController){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 10.dp
         ),
 
         modifier = Modifier
-            .size(width = 350.dp, height = 120.dp)
+            .size(width = 350.dp, height = 200.dp)
             .padding(6.dp),
         onClick = {
             navController.navigate("DetallesDeCaso")
