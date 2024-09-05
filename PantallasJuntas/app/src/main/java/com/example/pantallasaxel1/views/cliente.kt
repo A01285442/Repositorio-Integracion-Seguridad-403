@@ -29,6 +29,34 @@ import androidx.navigation.compose.rememberNavController
 import com.example.pantallasaxel1.R
 import com.example.pantallasaxel1.ui.theme.ClienteViewsTheme
 
+//.json
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
+import com.example.pantallasaxel1.models.caseCliente
+
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.InputStreamReader
+
+//No le muevan a caseRepository es para manejar los .json
+class CaseRepository(private val context: Context) {
+
+    fun loadCases(): List<caseCliente> {
+        return try {
+            val jsonFile = "cases.json"
+            val inputStream = context.assets.open(jsonFile)
+            val reader = InputStreamReader(inputStream)
+            val type = object : TypeToken<List<caseCliente>>() {}.type
+            Gson().fromJson(reader, type)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+}
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientView(navController: NavHostController) {
@@ -92,31 +120,63 @@ fun ClientView(navController: NavHostController) {
     }
 }
 
+//@Composable
+//fun ContentWithBoxes(modifier: Modifier = Modifier) {
+//    Column(
+//        modifier = modifier
+//            .fillMaxSize()
+//            .padding(16.dp),
+//        verticalArrangement = Arrangement.spacedBy(16.dp)
+//    ) {
+//        ContentBox(
+//            title = "Divorcio",
+//            date = "21/07/2023",
+//            description = "Después de años de conflictos, mi pareja y yo decidimos divorciarnos. Presentamos los papeles y comenzamos el proceso legal para la separación de bienes y la custodia de nuestros hijos."
+//        )
+//        ContentBox(
+//            title = "Violencia Familiar",
+//            date = "17/04/2024",
+//            description = "Mi pareja me insulta y me amenaza cada vez que se enfada. Sus ataques verbales y físicos me dejan aterrorizada, sin saber cuándo o cómo se desatará la próxima agresión."
+//        )
+//        ContentBox(
+//            title = "Robo de bicicleta",
+//            date = "02/02/2024",
+//            description = "Dejé mi bicicleta asegurada en el parque y, al volver, ya no estaba. La bicicleta fue robada y no hay señales de su paradero. Tengo sospechas del culpable, pero no tengo pruebas."
+//        )
+//    }
+//}
+
 @Composable
 fun ContentWithBoxes(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val caseRepository = remember { CaseRepository(context) }
+    var cases by remember { mutableStateOf(emptyList<caseCliente>()) }
+
+    LaunchedEffect(Unit) {
+        try {
+            val loadedCases = caseRepository.loadCases()
+            cases = loadedCases
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ContentBox(
-            title = "Divorcio",
-            date = "21/07/2023",
-            description = "Después de años de conflictos, mi pareja y yo decidimos divorciarnos. Presentamos los papeles y comenzamos el proceso legal para la separación de bienes y la custodia de nuestros hijos."
-        )
-        ContentBox(
-            title = "Violencia Familiar",
-            date = "17/04/2024",
-            description = "Mi pareja me insulta y me amenaza cada vez que se enfada. Sus ataques verbales y físicos me dejan aterrorizada, sin saber cuándo o cómo se desatará la próxima agresión."
-        )
-        ContentBox(
-            title = "Robo de bicicleta",
-            date = "02/02/2024",
-            description = "Dejé mi bicicleta asegurada en el parque y, al volver, ya no estaba. La bicicleta fue robada y no hay señales de su paradero. Tengo sospechas del culpable, pero no tengo pruebas."
-        )
+        cases.forEach { case ->
+            ContentBox(
+                title = case.title,
+                date = case.date,
+                description = case.description
+            )
+        }
     }
 }
+
 
 @Composable
 fun ContentBox(title: String, date: String, description: String) {
