@@ -78,6 +78,7 @@ fun ClientView(navController: NavHostController) {
     ClienteViewsTheme {
         val navController = rememberNavController()
         val onSchedule: (LocalDateTime) -> Unit = { selectedDateTime ->}
+        var expanded by remember { mutableStateOf(false) }
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -112,12 +113,31 @@ fun ClientView(navController: NavHostController) {
                                 contentDescription = "Search",
                             )
                         }
-                        IconButton(onClick = { /* TODO: Settings action */ }) {
+                        IconButton(onClick = { expanded = true }) {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
                                 tint = Color.White,
                                 contentDescription = "Settings"
                             )
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Perfil") },
+                                onClick = {
+                                    navController.navigate("Perfil")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Salir") },
+                                onClick = {
+                                    expanded = false
+                                    navController.navigate("login")
+                                }
+                            )
+                            // Add more options as needed
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)

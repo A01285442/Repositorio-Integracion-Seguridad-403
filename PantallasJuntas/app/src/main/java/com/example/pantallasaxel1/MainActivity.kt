@@ -3,10 +3,12 @@
 package com.example.pantallasaxel1
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,11 +28,13 @@ import com.example.pantallasaxel1.views.LoginScreen
 import com.example.pantallasaxel1.views.RegisterScreen
 import com.example.pantallasaxel1.views.ClientView
 import com.example.pantallasaxel1.views.MessagingViewAbogado
+import com.example.vistadeperfil.ProfileScreen
 import com.example.vistasproyecto.vistas.Casos
 
 
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +73,10 @@ class MainActivity : ComponentActivity() {
 
                         composable ("ChatAbogado"){
                             MessagingViewAbogado(navController = navController)
+                        }
+
+                        composable("Perfil"){
+                            ProfileScreen(navController = navController)
                         }
                     }
                 }
