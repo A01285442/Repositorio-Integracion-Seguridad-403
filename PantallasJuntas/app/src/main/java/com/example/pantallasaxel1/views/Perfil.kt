@@ -46,7 +46,7 @@ import com.example.pantallasaxel1.ui.theme.BlueTEC
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,7 +85,7 @@ Image(
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray), // Puedes usar un color de fondo en lugar de una imagen
+                        .background(Color.Gray),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = "No Image", color = Color.White) // Texto temporal

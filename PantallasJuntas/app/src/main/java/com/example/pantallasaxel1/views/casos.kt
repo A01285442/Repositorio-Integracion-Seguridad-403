@@ -64,7 +64,7 @@ fun Casos(navController: NavController, modifier: Modifier = Modifier) {
                 ),
                 title = {
                     Text(
-                        text = "Disputas de Propiedad",
+                        text = "Casos",
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis

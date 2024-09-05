@@ -2,6 +2,7 @@
 
 package com.example.pantallasaxel1.views
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -71,12 +72,13 @@ class CaseRepository(private val context: Context) {
 
 
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientView(navController: NavHostController) {
+fun ClientView(navController: NavController, modifier: Modifier = Modifier) {
     ClienteViewsTheme {
-        val navController = rememberNavController()
+//        val navController = rememberNavController()
         val onSchedule: (LocalDateTime) -> Unit = { selectedDateTime ->}
         var expanded by remember { mutableStateOf(false) }
 
@@ -128,29 +130,30 @@ fun ClientView(navController: NavHostController) {
                                 text = { Text("Perfil") },
                                 onClick = {
                                     navController.navigate("Perfil")
+                                    expanded = false
+
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("Salir") },
                                 onClick = {
-                                    expanded = false
                                     navController.navigate("login")
+                                    expanded = false
                                 }
                             )
-                            // Add more options as needed
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
                 )
             }
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "home",
-                modifier = Modifier.padding(innerPadding)
+        ) {
+
+            innerPadding ->
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
             ) {
-                composable("home") { ContentWithBoxes(onSchedule = onSchedule, navController = navController) }
-                composable("add") { MessagingView(navController = navController) }
+                ContentWithBoxes(onSchedule = {}, navController = navController)
             }
         }
     }

@@ -46,10 +46,6 @@ fun MessagingViewAbogado(navController: NavHostController) {
     var messageText by remember { mutableStateOf("") }
     val messages = remember { mutableStateListOf<Pair<String, Color>>() }
 
-//    // Automatically send a message from someone else when the view opens
-//    LaunchedEffect(Unit) {
-//        messages.add("Buenas tardes, soy el sistema autiomatizado de registro de Casos de Legal-Hub. \n Cuentame tu caso" to Color(android.graphics.Color.parseColor("#495D92")))
-//    }
 
     Column(
         modifier = Modifier
