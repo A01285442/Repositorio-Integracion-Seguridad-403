@@ -23,8 +23,8 @@ val supabase = createSupabaseClient(
 // Definición del modelo de datos de casos
 @Serializable
 data class Casoss(
-    val name: String,
-    val email: String
+    val titulo: String,
+    val fecha: String
 )
 
 // Función que obtiene la lista de casos desde la base de datos Supabase

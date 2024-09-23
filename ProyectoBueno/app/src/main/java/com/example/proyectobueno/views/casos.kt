@@ -201,7 +201,7 @@ fun ScrollContent(innerPadding: PaddingValues, navController: NavController) {
     ) {
         casos.forEach { caso ->
             CaseScrollSpace()
-            CaseScrollCard(caso.name, caso.email, navController = navController)
+            CaseScrollCard(caso.titulo, caso.fecha, navController = navController)
         }
     }
 }
