@@ -53,7 +53,7 @@ android {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.8.8") //Lectura de archivos .json
+    implementation(libs.gson.v288) //Lectura de archivos .json
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.ui.test.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

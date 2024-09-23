@@ -27,9 +27,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,9 +42,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.proyectobueno.models.CasoLista
+import com.example.proyectobueno.models.Casoss
 import com.example.proyectobueno.ui.theme.BlueTEC
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.serializer.KotlinXSerializer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 //Vistas Abogado
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,40 +126,20 @@ fun Casos(navController: NavController, modifier: Modifier = Modifier) {
         ScrollContent(innerPadding, navController = navController)
     }
 }
-
 @Composable
-fun ScrollContent(innerPadding: PaddingValues, navController: NavController) {
-    Column(
+fun CaseScrollSpace() {
+    Card(
         modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CaseScrollSpace()
-        CaseScrollCard(navController = navController)
-        CaseScrollSpace()
-        CaseScrollCard(navController = navController)
-        CaseScrollSpace()
-        CaseScrollCard(navController = navController)
-        CaseScrollSpace()
-        CaseScrollCard(navController = navController)
-        CaseScrollSpace()
-        CaseScrollCard(navController = navController)
-        CaseScrollSpace()
-        CaseScrollCard(navController = navController)
-        CaseScrollSpace()
-        CaseScrollCard(navController = navController)
-        CaseScrollSpace()
-        CaseScrollCard(navController = navController)
-        CaseScrollSpace()
-
-    }
+            .height(15.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent,
+        ),
+    ){}
 }
 
 @Composable
-fun CaseScrollCard(navController: NavController){
+fun CaseScrollCard(nombre: String, descripcion: String,navController: NavController) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
@@ -159,12 +156,12 @@ fun CaseScrollCard(navController: NavController){
         Row(
             modifier = Modifier
                 .padding(15.dp)
-        ){
+        ) {
             Icon(
                 modifier = Modifier
                     .size(80.dp),
                 imageVector = Icons.Outlined.AccountCircle,
-                contentDescription = "dnjsakndsajk",
+                contentDescription = "Icono de caso",
                 tint = Color.Black
 
             )
@@ -173,26 +170,38 @@ fun CaseScrollCard(navController: NavController){
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "María Bolaños Amargo",
+                    text = nombre,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Esta es la descripción de un caso. Esta es la descripción de un caso. Esta es la descripción de un caso. Esta es la descripción de un caso.  "
+                    text = descripcion
                 )
             }
         }
 
     }
 }
-
 @Composable
-fun CaseScrollSpace(){
-    Card(
+fun ScrollContent(innerPadding: PaddingValues, navController: NavController) {
+    var casos by remember { mutableStateOf<List<Casoss>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val listaCasos = CasoLista()
+            casos = CasoLista()
+        }
+    }
+    Column(
         modifier = Modifier
-            .height(15.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent,
-        ),
-    ){}
+            .padding(innerPadding)
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
+
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        casos.forEach { caso ->
+            CaseScrollSpace()
+            CaseScrollCard(caso.name, caso.email, navController = navController)
+        }
+    }
 }
