@@ -29,13 +29,16 @@ import com.example.proyectobueno.ui.theme.RegistroTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
 
 val supabase = createSupabaseClient(
     supabaseUrl = "https://qcbrsxgfoadcbvbhmbai.supabase.co",
     supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjYnJzeGdmb2FkY2J2YmhtYmFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3NzQ0NjQsImV4cCI6MjA0MjM1MDQ2NH0.8TrdE-W_ACszmnsgoolg4eAFS-1g0NS3H3PNUnZibwM"
 ) {
     install(Auth)
+    install(Postgrest)
 }
 
 @Composable
@@ -75,9 +78,9 @@ fun RegisterScreen(navController: NavController) {
                 )
 
                 try {
-                    supabase.from("registro").insert(user)
-                    // Una vez insertado, realizar la navegación
-                    navController.navigate("HomeScreen")
+                    // Inserta los datos en la tabla llamada 'registro'
+                    supabase.postgrest["registro"].insert(user)
+                    navController.navigate("HomeScreen")  // Navega a la pantalla de inicio tras insertar
                 } catch (e: Exception) {
                     e.printStackTrace() // Manejo de errores
                 } finally {
@@ -234,7 +237,7 @@ fun RegisterTemplate(
                     }
                     if (index < 4) {
                         Spacer(modifier = Modifier.width(8.dp))
-                        HorizontalDivider(
+                        Divider(
                             modifier = Modifier
                                 .width(40.dp),
                             thickness = 4.dp,
