@@ -26,86 +26,136 @@ import com.example.proyectobueno.R
 import androidx.navigation.compose.composable
 import com.example.proyectobueno.ui.theme.BlueTEC
 import com.example.proyectobueno.ui.theme.RegistroTheme
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.postgrest.from
 
+val supabase = createSupabaseClient(
+    supabaseUrl = "https://qcbrsxgfoadcbvbhmbai.supabase.co",
+    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjYnJzeGdmb2FkY2J2YmhtYmFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3NzQ0NjQsImV4cCI6MjA0MjM1MDQ2NH0.8TrdE-W_ACszmnsgoolg4eAFS-1g0NS3H3PNUnZibwM"
+) {
+    install(Auth)
+}
 
 @Composable
 fun RegisterScreen(navController: NavController) {
     RegistroTheme{
         var currentStep by remember { mutableStateOf(1) }
 
+        // Variables para almacenar los datos del usuario
+        var name by remember { mutableStateOf("") }
+        var dateBirth by remember { mutableStateOf("") }
+        var gender by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+
+        // Estado para controlar cuando insertar
+        var shouldInsert by remember { mutableStateOf(false) }
+
         when (currentStep) {
-            1 -> NameScreen(onContinue = { currentStep = 2 })
-            2 -> DateOfBirthScreen(onContinue = { currentStep = 3 })
-            3 -> GenderScreen(onContinue = { currentStep = 4 })
-            4 -> EmailScreen(onContinue = { currentStep = 5 })
-            5 -> PasswordScreen(onContinue = {})
+            1 -> NameScreen(name = name, onValueChange = { name = it }, onContinue = { currentStep = 2 })
+            2 -> DateOfBirthScreen(dateBirth = dateBirth, onValueChange = { dateBirth = it }, onContinue = { currentStep = 3 })
+            3 -> GenderScreen(gender = gender, onValueChange = { gender = it }, onContinue = { currentStep = 4 })
+            4 -> EmailScreen(email = email, onValueChange = { email = it }, onContinue = { currentStep = 5 })
+            5 -> PasswordScreen(password = password, onValueChange = { password = it }, onContinue = {
+                shouldInsert = true
+            })
+        }
+
+        // Lógica para insertar en Supabase
+        if (shouldInsert) {
+            LaunchedEffect(Unit) {
+                val user = mapOf(
+                    "name" to name,
+                    "dateBirth" to dateBirth,
+                    "gender" to gender,
+                    "email" to email,
+                    "password" to password
+                )
+
+                try {
+                    supabase.from("registro").insert(user)
+                    // Una vez insertado, realizar la navegación
+                    navController.navigate("HomeScreen")
+                } catch (e: Exception) {
+                    e.printStackTrace() // Manejo de errores
+                } finally {
+                    shouldInsert = false
+                }
+            }
         }
 
     }
 
 }
 
+
+
+
+
+
 @Composable
-fun NameScreen(onContinue: () -> Unit) {
-    var name by remember { mutableStateOf("") }
+fun NameScreen(name: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
+
     RegisterTemplate(
         progress = 1,
         currentStep = 1,
         label = "Dame tu nombre completo",
         value = name,
-        onValueChange = { name = it },
+        onValueChange = onValueChange,
         onContinue = onContinue
     )
 }
 
 @Composable
-fun DateOfBirthScreen(onContinue: () -> Unit) {
-    var dob by remember { mutableStateOf("") }
+fun DateOfBirthScreen(dateBirth: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
+
     RegisterTemplate(
         progress = 2,
         currentStep = 2,
         label = "Fecha de nacimiento",
-        value = dob,
-        onValueChange = { dob = it },
+        value = dateBirth,
+        onValueChange = onValueChange,
         onContinue = onContinue
     )
 }
 
 @Composable
-fun GenderScreen(onContinue: () -> Unit) {
-    var gender by remember { mutableStateOf("") }
+fun GenderScreen(gender: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
+
     RegisterTemplate(
         progress = 3,
         currentStep = 3,
         label = "Cual es tu género",
         value = gender,
-        onValueChange = { gender = it },
+        onValueChange = onValueChange,
         onContinue = onContinue
     )
 }
 
 @Composable
-fun EmailScreen(onContinue: () -> Unit) {
-    var email by remember { mutableStateOf("") }
+fun EmailScreen(email: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
+
     RegisterTemplate(
         progress = 4,
         currentStep = 4,
         label = "Tu E-mail",
         value = email,
-        onValueChange = { email = it },
+        onValueChange = onValueChange,
         onContinue = onContinue
     )
 }
 
 @Composable
-fun PasswordScreen(onContinue: () -> Unit) {
-    var password by remember { mutableStateOf("") }
+fun PasswordScreen(password: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
+
     RegisterTemplate(
         progress = 5,
         currentStep = 5,
         label = "Tu contraseña",
         value = password,
-        onValueChange = { password = it },
+        onValueChange = onValueChange,
         visualTransformation = PasswordVisualTransformation(),
         onContinue = onContinue
     )
@@ -184,11 +234,11 @@ fun RegisterTemplate(
                     }
                     if (index < 4) {
                         Spacer(modifier = Modifier.width(8.dp))
-                        Divider(
-                            color = if (index+1 < progress) BlueTEC else Color.Gray,
-                            thickness = 4.dp,
+                        HorizontalDivider(
                             modifier = Modifier
-                                .width(40.dp)
+                                .width(40.dp),
+                            thickness = 4.dp,
+                            color = if (index+1 < progress) BlueTEC else Color.Gray
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                     }

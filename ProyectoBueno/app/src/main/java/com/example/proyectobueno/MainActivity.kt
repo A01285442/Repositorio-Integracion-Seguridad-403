@@ -28,8 +28,11 @@ import com.example.proyectobueno.views.ProfileScreen
 import com.example.proyectobueno.views.Casos
 import com.example.proyectobueno.views.MessagingView
 import com.example.proyectobueno.views.MessagingViewChat
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.Auth
 
 class MainActivity : ComponentActivity() {
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
