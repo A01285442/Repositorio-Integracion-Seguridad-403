@@ -32,16 +32,83 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.composable
 import com.example.proyectobueno.R
 import com.example.proyectobueno.ui.theme.BlueTEC
-import androidx.navigation.compose.composable
 
+
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Columns
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+
+//import org.jetbrains.exposed.sql.*
+
+@Serializable
+data class User(
+    val role: String,
+    val password: String,
+    val username: String
+)
 
 //Login
-
 @Composable
 fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
+
+    //Supabase
+    val client = createSupabaseClient(
+        supabaseUrl = "https://jznehexnwcemrfnrgcuo.supabase.co/",
+        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6bmVoZXhud2NlbXJmbnJnY3VvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcwNTgwNDUsImV4cCI6MjA0MjYzNDA0NX0.-G8wgDwGFR26KrgF5nDXGbetNoFvauHanyuHzoqbRnE"
+
+    ){
+        install(Auth)
+        install(Postgrest)
+    }
+
+
+
+
+    // rol y la contraseña
+    suspend fun getUserCredentials(username: String): Pair<String, String>? {
+        return try {
+            // Perform query to Supabase
+            val response = client.from("login")
+                .select(columns = Columns.list("role, password, username"))
+                .decodeList<User>()
+
+            val users = response ?: return null
+
+            // Find user by username
+            val user = users.firstOrNull { userMap ->
+                val userUsername = userMap.username
+                userUsername == username
+            }
+
+            // Extract role and password if user is found
+            user?.let { userMap ->
+                val role = userMap.role as? String
+                val password = userMap.password as? String
+                if (role != null && password != null) {
+                    role to password
+                } else {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            println("Error fetching user: ${e.message}")
+            null
+        }
+    }
+    val coroutineScope = rememberCoroutineScope()
+
 
     Column(
         modifier = Modifier
@@ -92,19 +159,34 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                println("Username entered: $username")
-                when {
-                    username.endsWith("abogado@tec.mx") && password.endsWith("123")-> {
-                        navController.navigate("casos")
-                    }
-                    username.endsWith("cliente@tec.mx") && password.endsWith("123")-> {
-                        navController.navigate("Cliente")
-                    }
-                    else -> {
-                        loginError = true
-                    }
-                }
+                if (username.isNotEmpty() && password.isNotEmpty()) {
+                    // Launch coroutine to handle login
+                    coroutineScope.launch {
+                        val credentials = getUserCredentials(username)
+                        if (credentials != null) {
+                            val (role, dbPassword) = credentials
 
+                            println("Username ingresado: $username")
+                            println("Contraseña ingresada: $password")
+                            println("Contraseña en la base de datos: $dbPassword")
+                            println("Rol en la base de datos: $role")
+
+                            if (password == dbPassword) {
+                                when (role) {
+                                    "abogado" -> navController.navigate("casos")
+                                    "cliente" -> navController.navigate("Cliente")
+                                    else -> loginError = true
+                                }
+                            } else {
+                                loginError = true
+                            }
+                        } else {
+                            loginError = true
+                        }
+                    }
+                } else {
+                    loginError = true
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = BlueTEC,
@@ -114,6 +196,7 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
         ) {
             Text("Iniciar")
         }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(text = "¿No tienes una cuenta?", color = Color.Black)
@@ -133,4 +216,6 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
 
 
 }
+
+
 
