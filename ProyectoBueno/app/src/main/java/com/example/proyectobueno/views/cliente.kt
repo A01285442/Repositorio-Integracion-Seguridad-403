@@ -1,7 +1,5 @@
 package com.example.proyectobueno.views
 
-
-
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,8 +25,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
 import com.example.proyectobueno.R
 import com.example.proyectobueno.ui.theme.ClienteViewsTheme
+
+//APIs Jorge
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.HttpException
+import java.io.IOException
 
 //.json
 import android.content.Context
@@ -50,26 +57,35 @@ import java.time.LocalDateTime
 //cosas del calendario
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.text.style.TextOverflow
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.from
+import retrofit2.awaitResponse
 import java.util.Calendar
+
+val supabase = createSupabaseClient(
+    supabaseUrl = "https://ctcrgvrsexbyfbgtcrzv.supabase.co",
+    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0Y3JndnJzZXhieWZiZ3Rjcnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcxNDQ4NDksImV4cCI6MjA0MjcyMDg0OX0.XZZrXfxABVKZB8bL1W3CMoG8Ry_EZSlvgs3pmT4-t0M"
+) {
+    install(Auth)
+    install(Postgrest)
+}
+
+val idCliente = 1
 
 //No le muevan a caseRepository es para manejar los .json
 class CaseRepository(private val context: Context) {
-
-    fun loadCases(): List<caseCliente> {
-        return try {
-            val jsonFile = "cases.json"
-            val inputStream = context.assets.open(jsonFile)
-            val reader = InputStreamReader(inputStream)
-            val type = object : TypeToken<List<caseCliente>>() {}.type
-            Gson().fromJson(reader, type)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
+    suspend fun loadCases(): List<caseCliente> {
+        val cases = supabase.from("asesorias").select().decodeList<caseCliente>()
+        println(cases.size)
+        return cases
     }
 }
-
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -178,98 +194,104 @@ fun ContentWithBoxes(
 
     LaunchedEffect(Unit) {
         try {
-            val loadedCases = caseRepository.loadCases()
-            cases = loadedCases
+            val loadedCases = caseRepository.loadCases() // Now this is a suspend function
+            cases = loadedCases // Assign the loaded cases to the state variable
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    Column(
+    val scrollState = rememberScrollState()
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        cases.forEach { case ->
+        items(cases) { case ->
+            println(case.titulo)
+            println(case.fecha)
+            println(case.descripcion)
             ContentBox(
-                title = case.title,
-                date = case.date,
-                description = case.description,
+                title = case.titulo,
+                date = case.fecha,
+                description = case.descripcion,
                 onClick = {
                     selectedCase = case
                     showDialog = true
                 }
 
             )
+            println("Test2")
         }
+    }
 
         //Pop UP
-        if (showDialog && selectedCase != null) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = { Text(text = selectedCase!!.title) },
-                text = { Text(text = selectedCase!!.description) },
-                confirmButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("Cerrar")
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = {
-                            showDatePicker = true
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = BlueTEC,
-                            contentColor = WhiteTEC
-                        ),
-                        modifier = Modifier
-                            .padding(5.dp)
-
-                    ){
-                        Text(
-                            text = "Agendar cita",
-                            color = WhiteTEC,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+    if (showDialog && selectedCase != null) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = selectedCase!!.titulo) },
+            text = { Text(text = selectedCase!!.descripcion) },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cerrar")
                 }
-            )
-            if (showDatePicker) {
-                DatePickerDialog(
-                    context,
-                    { _, year, month, dayOfMonth ->
-                        selectedDateTime = selectedDateTime
-                            .withYear(year)
-                            .withMonth(month + 1)
-                            .withDayOfMonth(dayOfMonth)
-                        showDatePicker = false
-                        showTimePicker = true
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDatePicker = true
                     },
-                    selectedDateTime.year,
-                    selectedDateTime.monthValue - 1,
-                    selectedDateTime.dayOfMonth
-                ).show()
-            }
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BlueTEC,
+                        contentColor = WhiteTEC
+                    ),
+                    modifier = Modifier
+                        .padding(5.dp)
 
-            if (showTimePicker) {
-                val calendar = Calendar.getInstance()
-                TimePickerDialog(
-                    context,
-                    { _, hourOfDay, minute ->
-                        selectedDateTime = selectedDateTime
-                            .withHour(hourOfDay)
-                            .withMinute(minute)
-                        showTimePicker = false
-                        // Llamar fecha y hora
-                        onSchedule(selectedDateTime)
-                    },
-                    selectedDateTime.hour,
-                    selectedDateTime.minute,
-                    true
-                ).show()
+                ){
+                    Text(
+                        text = "Agendar cita",
+                        color = WhiteTEC,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
+        )
+        if (showDatePicker) {
+            DatePickerDialog(
+                context,
+                { _, year, month, dayOfMonth ->
+                    selectedDateTime = selectedDateTime
+                        .withYear(year)
+                        .withMonth(month + 1)
+                        .withDayOfMonth(dayOfMonth)
+                    showDatePicker = false
+                    showTimePicker = true
+                },
+                selectedDateTime.year,
+                selectedDateTime.monthValue - 1,
+                selectedDateTime.dayOfMonth
+            ).show()
+        }
+
+        if (showTimePicker) {
+            val calendar = Calendar.getInstance()
+            TimePickerDialog(
+                context,
+                { _, hourOfDay, minute ->
+                    selectedDateTime = selectedDateTime
+                        .withHour(hourOfDay)
+                        .withMinute(minute)
+                    showTimePicker = false
+                    // Llamar fecha y hora
+                    onSchedule(selectedDateTime)
+                },
+                selectedDateTime.hour,
+                selectedDateTime.minute,
+                true
+            ).show()
         }
     }
 }
