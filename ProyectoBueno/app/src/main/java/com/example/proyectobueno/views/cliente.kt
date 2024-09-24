@@ -60,47 +60,30 @@ import android.app.TimePickerDialog
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.text.style.TextOverflow
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.from
 import retrofit2.awaitResponse
 import java.util.Calendar
 
-// CONSTANTE DEL ID DEL CLIENTE, CAMBIAR DE ACUERDO AL INICIO DE SESION
-const val idClienteActual: Int = 5
-
-// APIs Jorge Casos Cliente
-interface ApiService {
-    @GET("data?idCliente=$idClienteActual")  // CAMBIAR ESTE LINK POR EL NUEVO DE SUPABASE
-    fun getCases(): Call<List<caseCliente>>
+val supabase = createSupabaseClient(
+    supabaseUrl = "https://ctcrgvrsexbyfbgtcrzv.supabase.co",
+    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0Y3JndnJzZXhieWZiZ3Rjcnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcxNDQ4NDksImV4cCI6MjA0MjcyMDg0OX0.XZZrXfxABVKZB8bL1W3CMoG8Ry_EZSlvgs3pmT4-t0M"
+) {
+    install(Auth)
+    install(Postgrest)
 }
 
-val retrofit = Retrofit.Builder()
-    .baseUrl("https://retoolapi.dev/8aRvb7/")  // Replace with your actual API URL
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
-val apiService = retrofit.create(ApiService::class.java)
-
+val idCliente = 1
 
 //No le muevan a caseRepository es para manejar los .json
 class CaseRepository(private val context: Context) {
     suspend fun loadCases(): List<caseCliente> {
-        println("Attempting to load cases...")
-        return try {
-            val response = apiService.getCases().awaitResponse() // If using coroutines
-            println("Response code: ${response.code()}") // Log the response code
-            if (response.isSuccessful) {
-                val body = response.body()
-                println("Response body: $body") // Log the response body
-                body ?: emptyList()
-            } else {
-                println("API error: ${response.code()} - ${response.message()}")
-                emptyList()
-            }
-        } catch (e: IOException) {
-            println("IOException: ${e.message}")
-            emptyList()
-        } catch (e: HttpException) {
-            println("HttpException: ${e.message}")
-            emptyList()
-        }
+        val cases = supabase.from("asesorias").select().decodeList<caseCliente>()
+        println(cases.size)
+        return cases
     }
 }
 
@@ -227,9 +210,12 @@ fun ContentWithBoxes(
     verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(cases) { case ->
+            println(case.titulo)
+            println(case.fecha)
+            println(case.descripcion)
             ContentBox(
-                title = case.tituloCaso,
-                date = case.fechaCreacion,
+                title = case.titulo,
+                date = case.fecha,
                 description = case.descripcion,
                 onClick = {
                     selectedCase = case
@@ -237,6 +223,7 @@ fun ContentWithBoxes(
                 }
 
             )
+            println("Test2")
         }
     }
 
@@ -244,7 +231,7 @@ fun ContentWithBoxes(
     if (showDialog && selectedCase != null) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text(text = selectedCase!!.tituloCaso) },
+            title = { Text(text = selectedCase!!.titulo) },
             text = { Text(text = selectedCase!!.descripcion) },
             confirmButton = {
                 TextButton(onClick = { showDialog = false }) {

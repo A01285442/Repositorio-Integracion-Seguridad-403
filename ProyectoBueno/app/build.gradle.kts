@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("plugin.serialization") version "2.0.0"
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -76,4 +78,12 @@ dependencies {
 
     // Gson
     implementation("com.google.code.gson:gson:2.8.8")
+
+    // Supabase
+    implementation(platform("io.github.jan-tennert.supabase:bom:2.6.1"))
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt")
+    implementation("io.github.jan-tennert.supabase:realtime-kt")
+
+    implementation("io.ktor:ktor-client-android:2.3.12")
 }
