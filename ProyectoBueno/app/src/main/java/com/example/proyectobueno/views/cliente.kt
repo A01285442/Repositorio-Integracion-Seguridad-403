@@ -67,19 +67,19 @@ import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import java.text.SimpleDateFormat
 //import retrofit2.awaitResponse
 import java.util.Calendar
-
+import java.util.Locale
 
 
 @Serializable
 data class Date(
     val fecha: String
 )
-//DB propia(AXEL)
 val supabaseCliente = createSupabaseClient(
-    supabaseUrl = "https://ctcrgvrsexbyfbgtcrzv.supabase.co",
-    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0Y3JndnJzZXhieWZiZ3Rjcnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcxNDQ4NDksImV4cCI6MjA0MjcyMDg0OX0.XZZrXfxABVKZB8bL1W3CMoG8Ry_EZSlvgs3pmT4-t0M"
+    supabaseUrl = "https://wbhyplodhfxcyeochnpf.supabase.co",
+    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiaHlwbG9kaGZ4Y3llb2NobnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU0MjExNTUsImV4cCI6MjA0MDk5NzE1NX0.sqMEMPdCx9u-kC0TI0OLWKm1KXZjSkeDS1N3bQiG-jI"
 ) {
     install(Auth)
     install(Postgrest)
@@ -99,8 +99,11 @@ class CaseRepository(private val context: Context) {
 //Insert DB Calendario
 suspend fun insertDate(selectedDate: Long) {
     try {
-        val response = supabase.from("DateTest")
-            .insert(mapOf("fecha" to selectedDate))
+        val dateString = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault()).format(
+            java.util.Date(selectedDate)
+        )
+        val response = supabaseCliente.from("asesorias")
+            .insert(mapOf("fecha" to dateString))
             .decodeList<Date>()
 
     } catch (e: Exception) {

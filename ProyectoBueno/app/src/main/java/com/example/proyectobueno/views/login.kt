@@ -73,9 +73,6 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
         install(Postgrest)
     }
 
-
-
-
     // rol y la contraseña
     suspend fun getUserCredentials(username: String): Pair<String, String>? {
         return try {
@@ -137,7 +134,7 @@ fun LoginScreen(navController: NavController,modifier: Modifier = Modifier) {
 
         TextField(
             value = username,
-            onValueChange = { username = it },
+            onValueChange = { username = it.lowercase() },
             label = { Text("E-mail") },
             modifier = Modifier.fillMaxWidth()
         )
