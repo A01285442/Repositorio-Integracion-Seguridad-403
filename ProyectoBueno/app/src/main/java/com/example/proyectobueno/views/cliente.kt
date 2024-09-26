@@ -30,11 +30,11 @@ import com.example.proyectobueno.R
 import com.example.proyectobueno.ui.theme.ClienteViewsTheme
 
 //APIs Jorge
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.HttpException
+//import retrofit2.Call
+//import retrofit2.http.GET
+//import retrofit2.Retrofit
+//import retrofit2.converter.gson.GsonConverterFactory
+//import retrofit2.HttpException
 import java.io.IOException
 
 //.json
@@ -65,10 +65,19 @@ import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.from
-import retrofit2.awaitResponse
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+//import retrofit2.awaitResponse
 import java.util.Calendar
 
-val supabase = createSupabaseClient(
+
+
+@Serializable
+data class Date(
+    val fecha: String
+)
+//DB propia(AXEL)
+val supabaseCliente = createSupabaseClient(
     supabaseUrl = "https://ctcrgvrsexbyfbgtcrzv.supabase.co",
     supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0Y3JndnJzZXhieWZiZ3Rjcnp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcxNDQ4NDksImV4cCI6MjA0MjcyMDg0OX0.XZZrXfxABVKZB8bL1W3CMoG8Ry_EZSlvgs3pmT4-t0M"
 ) {
@@ -81,11 +90,25 @@ val idCliente = 1
 //No le muevan a caseRepository es para manejar los .json
 class CaseRepository(private val context: Context) {
     suspend fun loadCases(): List<caseCliente> {
-        val cases = supabase.from("asesorias").select().decodeList<caseCliente>()
+        val cases = supabaseCliente.from("asesorias").select().decodeList<caseCliente>()
         println(cases.size)
         return cases
     }
 }
+
+//Insert DB Calendario
+suspend fun insertDate(selectedDate: Long) {
+    try {
+        val response = supabase.from("DateTest")
+            .insert(mapOf("fecha" to selectedDate))
+            .decodeList<Date>()
+
+    } catch (e: Exception) {
+        println("Error al insertar la fecha: ${e.message}")
+    }
+}
+
+
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -178,7 +201,7 @@ fun ClientView(navController: NavController, modifier: Modifier = Modifier) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ContentWithBoxes(
-    onSchedule: (LocalDateTime) -> Unit,
+    onSchedule: (String) -> Unit,
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -186,11 +209,7 @@ fun ContentWithBoxes(
     var cases by remember { mutableStateOf(emptyList<caseCliente>()) }
     var selectedCase by remember { mutableStateOf<caseCliente?>(null) }
     var showDialog by remember { mutableStateOf(false) } //No le muevan es para el pop up
-
-    //Variables que utiliza el calendario
-    var selectedDateTime by remember { mutableStateOf(LocalDateTime.now()) }
     var showDatePicker by remember { mutableStateOf(false) }
-    var showTimePicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         try {
@@ -259,42 +278,63 @@ fun ContentWithBoxes(
                 }
             }
         )
-        if (showDatePicker) {
-            DatePickerDialog(
-                context,
-                { _, year, month, dayOfMonth ->
-                    selectedDateTime = selectedDateTime
-                        .withYear(year)
-                        .withMonth(month + 1)
-                        .withDayOfMonth(dayOfMonth)
-                    showDatePicker = false
-                    showTimePicker = true
-                },
-                selectedDateTime.year,
-                selectedDateTime.monthValue - 1,
-                selectedDateTime.dayOfMonth
-            ).show()
-        }
-
-        if (showTimePicker) {
-            val calendar = Calendar.getInstance()
-            TimePickerDialog(
-                context,
-                { _, hourOfDay, minute ->
-                    selectedDateTime = selectedDateTime
-                        .withHour(hourOfDay)
-                        .withMinute(minute)
-                    showTimePicker = false
-                    // Llamar fecha y hora
-                    onSchedule(selectedDateTime)
-                },
-                selectedDateTime.hour,
-                selectedDateTime.minute,
-                true
-            ).show()
+        if (showDatePicker && selectedCase != null) {
+            openCalendar(selectedCase!!) { formattedDate ->
+                onSchedule(formattedDate)
+                showDatePicker = false
+                showDialog = false
+            }
         }
     }
 }
+
+@Composable
+private fun openCalendar(case: caseCliente, onSchedule: (String) -> Unit) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    var showDatePicker by remember { mutableStateOf(true) }
+    var selectedDate by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val selectedCalendar = Calendar.getInstance().apply {
+                    set(year, month, dayOfMonth)
+                }
+
+                TimePickerDialog(
+                    context,
+                    { _, hourOfDay, minute ->
+                        selectedCalendar.apply {
+                            set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            set(Calendar.MINUTE, minute)
+                        }
+                        val timestamp = selectedCalendar.timeInMillis
+
+                        coroutineScope.launch {
+                            insertDate(timestamp)
+                        }
+
+                        val formattedDateTime = "$dayOfMonth/${month + 1}/$year $hourOfDay:$minute"
+                        onSchedule(formattedDateTime)
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true
+                ).show()
+
+                showDatePicker = false
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+}
+
+
 
 
 @Composable
