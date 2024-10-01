@@ -71,7 +71,7 @@ fun CasoDetalleScreen(
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = caso.delito + "\nCarpeta de Investigación: " + caso.carpeta + "\nEn estapa de juicio Oral",
+                    text = caso.delito + "\nCarpeta de Investigación: " + caso.c_investigacion + "\nEn estapa de juicio Oral",
                     textAlign = TextAlign.Center
                 )
                 Text(

@@ -77,8 +77,8 @@ fun CasoItem(caso: Caso, onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
 
             Text(text = caso.delito, fontWeight = FontWeight.Bold)
-            Text(text = caso.carpeta)
-            Text(text = "Fiscalia: ".plus(caso.fiscalia))
+            Text(text = caso.c_investigacion)
+            Text(text = "Fiscalia: ".plus(caso.fiscalia_virtual))
 
 
         }
