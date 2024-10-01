@@ -38,9 +38,7 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
 
     Scaffold(
         topBar = { CustomTopBar(title = "Casos", navIcon = false, actIcon = true) },
-        bottomBar = {
-            CustomBottomBar(navController = navController) // Usa el navController pasado
-        }
+        bottomBar = { CustomBottomBar(navController = navController)} // Usa el navController pasado
     ) { padding ->
         LazyColumn(
             modifier = Modifier

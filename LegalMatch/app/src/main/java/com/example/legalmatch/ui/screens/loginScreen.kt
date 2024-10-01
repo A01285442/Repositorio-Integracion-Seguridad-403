@@ -1,7 +1,6 @@
 package com.example.proyectobueno.views
 
 
-
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -42,6 +41,7 @@ import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -66,6 +66,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
+
+
 
 
     val coroutineScope = rememberCoroutineScope()
@@ -99,7 +101,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
 
         TextField(
             value = username,
-            onValueChange = { username = it},
+            onValueChange = { username = it
+                            loginError = false},
             label = { Text("E-mail") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -107,7 +110,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
 
         TextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { password = it
+                            loginError = false},
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
@@ -115,18 +119,18 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         if (loginError) {
-            Text(text = "No valido", color = Color.Red)
+            Text(text = "Usuario o Contraseña no Valido", color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
         Button(
             onClick = {
                 if (username.isNotEmpty() && password.isNotEmpty()) {
-                    viewModel.login(username, password)
+                    viewModel.login(username.lowercase(), password)
                 } else {
                     Log.d(TAG,"Email y contraseña vacios")
-                    loginError = true
                 }
+                loginError = true
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = AzulTec,
@@ -156,6 +160,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
 
 
 }
+
+
 
 
 

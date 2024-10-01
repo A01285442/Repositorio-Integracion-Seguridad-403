@@ -40,19 +40,19 @@ class LoginViewModel() : ViewModel() {
                     if (user.contraseña == password) {
                         result = true
                     } else {
-                        _errorMessage.value = "Contraseña Incorrecta"
+                        //_errorMessage.value = "Contraseña Incorrecta"
                     }
                 } else {
-                    _errorMessage.value = "Usuario no encontrado"
+                    //_errorMessage.value = "Usuario no encontrado"
                 }
 
                 if (result) {
                     _isAuthenticated.value = true
                 } else {
-                    _errorMessage.value = "Credenciales incorrectas"
+                    //_errorMessage.value = "Credenciales incorrectas"
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "Error en la autenticación: ${e.message}"
+                //_errorMessage.value = "Error en la autenticación: ${e.message}"
             }
         }
     }

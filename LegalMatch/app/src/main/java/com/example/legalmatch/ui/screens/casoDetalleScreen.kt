@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 
@@ -46,7 +47,7 @@ fun CasoDetalleScreen(
     val caso = viewModel.getCasoInfo(NcasoId)
 
     Scaffold(
-        topBar = { CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false,) },
+        topBar = { CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController, Routes.Casos.route) },
         bottomBar = { CustomBottomBar(navController=navController) }
     ) { InnerPadding ->
         Column(
