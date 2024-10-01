@@ -39,7 +39,23 @@ class CasosViewModel() : ViewModel() {
     fun getCasoInfo(id: Int) : Caso {
         var casoDetalle = casos.firstOrNull { it.id == id }
         if (casoDetalle == null){
-            casoDetalle = Caso(0, LocalDateTime(1,1,1,1,1,1),false,"NaN","NaN","NaN",0,0)
+            casoDetalle = Caso("dsdsjh",
+                "judicial",
+                false,
+                LocalDateTime(1,1,1,1,1,1),
+                "NaN",
+                "NaN",
+                "direccionUI",
+                "drive_link",
+                "",
+                0,
+                0,
+                0,
+                "",
+                "",
+                "",
+                ""
+            )
         }
         return casoDetalle
     }

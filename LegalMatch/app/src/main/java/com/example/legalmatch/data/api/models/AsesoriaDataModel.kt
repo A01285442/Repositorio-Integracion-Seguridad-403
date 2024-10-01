@@ -5,11 +5,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Asesoria(
-    val id: Long,                      // Para int8 en PostgreSQL, usar Long en Kotlin
-    val created_at: LocalDateTime,      // Para timestamptz, puedes usar LocalDateTime
-    val fecha: LocalDateTime,           // Para timestamp
-    val titulo: String,                 // Para text
-    val descripcion: String,            // Para text
-    val confirmacion: Boolean,          // Para bool
-    val id_usuario: Long                // Para int8, usar Long en Kotlin
+    val c_investigacion: String,
+    val c_judicial: String,
+    val cancelado: Boolean,
+    val cliente_confirmado: Boolean,
+    val cliente_denuncio: Boolean,
+    val created_at: LocalDateTime,
+    val delito: String,
+    val descripcion: String,
+    val fecha_asesoria: LocalDateTime,
+    val id: Int,
+    val id_cliente: Int,
+    val nuc: String,
+    val titulo: String
 )

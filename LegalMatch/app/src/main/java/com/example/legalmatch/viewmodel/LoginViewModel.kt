@@ -37,7 +37,7 @@ class LoginViewModel() : ViewModel() {
                 val user = users.firstOrNull { it.correo == username }
 
                 if (user != null) {
-                    if (user.contrasena == password) {
+                    if (user.contraseña == password) {
                         result = true
                     } else {
                         _errorMessage.value = "Contraseña Incorrecta"

@@ -74,12 +74,13 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
             val user = Usuario(
                 id = null,
                 created_at = null,
-                matricula = null,
+                matricula = "null",
                 correo = email,
                 nombre = name,
                 fecha_nacimiento = LocalDateTime(1999,5,5, 5, 5, 5),
-                rol = 1,
-                contrasena = password
+                rol = "cliente",
+                contraseña = password,
+                sexo = "hombre"
             )
             Log.d(TAG, "Inserting data...")
             viewModel.registerClient(user)

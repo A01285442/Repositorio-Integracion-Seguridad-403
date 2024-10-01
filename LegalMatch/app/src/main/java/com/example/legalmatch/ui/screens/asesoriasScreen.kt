@@ -100,7 +100,7 @@ fun AsesoriaItem(asesoria: Asesoria) {
             Row(
                 Modifier.fillMaxWidth()
             ){
-                Text(text = asesoria.fecha.hour.toString().plus(":00"), fontWeight = FontWeight.Bold)
+                Text(text = asesoria.fecha_asesoria.hour.toString().plus(":00"), fontWeight = FontWeight.Bold)
                 Text(text = " • ", fontWeight = FontWeight.Bold)
                 Text(text = asesoria.titulo, fontWeight = FontWeight.Bold)
             }
