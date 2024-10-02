@@ -51,27 +51,13 @@ private const val TAG = "MainActivity"
 @Composable
 fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
 
-    val isAuthenticated by viewModel.isAuthenticated.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
+    //val isAuthenticated by viewModel.isAuthenticated.collectAsState()
+    //val errorMessage by viewModel.errorMessage.collectAsState()
 
     // UI para el inicio de sesión
-    if (isAuthenticated) {
-        navController.navigate(Routes.Asesorias.route)
-    } else {
-        // Mostrar formulario de inicio de sesión
-        // Manejar el error si es necesario
-        Text(text = errorMessage ?: "")
-    }
-
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
-
-
-
-
-    val coroutineScope = rememberCoroutineScope()
-
 
     Column(
         modifier = Modifier
@@ -102,7 +88,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
         TextField(
             value = username,
             onValueChange = { username = it
-                            loginError = false},
+                loginError = false},
             label = { Text("E-mail") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -111,7 +97,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
         TextField(
             value = password,
             onValueChange = { password = it
-                            loginError = false},
+                loginError = false
+            },
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
@@ -126,11 +113,11 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
         Button(
             onClick = {
                 if (username.isNotEmpty() && password.isNotEmpty()) {
-                    viewModel.login(username.lowercase(), password)
-                } else {
-                    Log.d(TAG,"Email y contraseña vacios")
-                }
-                loginError = true
+                    Log.d(TAG, "Probando a ver si jala")
+                    viewModel.login(username.lowercase(), password, onLoginSuccess = {
+                        navController.navigate(Routes.Asesorias.route)
+                    })
+                } else { Log.d(TAG,"Email y contraseña vacios") }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = AzulTec,
@@ -138,7 +125,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
             ),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar")
+            Text("Iniciar Sesión")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -152,16 +139,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
                     navController.navigate(Routes.Register.route)
                 }
         )
-
-
-
         Spacer(modifier = Modifier.height(8.dp))
     }
 
-
 }
-
-
-
-
-

@@ -1,12 +1,18 @@
 package com.example.legalmatch.ui.screens
 
+import android.annotation.SuppressLint
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -15,6 +21,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -33,50 +41,91 @@ import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
+import java.time.LocalDateTime
 
+private const val TAG = "MainActivity"
+
+@RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("SimpleDateFormat")
 @Composable
 fun AsesoriaScreen(navController: NavController,asesoriaViewModel: AsesoriaViewModel) {
 
-    Scaffold(
-        topBar = { CustomTopBar(title = "Asesorías", navIcon = false, actIcon = true) },
-        bottomBar = { CustomBottomBar(navController = navController) }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(color = GhostWhite),
+    val state = asesoriaViewModel.state
+    if (state.isLoading){
+        Log.d(TAG, "Loading started")
+        Box(modifier = Modifier.fillMaxSize().background(Color.White), contentAlignment = Alignment.Center){
+            CircularProgressIndicator(modifier = Modifier.size(60.dp))
+        }
+    } else {
+        Log.d(TAG, "finished loading")
+        Scaffold(
+            topBar = { CustomTopBar(title = "Asesorías", navIcon = false, actIcon = true) },
+            bottomBar = { CustomBottomBar(navController = navController) }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .background(color = GhostWhite),
+            ) {
+                val now = LocalDateTime.now()
+                val asesoriaList = state.asesorias
 
-        ) {
-            item {
-                Text(
-                    text = "Hoy",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = AzulTec,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(12.dp)
+                // Helper function to display Asesorias for a specific day difference
+                fun showAsesoriasForDayDifference(dayDifference: Int) {
+                    items(asesoriaList) { asesoria ->
+                        if (asesoria.fecha_asesoria.year == now.year &&
+                            asesoria.fecha_asesoria.dayOfYear == now.dayOfYear + dayDifference) {
+                            AsesoriaItem(asesoria)
+                        }
+                    }
+                }
+
+                // Sección "Hoy"
+                item {
+                    Text(
+                        text = "Hoy",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = AzulTec,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
+                showAsesoriasForDayDifference(0)
+
+                // Sección "Mañana"
+                item {
+                    Text(
+                        text = "Mañana",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = AzulTec,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
+                showAsesoriasForDayDifference(1)
+/*
+                val meses = listOf(
+                    "enero",
+                    "febrero",
+                    "marzo",
+                    "abril",
+                    "mayo",
+                    "junio",
+                    "julio",
+                    "agosto",
+                    "septiembre",
+                    "octubre",
+                    "noviembre",
+                    "diciembre"
                 )
-            }
 
-            items(asesoriaViewModel.asesorias) { asesoria ->
-                AsesoriaItem(asesoria)
-            }
-
-            item {
-                Text(
-                    text = "Mañana",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = AzulTec,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(12.dp)
-                )
-            }
-
-            items(asesoriaViewModel.asesorias) { asesoria ->
-                AsesoriaItem(asesoria)
+ */
             }
         }
     }
+
+
 }
 
 @Composable
@@ -147,21 +196,3 @@ fun AsesoriaItem(asesoria: Asesoria) {
         )
     }
 }
-
-/*
-@Preview
-@Composable
-fun PreviewAsesoriaScreen() {
-    val date = LocalDate(2024, 2, 15)
-    val time = LocalTime(16, 48)
-    val dateTime = LocalDateTime(date, time)
-
-    val datosFalsos = listOf(
-        Asesoria(1, dateTime,dateTime,"Titulo","Descripcion",true,1),
-        Asesoria(1, dateTime,dateTime,"Titulo","Descripcion",true,1),
-        Asesoria(1, dateTime,dateTime,"Titulo","Descripcion",true,1)
-    )
-
-    AsesoriaScreen(data = datosFalsos)
-}
-*/
