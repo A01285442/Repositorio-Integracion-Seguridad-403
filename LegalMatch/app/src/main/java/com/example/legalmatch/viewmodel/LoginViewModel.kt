@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.legalmatch.data.api.models.Usuario
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,38 +22,37 @@ class LoginViewModel() : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> get() = _errorMessage
 
+    private val _userClient = MutableStateFlow<Usuario?>(null)
+    val userClient : StateFlow<Usuario?> get() = _userClient
+
     // Si identifica al usuario cambia el valor de "isAuthenticated"
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String, onLoginSuccess: () -> Unit) {
         viewModelScope.launch {
             try {
-                var result = false
 
-                val response = supabase.from("usuarios")
-                    .select()
-                    .decodeList<Usuario>()
+                val user = supabase.from("usuarios")
+                    .select() {
+                        filter {
+                            eq("correo", username)
+                        }
 
-                val users = response
-
-                // Encontrar el usuario por correo
-                val user = users.firstOrNull { it.correo == username }
+                    }.decodeSingleOrNull<Usuario>()
 
                 if (user != null) {
                     if (user.contraseña == password) {
-                        result = true
+                        _userClient.value = user
+                        _isAuthenticated.value = true
+                        Log.d(TAG, "Usuario encontrado, iniciando...")
+                        onLoginSuccess()
                     } else {
-                        //_errorMessage.value = "Contraseña Incorrecta"
+                        _errorMessage.value = "Contraseña Incorrecta"
                     }
                 } else {
-                    //_errorMessage.value = "Usuario no encontrado"
+                    _errorMessage.value = "Usuario no encontrado"
                 }
 
-                if (result) {
-                    _isAuthenticated.value = true
-                } else {
-                    //_errorMessage.value = "Credenciales incorrectas"
-                }
             } catch (e: Exception) {
-                //_errorMessage.value = "Error en la autenticación: ${e.message}"
+                _errorMessage.value = "Error en la autenticación: ${e.message}"
             }
         }
     }
@@ -67,9 +67,5 @@ class LoginViewModel() : ViewModel() {
             }
         }
     }
-
-
-
-
 
 }

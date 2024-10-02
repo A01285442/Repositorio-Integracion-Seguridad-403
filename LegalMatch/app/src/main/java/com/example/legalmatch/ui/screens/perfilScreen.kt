@@ -1,5 +1,7 @@
 package com.example.legalmatch.ui.screens
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,9 +28,24 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
+import kotlin.reflect.jvm.internal.ReflectProperties.Val
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun PerfilScreen(navController: NavController) {
+fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
+    val TAG = "MainActivity"
+
+    val user by loginViewModel.userClient.collectAsState()
+/*
+    if (user == null) {
+        Log.d(TAG, "Usuario es null. Es probable que no hayas iniciado sesión correctamente.")
+    } else {
+        Log.d(TAG, "Usuario autenticado: ${user!!.correo}")
+    }
+
+ */
+
+
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
         bottomBar = { CustomBottomBar(navController=navController) }
@@ -40,12 +59,25 @@ fun PerfilScreen(navController: NavController) {
         ) {
             // Imagen de perfil
             // Icono de perfil en la parte superior (usa un Image si tienes la imagen)
-            Text(
-                text = "Donald J. Trump",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(top = 16.dp),
-                fontWeight = FontWeight.Bold
-            )
+
+
+
+            if (user != null) {
+                // La UI se actualiza automáticamente cuando el usuario ya no es null
+                Text(text = "Bienvenido, ${user!!.correo}")
+            } else {
+                Text(text = "Por favor, inicie sesión.")
+            }
+
+            user?.let {
+                Text(
+                    text = it.nombre,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(top = 16.dp),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Text(
                 text = "dTrump@gmail.com",
                 style = MaterialTheme.typography.bodyMedium,

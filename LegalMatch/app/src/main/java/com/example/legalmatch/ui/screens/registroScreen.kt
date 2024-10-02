@@ -62,7 +62,6 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
             3 -> GenderScreen(gender = gender, onValueChange = { gender = it }, onContinue = { currentStep = 4 })
             4 -> EmailScreen(email = email, onValueChange = { email = it }, onContinue = { currentStep = 5 })
             5 -> PasswordScreen(password = password, onValueChange = { password = it }, onContinue = {
-                Log.d(TAG, "About to insert...")
                 shouldInsert = true
             })
         }
@@ -82,7 +81,6 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
                 contraseña = password,
                 sexo = "hombre"
             )
-            Log.d(TAG, "Inserting data...")
             viewModel.registerClient(user)
             navController.navigate(Routes.Login.route)
         }
