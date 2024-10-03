@@ -25,29 +25,34 @@ val TAG = "MainActivity"
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaViewModel) {
+
+    val loginViewModel: LoginViewModel = viewModel()
+
+
     NavHost(
         navController = navController,
         startDestination = Routes.Login.route
     ) {
 
         composable(Routes.Asesorias.route) {
-            Log.d(TAG, "Navigating to AsesoriasScreen")
+            Log.d(TAG, "Navigating to Asesorias")
             AsesoriaScreen(navController, asesoriasViewModel)
         }
         composable(Routes.Casos.route){
+            Log.d(TAG, "Navigating to Casos")
             val casosViewModel : CasosViewModel = viewModel()
             CasosScreen(navController, casosViewModel)
         }
         composable(Routes.Perfil.route){
-            val loginViewModel: LoginViewModel = viewModel()
+            Log.d(TAG, "Navigating to Perfil")
             PerfilScreen(navController, loginViewModel)
         }
         composable(Routes.Register.route){
-            val loginViewModel: LoginViewModel = viewModel()
+            Log.d(TAG, "Navigating to Register")
             RegisterScreen(navController, loginViewModel)
         }
         composable(Routes.Login.route){
-            val loginViewModel: LoginViewModel = viewModel()
+            Log.d(TAG, "Navigating to Login")
             LoginScreen(navController, loginViewModel)
         }
 
