@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -49,6 +50,15 @@ fun CustomBottomBar(navController: NavController) {
                 selected = false,
                 onClick = { navController.navigate("perfil") }
             )
+
+            NavigationBarItem(
+                icon = { Icon(Icons.Default.Star, contentDescription = "Estadísticas") },
+                label = { Text("Estadísticas") },
+                selected = false,
+                onClick = { navController.navigate("Stats") }
+            )
+
+
         }
     }
 

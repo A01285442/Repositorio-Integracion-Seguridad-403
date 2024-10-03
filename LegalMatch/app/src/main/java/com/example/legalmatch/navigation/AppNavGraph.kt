@@ -15,6 +15,7 @@ import com.example.legalmatch.ui.screens.CasosScreen
 import com.example.legalmatch.ui.screens.CasosViewModel
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.screens.PerfilScreen
+import com.example.legalmatch.ui.screens.StatsScreen
 import com.example.proyectobueno.views.LoginScreen
 import com.example.proyectobueno.views.RegisterScreen
 
@@ -30,6 +31,9 @@ fun AppNavGraph(navController: NavHostController) {
         }
         composable(Routes.Casos.route){
             CasosScreen(navController, CasosViewModel())
+        }
+        composable(Routes.Stats.route){
+            StatsScreen(navController)
         }
         composable(Routes.Perfil.route){
             PerfilScreen(navController)
