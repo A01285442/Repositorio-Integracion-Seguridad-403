@@ -42,18 +42,18 @@ import com.example.legalmatch.ui.components.CustomTopBar
 fun CasoDetalleScreen(
     navController: NavController,
     viewModel: CasosViewModel,
-    casoId: Int?,
+    casoId: Int,
 ) {
     val context = LocalContext.current
-    var NcasoId = 0
-    if (casoId!=null){
-        NcasoId = casoId
-    }
 
-    val caso = viewModel.getCasoInfo(NcasoId)
+    val caso = viewModel.getCasoInfo(casoId)
 
     Scaffold(
-        topBar = { CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController, Routes.Casos.route) },
+        topBar = {
+            if (caso != null) {
+                CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController, Routes.Casos.route)
+            }
+        },
         bottomBar = { CustomBottomBar(navController=navController) }
     ) { InnerPadding ->
         Column(
@@ -71,28 +71,34 @@ fun CasoDetalleScreen(
                     .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = caso.titulo,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Left
-                )
-                Text(
-                    text = "Delito: " + caso.delito + "\nFiscalia Virtual: " + caso.fiscalia_virtual + "\nCarpeta de Investigación: " + caso.c_investigacion + "\nCarpeta Judicial: " + caso.c_judicial,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Left
-                )
+                if (caso != null) {
+                    Text(
+                        text = caso.titulo,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Left
+                    )
+                }
+                if (caso != null) {
+                    Text(
+                        text = "Delito: " + caso.delito + "\nFiscalia Virtual: " + caso.fiscalia_virtual + "\nCarpeta de Investigación: " + caso.c_investigacion + "\nCarpeta Judicial: " + caso.c_judicial,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Left
+                    )
+                }
                 Text(
                     text = "Descripción",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Left
                 )
-                Text(
-                    text = caso.descripcion,
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Left
-                )
+                if (caso != null) {
+                    Text(
+                        text = caso.descripcion,
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Left
+                    )
+                }
                 Text(
                     text = "Información del cliente",
                     style = MaterialTheme.typography.headlineSmall,
@@ -111,10 +117,11 @@ fun CasoDetalleScreen(
 
             // Button to add files
             Button(
-                onClick = { val url = "http://www.example.com" //Agregar funcionalidad de cambiar el link para los abogados.
+                onClick = {
+                    val url = caso?.drive_link//Agregar funcionalidad de cambiar el link para los abogados.
                     val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     ContextCompat.startActivity(context, i, null)
-                    },
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),

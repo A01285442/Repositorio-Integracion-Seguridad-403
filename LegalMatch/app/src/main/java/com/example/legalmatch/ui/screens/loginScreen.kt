@@ -118,8 +118,9 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
                         navController.navigate(Routes.Asesorias.route)
                     }
                     )
+                }else {
+                    loginError = true
                 }
-                loginError = true
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = AzulTec,
