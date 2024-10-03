@@ -49,16 +49,21 @@ private const val TAG = "MainActivity"
 
 //Login
 @Composable
-fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
+fun LoginScreen(navController: NavController,loginViewModel: LoginViewModel) {
 
-    //val isAuthenticated by viewModel.isAuthenticated.collectAsState()
-    //val errorMessage by viewModel.errorMessage.collectAsState()
+    // Obtenemos el estado de autenticación desde el ViewModel
+    val loginState by loginViewModel.loginState.collectAsState()
 
     // UI para el inicio de sesión
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var loginError by remember { mutableStateOf(false) }
 
+    // Mostrar un mensaje de error si existe
+    loginState.errorMessage?.let {
+        Text(text = it, color = Color.Red)
+    }
+
+    // UI de login
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -87,8 +92,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
 
         TextField(
             value = username,
-            onValueChange = { username = it
-                loginError = false},
+            onValueChange = { username = it },
             label = { Text("E-mail") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -96,25 +100,18 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
 
         TextField(
             value = password,
-            onValueChange = { password = it
-                loginError = false
-            },
+            onValueChange = { password = it },
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (loginError) {
-            Text(text = "Usuario o Contraseña no Valido", color = Color.Red)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
         Button(
             onClick = {
                 if (username.isNotEmpty() && password.isNotEmpty()) {
                     Log.d(TAG, "Probando a ver si jala")
-                    viewModel.login(username.lowercase(), password, onLoginSuccess = {
+                    loginViewModel.login(username.lowercase(), password, onLoginSuccess = {
                         navController.navigate(Routes.Asesorias.route)
                     })
                 } else { Log.d(TAG,"Email y contraseña vacios") }
