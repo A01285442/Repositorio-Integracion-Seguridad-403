@@ -1,8 +1,10 @@
 package com.example.app.navigation
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -19,30 +21,43 @@ import com.example.legalmatch.ui.screens.StatsScreen
 import com.example.proyectobueno.views.LoginScreen
 import com.example.proyectobueno.views.RegisterScreen
 
+val TAG = "MainActivity"
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavGraph(navController: NavHostController) {
+fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaViewModel) {
+
+    val loginViewModel: LoginViewModel = viewModel()
+
+
     NavHost(
         navController = navController,
         startDestination = Routes.Login.route
     ) {
+
         composable(Routes.Asesorias.route) {
-            AsesoriaScreen(navController, AsesoriaViewModel())
+            Log.d(TAG, "Navigating to Asesorias")
+            AsesoriaScreen(navController, asesoriasViewModel)
         }
         composable(Routes.Casos.route){
-            CasosScreen(navController, CasosViewModel())
+            Log.d(TAG, "Navigating to Casos")
+            val casosViewModel : CasosViewModel = viewModel()
+            CasosScreen(navController, casosViewModel)
         }
         composable(Routes.Stats.route){
             StatsScreen(navController)
         }
         composable(Routes.Perfil.route){
-            PerfilScreen(navController)
+            Log.d(TAG, "Navigating to Perfil")
+            PerfilScreen(navController, loginViewModel)
         }
         composable(Routes.Register.route){
-            RegisterScreen(navController, LoginViewModel())
+            Log.d(TAG, "Navigating to Register")
+            RegisterScreen(navController, loginViewModel)
         }
         composable(Routes.Login.route){
-            LoginScreen(navController, LoginViewModel())
+            Log.d(TAG, "Navigating to Login")
+            LoginScreen(navController, loginViewModel)
         }
 
         composable(
@@ -52,10 +67,5 @@ fun AppNavGraph(navController: NavHostController) {
             val itemId = backStackEntry.arguments?.getInt("itemId")
             CasoDetalleScreen(navController, CasosViewModel(), itemId)
         }
-
-
-
-
-
     }
 }
