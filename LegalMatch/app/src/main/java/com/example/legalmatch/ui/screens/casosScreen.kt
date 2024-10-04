@@ -31,8 +31,10 @@ private const val TAG = "MainActivity"
 @Composable
 fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
 
+    val state = casosViewModel.state.copy()
+
     // Mostrar el contenido según el estado actual
-    if (casosViewModel.isLoading) {
+    if (state.isLoading) {
         CircularProgressIndicator()
     }
 
@@ -46,7 +48,7 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
                 .fillMaxSize()
                 .background(color = GhostWhite)
         ) {
-            items(casosViewModel.casos) { caso -> // Cambié "Caso" a "caso" para mayor claridad
+            items(state.casos) { caso -> // Cambié "Caso" a "caso" para mayor claridad
                 CasoItem(caso) {
                     navController.navigate(Routes.CasoDetalle.createRoute(caso.id))
                 }

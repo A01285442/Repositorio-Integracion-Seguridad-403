@@ -164,7 +164,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                             )
                         }
 
-                           },
+                    },
                     confirmButton = {
                         Button(
                             colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray),
@@ -214,6 +214,5 @@ fun SwitchOption(option: String, description: String) {
             Text(text = option, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
             Text(text = description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
         }
-        Switch(checked = true, onCheckedChange = { /* Acción del switch */ })
-    }
+        Switch(checked = true, onCheckedChange = { /* Acción del switch*/}) }
 }

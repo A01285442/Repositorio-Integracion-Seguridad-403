@@ -27,6 +27,7 @@ val TAG = "MainActivity"
 fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaViewModel) {
 
     val loginViewModel: LoginViewModel = viewModel()
+    val casosViewModel : CasosViewModel = viewModel()
 
 
     NavHost(
@@ -40,7 +41,6 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         }
         composable(Routes.Casos.route){
             Log.d(TAG, "Navigating to Casos")
-            val casosViewModel : CasosViewModel = viewModel()
             CasosScreen(navController, casosViewModel)
         }
         composable(Routes.Perfil.route){
@@ -61,7 +61,9 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId")
-            CasoDetalleScreen(navController, CasosViewModel(), itemId)
+            if (itemId != null) {
+                CasoDetalleScreen(navController, casosViewModel, itemId)
+            }
         }
     }
 }

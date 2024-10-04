@@ -104,23 +104,23 @@ fun AsesoriaScreen(navController: NavController,asesoriaViewModel: AsesoriaViewM
                     )
                 }
                 showAsesoriasForDayDifference(1)
-/*
-                val meses = listOf(
-                    "enero",
-                    "febrero",
-                    "marzo",
-                    "abril",
-                    "mayo",
-                    "junio",
-                    "julio",
-                    "agosto",
-                    "septiembre",
-                    "octubre",
-                    "noviembre",
-                    "diciembre"
-                )
+                /*
+                                val meses = listOf(
+                                    "enero",
+                                    "febrero",
+                                    "marzo",
+                                    "abril",
+                                    "mayo",
+                                    "junio",
+                                    "julio",
+                                    "agosto",
+                                    "septiembre",
+                                    "octubre",
+                                    "noviembre",
+                                    "diciembre"
+                                )
 
- */
+                 */
             }
         }
     }
@@ -163,7 +163,7 @@ fun AsesoriaItem(asesoria: Asesoria) {
 
         }
     }
-    // Mostrar el AlertDialog si el estado `showDialog` es verdadero
+    // Mostrar el AlertDialog si el estado showDialog es verdadero
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -176,9 +176,9 @@ fun AsesoriaItem(asesoria: Asesoria) {
                 Button(
                     colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray),
                     onClick = {
-                    // Acción del botón de confirmación
-                    showDialog = false
-                }) {
+                        // Acción del botón de confirmación
+                        showDialog = false
+                    }) {
                     Text("Aceptar Caso")
                 }
             },
@@ -187,9 +187,9 @@ fun AsesoriaItem(asesoria: Asesoria) {
                     colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray),
                     onClick = {
 
-                    // Acción del botón de cancelación
-                    showDialog = false
-                }) {
+                        // Acción del botón de cancelación
+                        showDialog = false
+                    }) {
                     Text("Cancelar")
                 }
             }
