@@ -37,7 +37,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
 
         composable(Routes.Asesorias.route) {
             Log.d(TAG, "Navigating to Asesorias")
-            AsesoriaScreen(navController, asesoriasViewModel)
+            AsesoriaScreen(navController, asesoriasViewModel,loginViewModel)
         }
         composable(Routes.Casos.route){
             Log.d(TAG, "Navigating to Casos")

@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +50,7 @@ private const val TAG = "MainActivity"
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SimpleDateFormat")
 @Composable
-fun AsesoriaScreen(navController: NavController,asesoriaViewModel: AsesoriaViewModel) {
+fun AsesoriaScreen(navController: NavController,asesoriaViewModel: AsesoriaViewModel, loginViewModel: LoginViewModel) {
 
     val state = asesoriaViewModel.state
     if (state.isLoading){
@@ -71,65 +73,65 @@ fun AsesoriaScreen(navController: NavController,asesoriaViewModel: AsesoriaViewM
                 val now = LocalDateTime.now()
                 val asesoriaList = state.asesorias
 
-                // Helper function to display Asesorias for a specific day difference
-                fun showAsesoriasForDayDifference(dayDifference: Int) {
-                    items(asesoriaList) { asesoria ->
-                        if (asesoria.fecha_asesoria.year == now.year &&
-                            asesoria.fecha_asesoria.dayOfYear == now.dayOfYear + dayDifference) {
-                            AsesoriaItem(asesoria)
+                val mesesEspanol = listOf("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
+
+                var subtituloAyerMostrado = false
+                var subtituloHoyMostrado = false
+                var subtituloMananaMostrado = false
+                var subtituloOtroDiaMostrado = false
+
+                items(asesoriaList) { asesoria ->
+                    if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear - 1) {
+                        if (!subtituloAyerMostrado) {
+                            Subtitulo("Ayer")
+                            subtituloAyerMostrado = true
                         }
+                        AsesoriaItem(asesoria,asesoriaViewModel,loginViewModel)
+                    }
+                    else if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear) {
+                        if (!subtituloHoyMostrado) {
+                            Subtitulo("Hoy")
+                            subtituloHoyMostrado = true
+                        }
+                        AsesoriaItem(asesoria,asesoriaViewModel,loginViewModel)
+                    }
+                    else if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear + 1) {
+                        if (!subtituloMananaMostrado) {
+                            Subtitulo("Mañana")
+                            subtituloMananaMostrado = true
+                        }
+                        AsesoriaItem(asesoria,asesoriaViewModel,loginViewModel)
+                    }
+                    else {
+                        // Para otras fechas, puedes usar una lógica similar, comparando por día y mes
+                        if (!subtituloOtroDiaMostrado) {
+                            Subtitulo("${asesoria.fecha_asesoria.dayOfMonth} de ${mesesEspanol[asesoria.fecha_asesoria.monthNumber - 1]}")
+                            subtituloOtroDiaMostrado = true
+                        }
+                        AsesoriaItem(asesoria,asesoriaViewModel,loginViewModel)
                     }
                 }
 
-                // Sección "Hoy"
-                item {
-                    Text(
-                        text = "Hoy",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = AzulTec,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(12.dp)
-                    )
-                }
-                showAsesoriasForDayDifference(0)
-
-                // Sección "Mañana"
-                item {
-                    Text(
-                        text = "Mañana",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = AzulTec,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(12.dp)
-                    )
-                }
-                showAsesoriasForDayDifference(1)
-                /*
-                                val meses = listOf(
-                                    "enero",
-                                    "febrero",
-                                    "marzo",
-                                    "abril",
-                                    "mayo",
-                                    "junio",
-                                    "julio",
-                                    "agosto",
-                                    "septiembre",
-                                    "octubre",
-                                    "noviembre",
-                                    "diciembre"
-                                )
-
-                 */
             }
         }
     }
 
 
 }
-
 @Composable
-fun AsesoriaItem(asesoria: Asesoria) {
+fun Subtitulo(text: String){
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        color = AzulTec,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(12.dp)
+    )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun AsesoriaItem(asesoria: Asesoria,asesoriaViewModel: AsesoriaViewModel, loginViewModel: LoginViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
@@ -142,10 +144,10 @@ fun AsesoriaItem(asesoria: Asesoria) {
             contentColor = Color.Black,
             disabledContainerColor = Color.LightGray,
             disabledContentColor = Color.DarkGray
-
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            var showFullDescription by remember { mutableStateOf(false) }
             Row(
                 Modifier.fillMaxWidth()
             ){
@@ -154,12 +156,37 @@ fun AsesoriaItem(asesoria: Asesoria) {
                 Text(text = asesoria.titulo, fontWeight = FontWeight.Bold)
             }
 
+            // Descripción (completa o truncada)
             val maxChar = 150
-            if(asesoria.descripcion.length > maxChar){
-                Text(text = asesoria.descripcion.substring(0,maxChar).plus("...") )
-            } else {
+            if (showFullDescription) {
                 Text(text = asesoria.descripcion)
+            } else {
+                val truncatedDescription = if (asesoria.descripcion.length > maxChar) {
+                    asesoria.descripcion.substring(0, maxChar).plus("...")
+                } else {
+                    asesoria.descripcion
+                }
+                Text(text = truncatedDescription)
             }
+
+            // Ícono para expandir o colapsar la descripción
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(0.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = { showFullDescription = !showFullDescription },
+                ) {
+                    Text(
+                        text = if (showFullDescription) "Ver menos" else "Ver más",
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(0.dp)
+                    )
+                }
+            }
+            
+
 
         }
     }
@@ -176,7 +203,7 @@ fun AsesoriaItem(asesoria: Asesoria) {
                 Button(
                     colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray),
                     onClick = {
-                        // Acción del botón de confirmación
+                        asesoriaViewModel.aceptarcaso(asesoria, loginViewModel)
                         showDialog = false
                     }) {
                     Text("Aceptar Caso")

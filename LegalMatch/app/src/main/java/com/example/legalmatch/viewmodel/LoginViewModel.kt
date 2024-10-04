@@ -3,6 +3,7 @@ package com.example.legalmatch.ui.screens
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
@@ -86,7 +87,7 @@ class LoginViewModel() : ViewModel() {
         }
     }
 
-    fun registerClient(newUsuario: Usuario){
+    fun registerClient(newUsuario: SendUsuario){
         viewModelScope.launch {
             try {
                 supabase.postgrest["usuarios"].insert(newUsuario)
