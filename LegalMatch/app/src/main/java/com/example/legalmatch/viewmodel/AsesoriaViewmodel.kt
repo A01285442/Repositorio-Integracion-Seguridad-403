@@ -77,26 +77,39 @@ class AsesoriaViewModel : ViewModel() {
                     unidad_investigacion = ""
                 )
 
-            try {
-                supabase.postgrest["casos"].insert(caso)
-            } catch (e:Exception) {
+            // Se inserta el nuevo caso en la base de datos
+            try { supabase.postgrest["casos"].insert(caso) }
+            catch (e:Exception) { Log.d(TAG,"Error: $e") }
+
+            // Se marca la asesoría como finalizada
+            try { supabase.from("asesorias")
+                .update({ set("estado", "finalizado") }) {
+                    filter { eq("id", asesoria.id) }
+                }
+                fetchAsesorias()
+            } catch (e: Exception){
                 Log.d(TAG,"Error: $e")
             }
 
-            try {
+
+        }
+    }
+
+    fun cancelarCaso(asesoria: Asesoria){
+        viewModelScope.launch {
+            try{
                 supabase.from("asesorias").update({
-                        set("estado", "finalizado")
-                    }
-                ){
+                    set("estado","cancelado")
+                }) {
                     filter {
                         eq("id", asesoria.id)
                     }
                 }
-            } catch (e: Exception){
-                Log.d(TAG,"Error: $e")
+                fetchAsesorias()
+            } catch (e:Exception){
+                Log.d(TAG, "Error: $e")
             }
-            fetchAsesorias()
-
         }
+
     }
 }

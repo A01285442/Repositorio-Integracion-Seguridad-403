@@ -211,10 +211,9 @@ fun AsesoriaItem(asesoria: Asesoria,asesoriaViewModel: AsesoriaViewModel, loginV
             },
             dismissButton = {
                 Button(
-                    colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray),
+                    colors = ButtonColors(Color.Red,Color.White,Color.Gray,Color.Gray),
                     onClick = {
-
-                        // Acción del botón de cancelación
+                        asesoriaViewModel.cancelarCaso(asesoria)
                         showDialog = false
                     }) {
                     Text("Cancelar")
