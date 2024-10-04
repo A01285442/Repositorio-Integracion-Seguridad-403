@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
+import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.theme.AzulTec
@@ -70,9 +71,7 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
 
         // Lógica para insertar en Supabase
         if (shouldInsert) {
-            val user = Usuario(
-                id = null,
-                created_at = null,
+            val user = SendUsuario(
                 matricula = "null",
                 correo = email,
                 nombre = name,
