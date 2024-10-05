@@ -13,12 +13,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.legalmatch.R
 import com.example.legalmatch.ui.components.CustomBottomBar
@@ -36,9 +40,17 @@ import com.github.mikephil.charting.utils.MPPointF
 
 
 @Composable
-fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewModel) {
+fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewModel = viewModel()) {
     // ViewModel
     val stats by graficasViewModel.statsState.collectAsState()
+    val isLoading = remember { mutableStateOf(true) }
+    val errorMessage = remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        isLoading.value = true
+        graficasViewModel.fetchSexoCounts()
+        isLoading.value = false
+    }
 
     Scaffold(
         topBar = { CustomTopBar(title = "Estadísticas", navIcon = false, actIcon = false) },
@@ -60,7 +72,7 @@ fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewMode
 fun PieChartView(stats: List<StatsState>) {
     AndroidView(factory = { context ->
         PieChart(context).apply {
-            // PieChart Tamaños
+            // Configuración del PieChart
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -80,7 +92,7 @@ fun PieChartView(stats: List<StatsState>) {
             setHighlightPerTapEnabled(true)
             animateY(1400, Easing.EaseInOutQuad)
             legend.isEnabled = false
-            setEntryLabelColor(Color.WHITE)
+            setEntryLabelColor(Color.BLACK)
             setEntryLabelTextSize(12f)
 
             // Datos del ViewModel (stats)
@@ -102,9 +114,48 @@ fun PieChartView(stats: List<StatsState>) {
                 )
             }
 
-            this.data = data
+            val pieData = PieData(dataSet).apply {
+                setDrawValues(true)
+                setValueFormatter(PercentFormatter())
+                setValueTextSize(12f)
+                setValueTextColor(Color.BLACK)
+                setValueTypeface(Typeface.DEFAULT_BOLD)
+            }
+
+            this.data = pieData
             highlightValues(null)
             invalidate()
         }
+    }, update = { pieChart ->
+        // Actualizar los datos cuando `stats` cambia
+        val entries = ArrayList<PieEntry>().apply {
+            stats.forEach { stat ->
+                add(PieEntry(stat.count.toFloat(), stat.sexo))
+            }
+        }
+
+        val dataSet = PieDataSet(entries, "Usuarios por Sexo").apply {
+            setDrawIcons(false)
+            sliceSpace = 3f
+            iconsOffset = MPPointF(0f, 40f)
+            selectionShift = 5f
+            colors = listOf(
+                pieChart.context.getColor(R.color.purple_700),
+                pieChart.context.getColor(R.color.teal_200),
+                pieChart.context.getColor(R.color.red)
+            )
+        }
+
+        val pieData = PieData(dataSet).apply {
+            setDrawValues(true)
+            setValueFormatter(PercentFormatter())
+            setValueTextSize(12f)
+            setValueTextColor(Color.BLACK)
+            setValueTypeface(Typeface.DEFAULT_BOLD)
+        }
+
+        pieChart.data = pieData
+        pieChart.notifyDataSetChanged()
+        pieChart.invalidate()
     })
 }

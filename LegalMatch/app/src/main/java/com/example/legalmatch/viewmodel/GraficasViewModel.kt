@@ -1,6 +1,7 @@
 package com.example.legalmatch.viewmodel
 
 import android.util.Log
+import androidx.compose.foundation.layout.Column
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.legalmatch.ui.screens.supabaseCli
@@ -11,6 +12,7 @@ import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 // Supabase
 val supabase = createSupabaseClient(
@@ -23,6 +25,11 @@ val supabase = createSupabaseClient(
 
 private const val TAG = "MainActivity"
 
+@Serializable
+data class Usuario(
+    val sexo: String,
+)
+
 data class StatsState(
     val sexo: String,
     val count: Int
@@ -33,18 +40,17 @@ class GraficasViewModel : ViewModel() {
     private val _statsState = MutableStateFlow<List<StatsState>>(emptyList())
     val statsState: StateFlow<List<StatsState>> get() = _statsState
 
-    fun fetchSexoCounts(sexo: String) {
+    fun fetchSexoCounts() {
         viewModelScope.launch {
             try {
                 val usuarios = supabase.from("usuarios")
-                    .select() {
-                        filter {
-                            eq("sexo", sexo)
-                        }
-                    }.decodeList<Map<String, String>>()
+                    .select()
+                    .decodeList<Usuario>()
+                Log.d(TAG, "Usuarios: $usuarios")
 
-                val groupedCounts = usuarios.groupBy { it["sexo"] ?: "Desconocido" }
-                    .map { StatsState(it.key, it.value.size) }
+                val groupedCounts = usuarios.groupBy {it.sexo}
+                    .map { StatsState(it.key.capitalize(), it.value.size) }
+                Log.d(TAG, "grupos: $groupedCounts")
 
                 _statsState.value = groupedCounts
 
