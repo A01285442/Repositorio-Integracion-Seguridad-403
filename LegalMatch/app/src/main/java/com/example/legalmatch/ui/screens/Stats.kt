@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,7 +42,7 @@ import com.github.mikephil.charting.utils.MPPointF
 
 
 @Composable
-fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewModel = viewModel()) {
+fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewModel) {
     // ViewModel
     val stats by graficasViewModel.statsState.collectAsState()
     val isLoading = remember { mutableStateOf(true) }
@@ -63,7 +65,15 @@ fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewMode
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PieChartView(stats = stats)
+            if (isLoading.value) {
+                CircularProgressIndicator()
+            } else {
+                if (stats.isEmpty()) {
+                    Text("No hay datos disponibles.")
+                } else {
+                    PieChartView(stats = stats)
+                }
+            }
         }
     }
 }
@@ -141,8 +151,8 @@ fun PieChartView(stats: List<StatsState>) {
             selectionShift = 5f
             colors = listOf(
                 pieChart.context.getColor(R.color.purple_700),
-                pieChart.context.getColor(R.color.teal_200),
-                pieChart.context.getColor(R.color.red)
+                pieChart.context.getColor(R.color.red),
+                pieChart.context.getColor(R.color.teal_200)
             )
         }
 
