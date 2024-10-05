@@ -132,6 +132,23 @@ fun CasoDetalleScreen(
             ) {
                 Text(text = "Añadir archivos")
             }
+
+            // Caso como finalizado
+            // Button to add files
+            Button(
+                onClick = {
+                    // Añadir Funcionalidad
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "Cerrar Caso")
+            }
         }
     }
 }

@@ -15,8 +15,10 @@ import com.example.legalmatch.ui.screens.AsesoriaViewModel
 import com.example.legalmatch.ui.screens.CasoDetalleScreen
 import com.example.legalmatch.ui.screens.CasosScreen
 import com.example.legalmatch.ui.screens.CasosViewModel
+import com.example.legalmatch.ui.screens.ListaEstudiantesScreen
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.screens.PerfilScreen
+import com.example.legalmatch.viewmodel.EstudiantesViewmodel
 import com.example.proyectobueno.views.LoginScreen
 import com.example.proyectobueno.views.RegisterScreen
 
@@ -64,6 +66,11 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             if (itemId != null) {
                 CasoDetalleScreen(navController, casosViewModel, itemId)
             }
+        }
+
+        composable(Routes.ListaEstudiantes.route) {
+            Log.d(TAG, "Navigating to Lista de Estudiantes")
+            ListaEstudiantesScreen(navController, EstudiantesViewmodel())
         }
     }
 }

@@ -199,6 +199,16 @@ fun AsesoriaItem(asesoria: Asesoria,asesoriaViewModel: AsesoriaViewModel, loginV
             },
             title = { Text(text = "¿Quieres darle seguimiento a esta asesoría?") },
             text = { Text("Si aceptas, estos datos pasarán a la ventana de 'Casos', desde donde podrás manejar el resto de información necesaria") },
+            dismissButton = {
+                Button(
+                    colors = ButtonColors(Color.Red,Color.White,Color.Gray,Color.Gray),
+                    onClick = {
+                        asesoriaViewModel.cancelarCaso(asesoria)
+                        showDialog = false
+                    }) {
+                    Text("Cancelar Asesoría")
+                }
+            },
             confirmButton = {
                 Button(
                     colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray),
@@ -208,17 +218,8 @@ fun AsesoriaItem(asesoria: Asesoria,asesoriaViewModel: AsesoriaViewModel, loginV
                     }) {
                     Text("Aceptar Caso")
                 }
-            },
-            dismissButton = {
-                Button(
-                    colors = ButtonColors(Color.Red,Color.White,Color.Gray,Color.Gray),
-                    onClick = {
-                        asesoriaViewModel.cancelarCaso(asesoria)
-                        showDialog = false
-                    }) {
-                    Text("Cancelar")
-                }
             }
+
         )
     }
 }

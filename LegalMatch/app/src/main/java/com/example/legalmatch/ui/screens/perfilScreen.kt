@@ -14,6 +14,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -36,6 +38,7 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
+import okio.utf8Size
 import java.time.LocalDate
 
 private const val TAG = "MainActivity"
@@ -46,8 +49,11 @@ private const val TAG = "MainActivity"
 fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
     val loginState by loginViewModel.loginState.collectAsState()
-    var showDialogAñadirEstudiante by remember { mutableStateOf(false) }
+    var showDialogCambiarContraseña by remember { mutableStateOf(false) }
     var matricula by remember { mutableStateOf("") }
+    var nuevaContraseña by remember { mutableStateOf("") }
+    var nuevaContraseña2 by remember { mutableStateOf("") }
+    var botonCambiar by remember { mutableStateOf(false)}
 
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
@@ -103,6 +109,8 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                 ProfileStat(text = "62", description = "Casos cerrados")
             }
 
+            HorizontalDivider()
+
             // Opciones con switches
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
                 SwitchOption("Recordatorio de asesoría", "Te recordaremos 1 hora antes de cada asesoría confirmada")
@@ -110,25 +118,28 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                 SwitchOption("Activar Derechos", "Te recordaremos 1 hora antes de cada asesoría confirmada")
             }
 
+            // Botón para cambiar contraseña
             Button(
-                onClick = {showDialogAñadirEstudiante=true},
+                onClick = { showDialogCambiarContraseña = true},
                 colors = ButtonDefaults.buttonColors(containerColor = AzulTec),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 8.dp),
                 elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
             ) {
-                Text("Añadir estudiantes")
+                Text("Cambiar contraseña")
             }
+
+            // Botón para añadir estudiantes
             Button(
-                onClick = {},
+                onClick = {navController.navigate(Routes.ListaEstudiantes.route)},
                 colors = ButtonDefaults.buttonColors(containerColor = AzulTec),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 8.dp),
                 elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
             ) {
-                Text("Eliminar estudiantes")
+                Text("Editar Estudiantes")
             }
 
             // Botón de cerrar sesión
@@ -139,60 +150,79 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 8.dp),
                 elevation = ButtonDefaults.elevatedButtonElevation(10.dp)
             ) {
                 Text(text = "Cerrar Sesión", color = Color.White)
             }
 
-            if (showDialogAñadirEstudiante) {
+            if (showDialogCambiarContraseña) {
                 AlertDialog(
                     onDismissRequest = {
                         // Acción cuando se cierra el diálogo (fuera del área de alerta o con el botón "Cancelar")
-                        showDialogAñadirEstudiante = false
+                        showDialogCambiarContraseña = false
                     },
-                    title = { Text(text = "Añade a un estudiante a la clínica penal") },
+                    title = { Text(text = "Cambiar Contraseña") },
                     text = {
                         Column {
-                            Text("Selecciona una matrícula. Su contraseña será '123', asegúrate que inmediatamente.")
 
+                            // Campo para ingresar la matrícula
                             TextField(
-                                value = matricula,
-                                onValueChange = { matricula = it },
-                                label = { Text("Matricula") },
-                                modifier = Modifier.fillMaxWidth()
+                                value = nuevaContraseña,
+                                onValueChange = { nuevaContraseña = it },
+                                label = { Text("Nueva Contraseña") },
+                                modifier = Modifier.fillMaxWidth(),
+                                visualTransformation = PasswordVisualTransformation()
                             )
-                        }
 
+                            // Campo para ingresar la nueva contraseña
+                            TextField(
+                                value = nuevaContraseña2,
+                                onValueChange = { nuevaContraseña2 = it },
+                                label = { Text("Nueva Contraseña") },
+                                modifier = Modifier.fillMaxWidth(),
+                                visualTransformation = PasswordVisualTransformation() // Para ocultar la contraseña
+                            )
+                            if (nuevaContraseña.toByteArray().size < 8){
+                                Text("Mínimo 8 caracteres")
+                            }
+                            else if (nuevaContraseña!=nuevaContraseña2){
+                                Text("Las contraseñas deben ser iguales")
+                            }
+                            else botonCambiar = true
+                        }
                     },
                     confirmButton = {
                         Button(
-                            colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray),
+                            enabled = botonCambiar,
+                            colors = ButtonColors(AzulTec, Color.White, Color.Gray, Color.White),
                             onClick = {
-                                // Acción del botón de confirmación
-                                showDialogAñadirEstudiante = false
-                            }) {
-                            Text("Aceptar Caso")
+                                // Lógica para cambiar la contraseña del estudiante aquí
+                                //cambiarContraseña(matricula, nuevaContraseña)
+
+                                showDialogCambiarContraseña = false // Cierra el diálogo después de cambiar la contraseña
+                            }
+                        ) {
+                            Text("Cambiar")
                         }
                     },
                     dismissButton = {
                         Button(
-                            colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray),
-                            onClick = {
-
-                                // Acción del botón de cancelación
-                                showDialogAñadirEstudiante = false
-                            }) {
+                            colors = ButtonColors(Color.Gray, Color.White, Color.Gray, Color.Gray),
+                            onClick = { showDialogCambiarContraseña = false }
+                        ) {
                             Text("Cancelar")
                         }
                     }
                 )
             }
+
         }
 
 
     }
 }
+
 
 @Composable
 fun ProfileStat(text: String, description: String) {
