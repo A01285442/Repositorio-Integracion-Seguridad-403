@@ -3,20 +3,29 @@ package com.example.proyectobueno.views
 import android.text.InputType
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -37,6 +46,7 @@ import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.theme.AzulTec
 import kotlinx.datetime.LocalDateTime
+
 
 private const val TAG = "MainActivity"
 
@@ -133,18 +143,69 @@ fun DateOfBirthScreen(dateBirth: String, onValueChange: (String) -> Unit, onCont
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GenderScreen(gender: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
+    val genderOptions = listOf("Hombre", "Mujer", "Otro")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedGender by remember { mutableStateOf(gender) }
+
 
     RegisterTemplate(
         progress = 3,
         currentStep = 3,
         label = "Cual es tu género",
-        value = gender,
+        value = selectedGender,
         onValueChange = onValueChange,
         onContinue = onContinue,
-        inputType = InputType.TYPE_MASK_CLASS
+        inputType = InputType.TYPE_MASK_CLASS,
+
     )
+    //{
+//        // Mover ExposedDropdownMenuBox dentro del composable para evitar conflictos
+//        Box(modifier = Modifier.fillMaxWidth()) {
+//            ExposedDropdownMenuBox(
+//                expanded = expanded,
+//                onExpandedChange = {
+//                    expanded = !expanded
+//                }
+//            ) {
+//                TextField(
+//                    readOnly = true,
+//                    value = selectedGender,
+//                    onValueChange = { }, // No permitimos cambios aquí
+//                    label = { Text("Selecciona tu género") },
+//                    trailingIcon = {
+//                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+//                    },
+//                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .menuAnchor()
+//                        .clickable { expanded = !expanded } // Manejo del estado para expandir/cerrar el menú
+//                )
+//
+//                // Menú desplegable con las opciones de género
+//                ExposedDropdownMenu(
+//                    expanded = expanded,
+//                    onDismissRequest = {
+//                        expanded = false
+//                    }
+//                ) {
+//                    genderOptions.forEach { option ->
+//                        DropdownMenuItem(
+//                            onClick = {
+//                                selectedGender = option  // Actualiza el género seleccionado
+//                                onValueChange(option)    // Envía el valor seleccionado
+//                                expanded = false         // Cierra el menú
+//                            },
+//                            text = { Text(text = option) }
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
 
 @Composable
@@ -159,6 +220,7 @@ fun EmailScreen(email: String, onValueChange: (String) -> Unit, onContinue: () -
         onContinue = onContinue,
         inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
     )
+
 }
 
 @Composable
@@ -229,6 +291,7 @@ fun RegisterTemplate(
                     value = value,
                     onValueChange = onValueChange,
                     label = { Text(label) },
+                    visualTransformation = visualTransformation,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)

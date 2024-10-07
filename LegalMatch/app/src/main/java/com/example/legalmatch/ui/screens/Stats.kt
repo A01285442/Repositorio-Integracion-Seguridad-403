@@ -38,20 +38,21 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.MPPointF
-
+import kotlinx.coroutines.delay
 
 
 @Composable
-fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewModel) {
+fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewModel = viewModel()) {
     // ViewModel
     val stats by graficasViewModel.statsState.collectAsState()
     val isLoading = remember { mutableStateOf(true) }
     val errorMessage = remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
-        isLoading.value = true
-        graficasViewModel.fetchSexoCounts()
-        isLoading.value = false
+        while (true) {
+            graficasViewModel.fetchSexoCounts()
+            delay(5_000)
+        }
     }
 
     Scaffold(
@@ -65,17 +66,20 @@ fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewMode
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (isLoading.value) {
-                CircularProgressIndicator()
-            } else {
-                if (stats.isEmpty()) {
-                    Text("No hay datos disponibles.")
-                } else {
+            when {
+                isLoading.value -> {
+                    CircularProgressIndicator()
+                }
+                stats.isEmpty() -> {
+                    Text(text = "No hay datos para mostrar")
+                }
+                else -> {
                     PieChartView(stats = stats)
                 }
             }
         }
     }
+
 }
 
 @Composable
