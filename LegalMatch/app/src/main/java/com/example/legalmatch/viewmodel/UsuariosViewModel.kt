@@ -18,10 +18,12 @@ private const val TAG = "MainActivity"
 
 data class EstudiantesState(
     val estudiantes: List<Usuario> = emptyList(),
+    val infoCliente: Usuario = Usuario("","",LocalDateTime(1,1,1,1,1,1), LocalDateTime(1,1,1,1,1,1), 0, "","","estudiante", "hombre"),
+    val infoAbogado: Usuario = Usuario("","",LocalDateTime(1,1,1,1,1,1), LocalDateTime(1,1,1,1,1,1), 0, "","","estudiante", "hombre"),
     val isLoading: Boolean = false
 )
 
-class EstudiantesViewmodel : ViewModel(){
+class UsuariosViewModel : ViewModel(){
     private var _state by mutableStateOf(EstudiantesState())
     val state: EstudiantesState get() = _state
 
@@ -83,6 +85,24 @@ class EstudiantesViewmodel : ViewModel(){
                 Log.d(TAG, "Error: e.message")
             }
             fetchEstudiantes()
+        }
+    }
+
+    fun getClientInfo(id: Int){
+        viewModelScope.launch {
+            try {
+                _state = state.copy(isLoading = true)
+
+                // Código para obtener cliehnte
+                val cliente = supabase.from("usuarios")
+                    .select(){ filter { eq("id", id) } }
+                    .decodeSingleOrNull<Usuario>()
+
+                _state = cliente?.let { state.copy(infoCliente = it, isLoading = false) }!!
+            } catch (e: Exception) {
+                Log.d(TAG,"Error: ${e.message}")
+                _state = state.copy(isLoading = false) // Aquí también se usa correctamente
+            }
         }
     }
 

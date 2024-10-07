@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.data.api.models.SendUsuario
@@ -28,6 +29,7 @@ private const val TAG = "MainActivity"
 @RequiresApi(Build.VERSION_CODES.O)
 data class UserRegistrationData @RequiresApi(Build.VERSION_CODES.O) constructor(
     var name: String = "",
+    var lastname: String = "",
     var dateOfBirth: LocalDateTime = LocalDateTime.now(),
     var sex: String = "",
     var email: String = "",
@@ -50,7 +52,7 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
             val user = SendUsuario(
                 matricula = "null",
                 correo = registrationData.email,
-                nombre = registrationData.name,
+                nombre = registrationData.name + " " + registrationData.lastname,
                 fecha_nacimiento = registrationData.dateOfBirth.toKotlinLocalDateTime(),
                 rol = "cliente",
                 contraseña = registrationData.password,
@@ -68,10 +70,11 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
 
     // Control de las pantallas por pasos
     when (currentStep) {
-        1 -> InputScreen(
-            label = "Nombre Completo",
-            value = registrationData.name,
-            onValueChange = { registrationData = registrationData.copy(name = it) },
+        1 -> NameScreen(
+            nombre = registrationData.name,
+            apellido = registrationData.lastname,
+            onNombreChange = { registrationData = registrationData.copy(name = it) },
+            onApellidoChange = { registrationData = registrationData.copy(lastname = it) },
             onContinue = { currentStep = 2 }
         )
         2 -> DateOfBirthScreen(
@@ -95,6 +98,71 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
             onValueChange = { registrationData = registrationData.copy(password = it) },
             onContinue = { shouldInsert = true }
         )
+    }
+}
+
+@Composable
+fun NameScreen(
+    nombre: String,
+    apellido: String,
+    onNombreChange: (String) -> Unit,
+    onApellidoChange: (String) -> Unit,
+    onContinue: () -> Unit
+) {
+    val isValid = nombre.isNotBlank() and apellido.isNotBlank()
+
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Nombre Completo",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = AzulTec
+            )
+
+            OutlinedTextField(
+                value = nombre,
+                onValueChange = onNombreChange,
+                label = { Text("Nombre") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                singleLine = true
+            )
+            OutlinedTextField(
+                value = apellido,
+                onValueChange = onApellidoChange,
+                label = { Text("Apellidos") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = { if (isValid) onContinue() },
+                enabled = isValid,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isValid) AzulTec else Color.Gray,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "Continuar")
+            }
+            Text("La información debe ser congruente con tus documentos oficiales", fontSize = 10.sp)
+        }
     }
 }
 
@@ -207,10 +275,11 @@ fun DateOfBirthScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             ) {
-                Text(
-                    text = selectedDateTime?.toString() ?: "Seleccionar fecha",
-                    color = Color.Black
-                )
+                if(selectedDateTime==null){
+                    Text("Seleccionar fecha", color = Color.Black)
+                } else {
+                    Text(selectedDateTime.dayOfMonth.toString() + " " + selectedDateTime.month.toString() + " " + selectedDateTime.year.toString())
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -286,6 +355,8 @@ fun SexScreen(value: String, onValueChange: (String) -> Unit, onContinue: () -> 
             ) {
                 Text(text = "Continuar")
             }
+
+            Text("La información debe ser congruente con tus documentos oficiales", fontSize = 10.sp)
         }
     }
 }

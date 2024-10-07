@@ -43,12 +43,12 @@ import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
-import com.example.legalmatch.viewmodel.EstudiantesViewmodel
+import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 private const val TAG = "MainActivity"
 
 @Composable
-fun ListaEstudiantesScreen(navController: NavController, viewmodel: EstudiantesViewmodel) {
+fun ListaEstudiantesScreen(navController: NavController, viewmodel: UsuariosViewModel) {
 
     val state = viewmodel.state
     var matricula by remember { mutableStateOf("") }

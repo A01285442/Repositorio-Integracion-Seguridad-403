@@ -43,23 +43,27 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CasoDetalleScreen(
     navController: NavController,
-    viewModel: CasosViewModel,
+    casosVM: CasosViewModel,
     casoId: Int,
+    usuariosVM: UsuariosViewModel
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState() // Estado del scroll
 
-    val caso = viewModel.getCasoInfo(casoId)
+    val caso = casosVM.getCasoInfo(casoId)
     if (caso == null){
         Text("Caso no encontrado. Favor de reiniciar la aplicación.")
         return
     }
+    usuariosVM.getClientInfo(caso.id_cliente)
+    val cliente = usuariosVM.state.infoCliente
 
     Scaffold(
         topBar = {
@@ -106,7 +110,7 @@ fun CasoDetalleScreen(
             )
             Text(
                 text = caso.descripcion,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Left
             )
 
@@ -119,23 +123,22 @@ fun CasoDetalleScreen(
                 textAlign = TextAlign.Left
             )
             Text(
-                text = "Nombre completo: Maria Bolaños Amargo" +
-                        "\nGénero: female" +
-                        "\nNacimiento: Sep 12, 2000" +
-                        "\nCelularr: 47-1234-1234",
-                style = MaterialTheme.typography.titleSmall,
+                text = "Nombre completo: ${cliente.nombre}" +
+                        "\nSexo: ${cliente.sexo}" +
+                        "\nNacimiento: ${cliente.fecha_nacimiento.date}" +
+                        "\nCorreo: ${cliente.correo}",
+                style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Left
             )
 
-            // Botones
+            // Añadir archivo
             Button(
                 onClick = {
-                    val url = caso?.drive_link//Agregar funcionalidad de cambiar el link para los abogados.
+                    val url = caso.drive_link//Agregar funcionalidad de cambiar el link para los abogados.
                     val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    ContextCompat.startActivity(context, i, null)
+                    startActivity(context, i, null)
                 },
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Blue,
                     contentColor = Color.White
@@ -144,37 +147,51 @@ fun CasoDetalleScreen(
                 Text(text = "Añadir archivos")
             }
 
-            Row {
-                Button(
-                    onClick = {
-                        viewModel.cerrarCaso(casoId)
-                        navController.navigateUp()
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Gray,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(text = "Editar Información")
-                }
-                Button(
-                    onClick = {
-                        viewModel.cerrarCaso(casoId)
-                        navController.navigateUp()
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(text = "Cerrar Caso")
-                }
+
+            // Ver en google maps
+            Button(
+                onClick = {
+                    val url = caso.direccion_ui//Agregar funcionalidad de cambiar el link para los abogados.
+                    val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    startActivity(context, i, null)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Blue,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "Ver en Google Maps")
+            }
+
+            // Editar información
+            Button(
+                onClick = {
+                    casosVM.cerrarCaso(casoId)
+                    navController.navigateUp()
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Gray,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "Editar Información")
+            }
+
+            // Cerrar caso
+            Button(
+                onClick = {
+                    casosVM.cerrarCaso(casoId)
+                    navController.navigateUp()
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(text = "Cerrar Caso")
             }
 
 
