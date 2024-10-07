@@ -35,7 +35,7 @@ fun CustomBottomBarClientes(navController: NavController) {
         ) {
             NavigationBarItem(
                 icon = { Icon(Icons.Default.Menu, contentDescription = "Mis Casos") },
-                label = { Text("Mis Casos") },
+                label = { Text("Actividad") },
                 selected = false,
                 onClick = { navController.navigate(Routes.CasosCliente.route) }
             )

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.navigation.AppNavGraph
+import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
@@ -33,6 +34,7 @@ data class LoginState(
     val userClient: Usuario? = null,
     val errorMessage: String? = null,
     val isLoading: Boolean = false,
+    val asesoriasRelacionadas: List<Asesoria> = emptyList(),
     val casosRelacionados: List<Caso> = emptyList()
 )
 
@@ -135,6 +137,33 @@ class LoginViewModel() : ViewModel() {
         Log.d(TAG, "Sesión cerrada")
         then()
     }
+
+    // Funciones para la vista de Cliente
+    fun getAsesoriasRelacionadas(){
+        viewModelScope.launch {
+
+            _loginState.value = _loginState.value.copy(isLoading = true) // Inicia el estado de carga
+
+            // Obtenemos información a través de la base de datos
+
+            try {
+                // Obtener una lista
+                val fetchedCasos = supabaseCasoCliente.from("asesorias")
+                    .select(){ filter{ _loginState.value.userClient?.let { eq("id_cliente", it.id) } }}
+                    .decodeList<Asesoria>()
+                _loginState.value = _loginState.value.copy(asesoriasRelacionadas = fetchedCasos, isLoading = false)
+
+            } catch (e: Exception) {
+                e.message?.let {
+                    _loginState.value = _loginState.value.copy(
+                        errorMessage = e.message!!,
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
     fun getCasosRelacionados(){
         viewModelScope.launch {
 
@@ -159,7 +188,4 @@ class LoginViewModel() : ViewModel() {
             }
         }
     }
-
-
-
 }
