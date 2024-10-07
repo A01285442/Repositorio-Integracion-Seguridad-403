@@ -3,6 +3,7 @@ package com.example.legalmatch.ui.screens
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.navigation.AppNavGraph
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import io.github.jan.supabase.createSupabaseClient
@@ -60,7 +61,7 @@ class LoginViewModel() : ViewModel() {
     }
 
         // Si identifica al usuario cambia el valor de "isAuthenticated"
-        fun login(username: String, password: String, onLoginSuccess: () -> Unit) {
+        fun login(username: String, password: String, onLoginSuccessAbogado: () -> Unit, onLoginSuccessCliente: () -> Unit) {
             Log.d(TAG, "Iniciando función login()")  // Log antes de la coroutine
             viewModelScope.launch {
                 Log.d(TAG, "Iniciando coroutine")  // Log dentro de la coroutine
@@ -81,7 +82,14 @@ class LoginViewModel() : ViewModel() {
                                 isLoading = false
                             )
                             Log.d(TAG, "Usuario encontrado: ${user.correo}")
-                            onLoginSuccess()
+                            setUserID2(user.id)
+                            // Dependiendo del rol del usuario te manda a otra pantalla, abogados y clientes.
+                            if(user.rol == "cliente"){
+                                onLoginSuccessCliente()
+                            }
+                            else{
+                                onLoginSuccessAbogado()
+                            }
                         } else {
                             Log.d(TAG, "Contraseña Incorrecta")
                             _loginState.value = _loginState.value.copy(

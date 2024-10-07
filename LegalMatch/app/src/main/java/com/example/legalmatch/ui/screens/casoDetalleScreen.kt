@@ -63,7 +63,7 @@ fun CasoDetalleScreen(
 
     Scaffold(
         topBar = {
-            CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController, Routes.Casos.route)
+            CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController = navController, rutaBackButton = Routes.Casos.route)
         },
         bottomBar = { CustomBottomBar(navController=navController) }
     ) { InnerPadding ->

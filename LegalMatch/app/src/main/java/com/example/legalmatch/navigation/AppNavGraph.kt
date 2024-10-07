@@ -13,12 +13,15 @@ import androidx.navigation.navArgument
 import com.example.legalmatch.ui.screens.AsesoriaScreen
 import com.example.legalmatch.ui.screens.AsesoriaViewModel
 import com.example.legalmatch.ui.screens.CasoDetalleScreen
+import com.example.legalmatch.ui.screens.CasosClienteScreen
 import com.example.legalmatch.ui.screens.CasosScreen
 import com.example.legalmatch.ui.screens.CasosViewModel
 import com.example.legalmatch.ui.screens.ListaEstudiantesScreen
 import com.example.legalmatch.ui.screens.LoginViewModel
+import com.example.legalmatch.ui.screens.PerfilClienteScreen
 import com.example.legalmatch.ui.screens.PerfilScreen
 import com.example.legalmatch.ui.screens.StatsScreen
+import com.example.legalmatch.ui.screens.casosClienteViewModel
 import com.example.legalmatch.viewmodel.GraficasViewModel
 import com.example.legalmatch.viewmodel.EstudiantesViewmodel
 import com.example.proyectobueno.views.LoginScreen
@@ -81,6 +84,14 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         }
 
         // Vistas Cliente
+        composable(Routes.CasosCliente.route){
+            Log.d(TAG, "Navigating to Casos Cliente")
+            CasosClienteScreen(navController, casosClienteViewModel())
+        }
+        composable(Routes.PerfilCliente.route){
+            Log.d(TAG, "Navigating to Perfil Clientes")
+            PerfilClienteScreen(navController, loginViewModel)
+        }
 
     }
 }

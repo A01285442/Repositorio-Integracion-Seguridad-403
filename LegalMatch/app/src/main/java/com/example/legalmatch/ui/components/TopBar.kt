@@ -2,6 +2,7 @@ package com.example.legalmatch.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
@@ -18,7 +19,7 @@ import com.example.legalmatch.ui.theme.AzulTec
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopBar(title: String, navIcon: Boolean, actIcon: Boolean, navController: NavController = rememberNavController(), rutaBackButton: String = "") {
+fun CustomTopBar(title: String, navIcon: Boolean, actIcon: Boolean, navController: NavController = rememberNavController(), rutaBackButton: String = "", rutaActButton: String = "") {
     CenterAlignedTopAppBar(
         modifier = Modifier.shadow(8.dp),  // Añadir sombra
         colors = TopAppBarColors(
@@ -45,9 +46,9 @@ fun CustomTopBar(title: String, navIcon: Boolean, actIcon: Boolean, navControlle
         },
         actions = {
             if(actIcon){
-                IconButton(onClick = { /* do something */ }) {
+                IconButton(onClick = { navController.navigate(route = rutaActButton) }) {
                     Icon(
-                        imageVector = Icons.Filled.MoreVert,
+                        imageVector = Icons.Filled.Add,
                         contentDescription = "Localized description"
                     )
                 }
