@@ -59,7 +59,7 @@ fun AsesoriaScreen(navController: NavController,asesoriaViewModel: AsesoriaViewM
     } else {
         Log.d(TAG, "finished loading")
         Scaffold(
-            topBar = { CustomTopBar(title = "Asesorías", navIcon = false, actIcon = true) },
+            topBar = { CustomTopBar(title = "Asesorías", navIcon = false, actIcon = false) },
             bottomBar = { CustomBottomBar(navController = navController) }
         ) { padding ->
             LazyColumn(

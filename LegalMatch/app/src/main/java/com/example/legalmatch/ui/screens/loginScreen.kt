@@ -114,9 +114,13 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
             onClick = {
                 if (username.isNotEmpty() && password.isNotEmpty()) {
                     Log.d(TAG, "Probando Login")
-                    viewModel.login(username.lowercase(), password, onLoginSuccess = {
+                    viewModel.login(username.lowercase(), password,
+                        onLoginSuccessAbogado = {
                         navController.navigate(Routes.Asesorias.route)
-                    }
+                    },
+                        onLoginSuccesCliente = {
+                            navController.navigate(Routes.CasosCliente.route)
+                        }
                     )
                 }else {
                     loginError = true

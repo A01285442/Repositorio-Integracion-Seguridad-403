@@ -10,15 +10,11 @@ sealed class Routes(val route: String) {
         fun createRoute(itemId: Int) = "detalle/$itemId"
     }
 
+    // Vistas del Cliente
+    object CasosCliente : Routes("casosCliente")
+
 
     // Vistas de Inicio de Sesión
     object  Login : Routes("login")
     object  Register : Routes("register")
-
-    // Vistas del cliente
-
-
-
-
-
 }

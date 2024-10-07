@@ -29,9 +29,9 @@ import com.example.legalmatch.ui.theme.GhostWhite
 private const val TAG = "MainActivity"
 
 @Composable
-fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
+fun CasosClienteScreen(navController: NavController, casosClienteViewModel: CasosViewModel) {
 
-    val state = casosViewModel.state.copy()
+    val state = casosClienteViewModel.state.copy()
 
     // Mostrar el contenido según el estado actual
     if (state.isLoading) {
@@ -39,8 +39,7 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
     }
 
     Scaffold(
-        topBar = { CustomTopBar(title = "Casos", navIcon = false, actIcon = false) },
-        bottomBar = { CustomBottomBar(navController = navController) } // Usa el navController pasado
+        topBar = { CustomTopBar(title = "Sus Casos", navIcon = false, actIcon = true) },
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -49,9 +48,7 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
                 .background(color = GhostWhite)
         ) {
             items(state.casos) { caso -> // Cambié "Caso" a "caso" para mayor claridad
-                CasoItem(caso) {
-                    navController.navigate(Routes.CasoDetalle.createRoute(caso.id))
-                }
+                CasoClienteItem(caso)
             }
         }
     }
@@ -59,12 +56,12 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
 
 
 @Composable
-fun CasoItem(caso: Caso, onClick: () -> Unit) {
+fun CasoClienteItem(caso: Caso) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable { onClick() },
+            .clickable {},
         elevation = CardDefaults.cardElevation(10.dp),
         colors = CardColors(
             containerColor = Color.White,

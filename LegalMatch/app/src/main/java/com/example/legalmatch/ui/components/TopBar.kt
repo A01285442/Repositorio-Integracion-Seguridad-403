@@ -2,6 +2,7 @@ package com.example.legalmatch.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
@@ -47,7 +48,7 @@ fun CustomTopBar(title: String, navIcon: Boolean, actIcon: Boolean, navControlle
             if(actIcon){
                 IconButton(onClick = { /* do something */ }) {
                     Icon(
-                        imageVector = Icons.Filled.MoreVert,
+                        imageVector = Icons.Filled.Add,
                         contentDescription = "Localized description"
                     )
                 }

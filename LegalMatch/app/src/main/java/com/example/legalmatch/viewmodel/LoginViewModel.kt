@@ -39,7 +39,7 @@ class LoginViewModel() : ViewModel() {
     val loginState: StateFlow<LoginState> get() = _loginState
 
     // Si identifica al usuario cambia el valor de "isAuthenticated"
-    fun login(username: String, password: String, onLoginSuccess: () -> Unit) {
+    fun login(username: String, password: String, onLoginSuccessAbogado: () -> Unit, onLoginSuccesCliente: () -> Unit) {
         Log.d(TAG, "Iniciando función login()")  // Log antes de la coroutine
         viewModelScope.launch {
             Log.d(TAG, "Iniciando coroutine")  // Log dentro de la coroutine
@@ -60,7 +60,12 @@ class LoginViewModel() : ViewModel() {
                             isLoading = false
                         )
                         Log.d(TAG, "Usuario encontrado: ${user.correo}")
-                        onLoginSuccess()
+                        if(user.rol == "cliente"){
+                            onLoginSuccesCliente()
+                        }
+                        else{
+                            onLoginSuccessAbogado()
+                        }
                     } else {
                         Log.d(TAG, "Contraseña Incorrecta")
                         _loginState.value = _loginState.value.copy(

@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.example.legalmatch.ui.screens.AsesoriaScreen
 import com.example.legalmatch.ui.screens.AsesoriaViewModel
 import com.example.legalmatch.ui.screens.CasoDetalleScreen
+import com.example.legalmatch.ui.screens.CasosClienteScreen
 import com.example.legalmatch.ui.screens.CasosScreen
 import com.example.legalmatch.ui.screens.CasosViewModel
 import com.example.legalmatch.ui.screens.LoginViewModel
@@ -55,7 +56,10 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             Log.d(TAG, "Navigating to Login")
             LoginScreen(navController, loginViewModel)
         }
-
+        composable(Routes.CasosCliente.route){
+            Log.d(TAG, "Navigating to Casos Clientes")
+            CasosClienteScreen(navController, casosViewModel)
+        }
         composable(
             route = Routes.CasoDetalle.route,
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
