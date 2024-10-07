@@ -37,6 +37,17 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         startDestination = Routes.Login.route
     ) {
 
+        // Login
+        composable(Routes.Login.route){
+            Log.d(TAG, "Navigating to Login")
+            LoginScreen(navController, loginViewModel)
+        }
+        composable(Routes.Register.route){
+            Log.d(TAG, "Navigating to Register")
+            RegisterScreen(navController, loginViewModel)
+        }
+
+        // Vistas Abogado
         composable(Routes.Asesorias.route) {
             Log.d(TAG, "Navigating to Asesorias")
             AsesoriaScreen(navController, asesoriasViewModel,loginViewModel)
@@ -49,28 +60,22 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             Log.d(TAG, "Navigating to Perfil")
             PerfilScreen(navController, loginViewModel)
         }
-        composable(Routes.Register.route){
-            Log.d(TAG, "Navigating to Register")
-            RegisterScreen(navController, loginViewModel)
-        }
-        composable(Routes.Login.route){
-            Log.d(TAG, "Navigating to Login")
-            LoginScreen(navController, loginViewModel)
-        }
-
         composable(
             route = Routes.CasoDetalle.route,
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId")
             if (itemId != null) {
+                Log.d(TAG, "Navigating to Caso Detalle")
                 CasoDetalleScreen(navController, casosViewModel, itemId)
             }
         }
-
         composable(Routes.ListaEstudiantes.route) {
             Log.d(TAG, "Navigating to Lista de Estudiantes")
             ListaEstudiantesScreen(navController, EstudiantesViewmodel())
         }
+
+        // Vistas Cliente
+
     }
 }

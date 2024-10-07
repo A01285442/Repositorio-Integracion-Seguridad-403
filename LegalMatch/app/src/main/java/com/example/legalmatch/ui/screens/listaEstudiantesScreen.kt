@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +26,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +51,8 @@ private const val TAG = "MainActivity"
 fun ListaEstudiantesScreen(navController: NavController, viewmodel: EstudiantesViewmodel) {
 
     val state = viewmodel.state
+    var matricula by remember { mutableStateOf("") }
+    var nombre by remember { mutableStateOf("") }
 
     // Mostrar el contenido según el estado actual
     if (state.isLoading) {
@@ -62,32 +71,46 @@ fun ListaEstudiantesScreen(navController: NavController, viewmodel: EstudiantesV
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween // Esto empuja el botón hacia la derecha
+                horizontalArrangement = Arrangement.SpaceBetween, // Esto empuja el botón hacia la derecha
+
             ) {
                 // Nombre y correo del estudiante a la izquierda
                 Column(
                     modifier = Modifier.weight(1f) // Permite que el contenido ocupe el espacio disponible
                 ) {
                     OutlinedTextField(
-                        value = "Matricula",
-                        onValueChange = { /* Nada, no permitimos edición directa */ },
-                        label = { Text("Matricula") },
-                        readOnly = true,  // Lo marcamos como solo lectura
+                        value = nombre,
+                        onValueChange = { nombre = it },
+                        label = { Text("Nombre") },
+                        readOnly = false,  // Lo marcamos como solo lectura
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)
+                            .padding(vertical = 2.dp)
                             .clickable { /*onClick()*/ }  // Al hacer clic, mostramos el DatePicker
                     )
+                    OutlinedTextField(
+                        value = matricula,
+                        onValueChange = { matricula = it },
+                        label = { Text("Matricula") },
+                        readOnly = false,  // Lo marcamos como solo lectura
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 2.dp)
+                            .clickable { /*onClick()*/ }  // Al hacer clic, mostramos el DatePicker
+                    )
+                    Button(
+                        onClick = { viewmodel.creaEstudiante(nombre, matricula) },
+                        colors = ButtonColors(AzulTec, Color.White, Color.Gray, Color.Gray),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(vertical = 2.dp),
+                    ) {
+                        Text("Añadir Estudiante")
+                    }
                 }
 
-                // Botón de eliminar a la derecha
-                Button(
-                    onClick = { /* Aqui va algo */ },
-                    modifier = Modifier.padding(start = 8.dp), // Separar un poco el botón del contenido
-                    colors = ButtonColors(AzulTec, Color.White, Color.Gray, Color.Gray)
-                ) {
-                    Text("Añadir")
-                }
+
+
             }
 
             // Línea divisoria entre los ítems
@@ -101,7 +124,7 @@ fun ListaEstudiantesScreen(navController: NavController, viewmodel: EstudiantesV
 
 
                 items(state.estudiantes) { estudiante ->
-                    EstudianteItem(estudiante, onDeleteClick = { println("fdbnkhjs")})
+                    EstudianteItem(estudiante, onDeleteClick = {viewmodel.eliminaEstudiante(estudiante.id)})
                 }
         }
 

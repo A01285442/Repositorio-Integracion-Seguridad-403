@@ -39,44 +39,16 @@ class LoginViewModel() : ViewModel() {
     private val _loginState = MutableStateFlow(LoginState())
     val loginState: StateFlow<LoginState> get() = _loginState
 
-    // Si identifica al usuario cambia el valor de "isAuthenticated"
-    fun login(username: String, password: String, onLoginSuccess: () -> Unit) {
-        Log.d(TAG, "Iniciando función login()")  // Log antes de la coroutine
+    fun cambioContraseña(password: String) {
         viewModelScope.launch {
-            Log.d(TAG, "Iniciando coroutine")  // Log dentro de la coroutine
             try {
-                val user = supabaseCli.from("usuarios")
-                    .select() {
-                        filter {
-                            eq("correo", username)
-                        }
-                    }.decodeSingleOrNull<Usuario>()
-
-                if (user != null) {
-                    if (user.contraseña == password) {
-                        _loginState.value = _loginState.value.copy(
-                            isAuthenticated = true,
-                            userClient = user,
-                            errorMessage = null,
-                            isLoading = false
-                        )
-                        Log.d(TAG, "Usuario encontrado: ${user.correo}")
-                        onLoginSuccess()
-                    } else {
-                        Log.d(TAG, "Contraseña Incorrecta")
-                        _loginState.value = _loginState.value.copy(
-                            errorMessage = "Contraseña Incorrecta",
-                            isLoading = false
-                        )
+                supabaseCli.from("usuarios").update({
+                    set("contraseña", password)
+                }) {
+                    filter {
+                        loginState.value.userClient?.let { eq("id", it.id) }
                     }
-                } else {
-                    Log.d(TAG, "Usuario no encontrado")
-                    _loginState.value = _loginState.value.copy(
-                        errorMessage = "Usuario no encontrado",
-                        isLoading = false
-                    )
                 }
-
             } catch (e: Exception) {
                 Log.d(TAG, "Error en la autenticacion: ${e.message}")
                 _loginState.value = _loginState.value.copy(
@@ -87,26 +59,73 @@ class LoginViewModel() : ViewModel() {
         }
     }
 
-    fun registerClient(newUsuario: SendUsuario){
-        viewModelScope.launch {
-            try {
-                supabase.postgrest["usuarios"].insert(newUsuario)
-            } catch (e: Exception){
-                e.printStackTrace()
-                Log.d(TAG,e.message.toString())
+        // Si identifica al usuario cambia el valor de "isAuthenticated"
+        fun login(username: String, password: String, onLoginSuccess: () -> Unit) {
+            Log.d(TAG, "Iniciando función login()")  // Log antes de la coroutine
+            viewModelScope.launch {
+                Log.d(TAG, "Iniciando coroutine")  // Log dentro de la coroutine
+                try {
+                    val user = supabaseCli.from("usuarios")
+                        .select() {
+                            filter {
+                                eq("correo", username)
+                            }
+                        }.decodeSingleOrNull<Usuario>()
+
+                    if (user != null) {
+                        if (user.contraseña == password) {
+                            _loginState.value = _loginState.value.copy(
+                                isAuthenticated = true,
+                                userClient = user,
+                                errorMessage = null,
+                                isLoading = false
+                            )
+                            Log.d(TAG, "Usuario encontrado: ${user.correo}")
+                            onLoginSuccess()
+                        } else {
+                            Log.d(TAG, "Contraseña Incorrecta")
+                            _loginState.value = _loginState.value.copy(
+                                errorMessage = "Contraseña Incorrecta",
+                                isLoading = false
+                            )
+                        }
+                    } else {
+                        Log.d(TAG, "Usuario no encontrado")
+                        _loginState.value = _loginState.value.copy(
+                            errorMessage = "Usuario no encontrado",
+                            isLoading = false
+                        )
+                    }
+
+                } catch (e: Exception) {
+                    Log.d(TAG, "Error en la autenticacion: ${e.message}")
+                    _loginState.value = _loginState.value.copy(
+                        errorMessage = "Error en la autenticación: ${e.message}",
+                        isLoading = false
+                    )
+                }
             }
         }
-    }
 
-    fun closeSession(then: () -> Unit){
-        _loginState.value = _loginState.value.copy(
-            isAuthenticated = false,
-            userClient = null,
-            errorMessage = null,
-            isLoading = false
-        )
-        Log.d(TAG, "Sesión cerrada")
-        then()
-    }
+        fun registerClient(newUsuario: SendUsuario) {
+            viewModelScope.launch {
+                try {
+                    supabase.postgrest["usuarios"].insert(newUsuario)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.d(TAG, e.message.toString())
+                }
+            }
+        }
 
+        fun closeSession(then: () -> Unit) {
+            _loginState.value = _loginState.value.copy(
+                isAuthenticated = false,
+                userClient = null,
+                errorMessage = null,
+                isLoading = false
+            )
+            Log.d(TAG, "Sesión cerrada")
+            then()
+        }
 }

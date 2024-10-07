@@ -50,7 +50,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
     val loginState by loginViewModel.loginState.collectAsState()
     var showDialogCambiarContraseña by remember { mutableStateOf(false) }
-    var matricula by remember { mutableStateOf("") }
+    var contraseñaActual by remember { mutableStateOf("") }
     var nuevaContraseña by remember { mutableStateOf("") }
     var nuevaContraseña2 by remember { mutableStateOf("") }
     var botonCambiar by remember { mutableStateOf(false)}
@@ -121,7 +121,11 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             // Botón para cambiar contraseña
             Button(
                 onClick = { showDialogCambiarContraseña = true},
-                colors = ButtonDefaults.buttonColors(containerColor = AzulTec),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AzulTec,
+                    contentColor = Color.White,
+                    disabledContentColor = Color.White,
+                    disabledContainerColor = Color(0xFF87B2E4)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -158,13 +162,19 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
             if (showDialogCambiarContraseña) {
                 AlertDialog(
-                    onDismissRequest = {
-                        // Acción cuando se cierra el diálogo (fuera del área de alerta o con el botón "Cancelar")
-                        showDialogCambiarContraseña = false
-                    },
+                    onDismissRequest = { showDialogCambiarContraseña = false },
                     title = { Text(text = "Cambiar Contraseña") },
                     text = {
                         Column {
+
+                            TextField(
+                                value = contraseñaActual,
+                                onValueChange = { contraseñaActual = it },
+                                label = { Text("Contraseña Actual") },
+                                modifier = Modifier.fillMaxWidth(),
+                                visualTransformation = PasswordVisualTransformation()
+                            )
+
 
                             // Campo para ingresar la matrícula
                             TextField(
@@ -183,7 +193,10 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                                 modifier = Modifier.fillMaxWidth(),
                                 visualTransformation = PasswordVisualTransformation() // Para ocultar la contraseña
                             )
-                            if (nuevaContraseña.toByteArray().size < 8){
+                            if (contraseñaActual != loginState.userClient?.contraseña){
+                                Text("La contraseña actual es incorrecta.")
+                            }
+                            else if (nuevaContraseña.toByteArray().size < 8){
                                 Text("Mínimo 8 caracteres")
                             }
                             else if (nuevaContraseña!=nuevaContraseña2){
@@ -195,10 +208,9 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                     confirmButton = {
                         Button(
                             enabled = botonCambiar,
-                            colors = ButtonColors(AzulTec, Color.White, Color.Gray, Color.White),
+                            colors = ButtonColors(AzulTec, Color.White, Color(0xFF87B2E4), Color.White),
                             onClick = {
-                                // Lógica para cambiar la contraseña del estudiante aquí
-                                //cambiarContraseña(matricula, nuevaContraseña)
+                                loginViewModel.cambioContraseña(nuevaContraseña)
 
                                 showDialogCambiarContraseña = false // Cierra el diálogo después de cambiar la contraseña
                             }

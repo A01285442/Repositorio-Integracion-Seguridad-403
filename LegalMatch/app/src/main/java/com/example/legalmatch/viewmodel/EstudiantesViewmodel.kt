@@ -6,11 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.supabase
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 
 private const val TAG = "MainActivity"
 
@@ -46,4 +48,42 @@ class EstudiantesViewmodel : ViewModel(){
             }
         }
     }
+
+    fun eliminaEstudiante(id: Int){
+
+        viewModelScope.launch {
+            try {
+                supabase.from("usuarios").delete {
+                    filter {
+                        eq("id", id)
+                    }
+                }
+            } catch (e: Exception){
+                Log.d(TAG, "Error: e.message")
+            }
+            fetchEstudiantes()
+        }
+    }
+
+    fun creaEstudiante(nombre: String, matricula: String){
+        val _matricula = matricula.lowercase()
+        val NewEstudiante = SendUsuario(
+            contraseña = _matricula,
+            correo = _matricula+"@tec.mx",
+            fecha_nacimiento = LocalDateTime(1,1,1,1,1,1),
+            matricula = matricula,
+            nombre = nombre,
+            rol = "estudiante",
+            sexo = "hombre"
+        )
+        viewModelScope.launch {
+            try {
+                supabase.from("usuarios").insert(NewEstudiante)
+            } catch (e: Exception){
+                Log.d(TAG, "Error: e.message")
+            }
+            fetchEstudiantes()
+        }
+    }
+
 }
