@@ -162,7 +162,6 @@ fun GenderScreen(gender: String, onValueChange: (String) -> Unit, onContinue: ()
 
     )
     //{
-//        // Mover ExposedDropdownMenuBox dentro del composable para evitar conflictos
 //        Box(modifier = Modifier.fillMaxWidth()) {
 //            ExposedDropdownMenuBox(
 //                expanded = expanded,
@@ -173,7 +172,7 @@ fun GenderScreen(gender: String, onValueChange: (String) -> Unit, onContinue: ()
 //                TextField(
 //                    readOnly = true,
 //                    value = selectedGender,
-//                    onValueChange = { }, // No permitimos cambios aquí
+//                    onValueChange = { },
 //                    label = { Text("Selecciona tu género") },
 //                    trailingIcon = {
 //                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
@@ -182,10 +181,8 @@ fun GenderScreen(gender: String, onValueChange: (String) -> Unit, onContinue: ()
 //                    modifier = Modifier
 //                        .fillMaxWidth()
 //                        .menuAnchor()
-//                        .clickable { expanded = !expanded } // Manejo del estado para expandir/cerrar el menú
+//                        .clickable { expanded = !expanded }
 //                )
-//
-//                // Menú desplegable con las opciones de género
 //                ExposedDropdownMenu(
 //                    expanded = expanded,
 //                    onDismissRequest = {
@@ -195,9 +192,9 @@ fun GenderScreen(gender: String, onValueChange: (String) -> Unit, onContinue: ()
 //                    genderOptions.forEach { option ->
 //                        DropdownMenuItem(
 //                            onClick = {
-//                                selectedGender = option  // Actualiza el género seleccionado
-//                                onValueChange(option)    // Envía el valor seleccionado
-//                                expanded = false         // Cierra el menú
+//                                selectedGender = option
+//                                onValueChange(option)
+//                                expanded = false      
 //                            },
 //                            text = { Text(text = option) }
 //                        )

@@ -36,17 +36,18 @@ data class StatsState(
 )
 
 class GraficasViewModel : ViewModel() {
-
     private val _statsState = MutableStateFlow<List<StatsState>>(emptyList())
     val statsState: StateFlow<List<StatsState>> get() = _statsState
 
+    init {
+        fetchSexoCounts()
+    }
     fun fetchSexoCounts() {
         viewModelScope.launch {
             try {
                 val usuarios = supabase.from("usuarios")
                     .select()
                     .decodeList<Usuario>()
-                Log.d(TAG, "Usuarios: $usuarios")
 
                 val groupedCounts = usuarios.groupBy {it.sexo}
                     .map { StatsState(it.key.capitalize(), it.value.size) }
