@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import okio.utf8Size
@@ -46,7 +47,7 @@ private const val TAG = "MainActivity"
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
+fun PerfilClienteScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
     val loginState by loginViewModel.loginState.collectAsState()
     var showDialogCambiarContraseña by remember { mutableStateOf(false) }
@@ -57,7 +58,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
-        bottomBar = { CustomBottomBar(navController=navController) }
+        bottomBar = { CustomBottomBarClientes(navController=navController) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -97,26 +98,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                 }
             }
 
-
-
-            // Stats (años, reseñas, casos cerrados)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ProfileStat(text = res , description = "En Legal Match")
-                ProfileStat(text = "4.7 ★", description = "12 Reseñas")
-                ProfileStat(text = "62", description = "Casos cerrados")
-            }
-
             HorizontalDivider()
-
-            // Opciones con switches
-            Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                SwitchOption("Recordatorio de asesoría", "Te recordaremos 1 hora antes de cada asesoría confirmada")
-                SwitchOption("Editar lista de estudiantes", "Te recordaremos 1 hora antes de cada asesoría confirmada")
-                SwitchOption("Activar Derechos", "Te recordaremos 1 hora antes de cada asesoría confirmada")
-            }
 
             // Botón para cambiar contraseña
             Button(
@@ -133,19 +115,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             ) {
                 Text("Cambiar contraseña")
             }
-
-            // Botón para añadir estudiantes
-            Button(
-                onClick = {navController.navigate(Routes.ListaEstudiantes.route)},
-                colors = ButtonDefaults.buttonColors(containerColor = AzulTec),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
-            ) {
-                Text("Editar Estudiantes")
-            }
-
+0
             // Botón de cerrar sesión
             Button(
                 onClick = { loginViewModel.closeSession(then = {
@@ -233,28 +203,4 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
 
     }
-}
-
-
-@Composable
-fun ProfileStat(text: String, description: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = text, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text(text = description, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
-    }
-}
-
-@Composable
-fun SwitchOption(option: String, description: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Text(text = option, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-            Text(text = description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-        }
-        Switch(checked = true, onCheckedChange = { /* Acción del switch*/}) }
 }

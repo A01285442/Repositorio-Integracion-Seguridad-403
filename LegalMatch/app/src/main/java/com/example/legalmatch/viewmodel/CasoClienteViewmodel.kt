@@ -13,8 +13,10 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
 
+var UserID = 0
+
 // Supabase
-val supabase = createSupabaseClient(
+val supabaseCasoCliente = createSupabaseClient(
     supabaseUrl = "https://wbhyplodhfxcyeochnpf.supabase.co",
     supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiaHlwbG9kaGZ4Y3llb2NobnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU0MjExNTUsImV4cCI6MjA0MDk5NzE1NX0.sqMEMPdCx9u-kC0TI0OLWKm1KXZjSkeDS1N3bQiG-jI",
 ) {
@@ -24,55 +26,32 @@ val supabase = createSupabaseClient(
 
 private const val TAG = "MainActivity"
 
-data class CasoState(
+data class CasoClienteState(
     val casos: List<Caso> = emptyList(),
     val isLoading: Boolean = false,
     val errorMessage: String = ""
 
 )
 
-class CasosViewModel() : ViewModel() {
+class casosClienteViewModel() : ViewModel() {
 
     private var _state by mutableStateOf(CasoState())
     val state: CasoState get() = _state
-
+/*
     init {
+        Log.d(TAG, "Fetching casos")
         fetchCasos()
     }
+
+ */
 
 
     fun getCasoInfo(id: Int) : Caso? {
         return state.copy().casos.firstOrNull{it.id == id}
     }
-    fun cerrarCaso(id: Int) {
-        viewModelScope.launch {
-            try {
-                supabase.from("casos")
-                    .update({
-                        set("caso_cerrado", true)
-                    }) {
-                        filter {
-                            eq("id", id)
-                        }
-                    }
-            } catch (e: Exception) {
-                Log.d(TAG, "Error: ${e.message}")
-                e.message?.let {
-                    _state = state.copy(
-                        errorMessage = e.message!!,
-                        isLoading = false
-                    )
-                }
-            } finally {
-                fetchCasos()
-            }
-        }
-    }
 
 
-
-
-    private fun fetchCasos(){
+    fun fetchCasos(id: Int){
         viewModelScope.launch {
 
             _state = state.copy(isLoading = true) // Inicia el estado de carga
@@ -81,8 +60,8 @@ class CasosViewModel() : ViewModel() {
 
             try {
                 // Obtener una lista
-                val fetchedCasos = supabase.from("casos")
-                    .select()
+                val fetchedCasos = supabaseCasoCliente.from("casos")
+                    .select(){ filter{ eq("id_cliente", id)}}
                     .decodeList<Caso>()
                 _state = state.copy(casos = fetchedCasos, isLoading = false)
 
@@ -97,3 +76,4 @@ class CasosViewModel() : ViewModel() {
         }
     }
 }
+

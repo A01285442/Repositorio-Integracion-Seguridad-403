@@ -16,9 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.app.navigation.Routes
 
 @Composable
-fun CustomBottomBar(navController: NavController) {
+fun CustomBottomBarClientes(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -33,31 +34,17 @@ fun CustomBottomBar(navController: NavController) {
             containerColor = Color.White
         ) {
             NavigationBarItem(
-                icon = { Icon(Icons.Default.Menu, contentDescription = "Agenda") },
-                label = { Text("Agenda") },
+                icon = { Icon(Icons.Default.Menu, contentDescription = "Mis Casos") },
+                label = { Text("Mis Casos") },
                 selected = false,
-                onClick = { navController.navigate("asesorias") }
-            )
-            NavigationBarItem(
-                icon = { Icon(Icons.Default.Done, contentDescription = "Historial") },
-                label = { Text("Casos") },
-                selected = false,
-                onClick = { navController.navigate("casos") }
+                onClick = { navController.navigate(Routes.CasosCliente.route) }
             )
             NavigationBarItem(
                 icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
                 label = { Text("Perfil") },
                 selected = false,
-                onClick = { navController.navigate("perfil") }
+                onClick = { navController.navigate(Routes.PerfilCliente.route) }
             )
-            NavigationBarItem(
-                icon = { Icon(Icons.Default.Star, contentDescription = "Estadísticas") },
-                label = { Text("Estadísticas") },
-                selected = false,
-                onClick = { navController.navigate("Stats") }
-            )
-
-
         }
     }
 
