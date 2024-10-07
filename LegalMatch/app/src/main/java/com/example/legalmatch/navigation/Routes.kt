@@ -20,4 +20,5 @@ sealed class Routes(val route: String) {
     // Vistas del cliente
     object CasosCliente : Routes("casosClientes")
     object PerfilCliente : Routes("perfilCliente")
+    object Info : Routes("info")
 }

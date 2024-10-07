@@ -4,76 +4,162 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.GhostWhite
-
-// ViewModel simulado (sin lógica aún)
-class InfoViewModel : ViewModel() {
-    var videoUrl by mutableStateOf(TextFieldValue(""))
-    var imageUrl by mutableStateOf(TextFieldValue(""))
-    var newsText by mutableStateOf(TextFieldValue(""))
-}
+import androidx.compose.foundation.rememberScrollState
+import com.example.legalmatch.ui.theme.AzulTec
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InfoScreen(navController: NavController, infoViewModel: InfoViewModel = viewModel()) {
+fun InfoScreen(navController: NavController) {
+    // Estado para manejar los datos del formulario
+    var selectedRole by remember { mutableStateOf("Selecciona un rol") }
+    var selectedDate by remember { mutableStateOf("Selecciona una fecha") }
+    var selectedHour by remember { mutableStateOf("Selecciona el horario de tu cita") }
+    var description by remember { mutableStateOf(TextFieldValue("")) }
+
+    val roles = listOf("Demandado", "Demandante")
+    val dates = listOf("10/10/2024", "15/10/2024", "20/10/2024") // Ejemplo de fechas
+    val horarios = listOf("9:00 am", "10:00 am", "11:00 am", "12:00 pm")
 
     Scaffold(
         topBar = {
-            CustomTopBar(title = "Bufete de Abogados - Cargar Contenido", navIcon = false, actIcon = true)
+            CustomTopBar(title = "Agendar Asesoría", navIcon = false, actIcon = false)
         },
         bottomBar = {
             CustomBottomBar(navController = navController) // Barra inferior
         }
     ) { paddingValues ->
+        // Habilitar desplazamiento
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
                 .background(color = GhostWhite)
+                .verticalScroll(rememberScrollState()) // Habilitar scroll vertical
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Campo para URL del video
-            Text(text = "Cargar Video:")
-            BasicTextField(
-                value = infoViewModel.videoUrl,
-                onValueChange = { infoViewModel.videoUrl = it },
+
+
+            // Menú desplegable para seleccionar el rol
+            Text(text = "Selecciona si eres demandado o demandante", fontSize = 18.sp)
+            var expandedRole by remember { mutableStateOf(false) }
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(40.dp)
                     .border(1.dp, MaterialTheme.colorScheme.primary)
                     .padding(8.dp)
-            )
+            ) {
+                TextButton(
+                    onClick = { expandedRole = !expandedRole },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = selectedRole)
+                }
 
-            // Campo para URL de la imagen
-            Text(text = "Cargar Imagen:")
-            BasicTextField(
-                value = infoViewModel.imageUrl,
-                onValueChange = { infoViewModel.imageUrl = it },
+                DropdownMenu(
+                    expanded = expandedRole,
+                    onDismissRequest = { expandedRole = false }
+                ) {
+                    roles.forEach { role ->
+                        DropdownMenuItem(
+                            text = { Text(role) },
+                            onClick = {
+                                selectedRole = role
+                                expandedRole = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Menú desplegable para seleccionar la fecha
+            Text(text = "Fecha:", fontSize = 18.sp)
+            var expandedDate by remember { mutableStateOf(false) }
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(40.dp)
                     .border(1.dp, MaterialTheme.colorScheme.primary)
                     .padding(8.dp)
-            )
+            ) {
+                TextButton(
+                    onClick = { expandedDate = !expandedDate },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = selectedDate)
+                }
 
-            // Campo para el texto de la noticia
-            Text(text = "Agregar Noticia:")
+                DropdownMenu(
+                    expanded = expandedDate,
+                    onDismissRequest = { expandedDate = false }
+                ) {
+                    dates.forEach { date ->
+                        DropdownMenuItem(
+                            text = { Text(date) },
+                            onClick = {
+                                selectedDate = date
+                                expandedDate = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Menú desplegable para seleccionar el horario
+            Text(text = "Horario:", fontSize = 18.sp)
+            var expandedHour by remember { mutableStateOf(false) }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, MaterialTheme.colorScheme.primary)
+                    .padding(8.dp)
+            ) {
+                TextButton(
+                    onClick = { expandedHour = !expandedHour },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = selectedHour)
+                }
+
+                DropdownMenu(
+                    expanded = expandedHour,
+                    onDismissRequest = { expandedHour = false }
+                ) {
+                    horarios.forEach { horario ->
+                        DropdownMenuItem(
+                            text = { Text(horario) },
+                            onClick = {
+                                selectedHour = horario
+                                expandedHour = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Campo para la descripción del delito
+            Text(text = "Descripción Delito:", fontSize = 18.sp)
             BasicTextField(
-                value = infoViewModel.newsText,
-                onValueChange = { infoViewModel.newsText = it },
+                value = description,
+                onValueChange = { description = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
@@ -81,12 +167,16 @@ fun InfoScreen(navController: NavController, infoViewModel: InfoViewModel = view
                     .padding(8.dp)
             )
 
-            // Botón para agregar contenido
+            // Botón para agendar asesoría
             Button(
-                onClick = { /* Acciones para agregar contenido */ },
+                onClick = { /* Acciones para agendar asesoría */ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AzulTec,
+                    contentColor = Color.White
+                ),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Agregar")
+                Text(text = "Agendar Asesoría", fontSize = 18.sp)
             }
         }
     }
@@ -97,3 +187,4 @@ fun InfoScreen(navController: NavController, infoViewModel: InfoViewModel = view
 fun InfoScreenPreview() {
     InfoScreen(navController = rememberNavController())
 }
+
