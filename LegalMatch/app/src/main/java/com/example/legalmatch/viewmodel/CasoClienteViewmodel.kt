@@ -37,10 +37,13 @@ class casosClienteViewModel() : ViewModel() {
 
     private var _state by mutableStateOf(CasoState())
     val state: CasoState get() = _state
-
+/*
     init {
+        Log.d(TAG, "Fetching casos")
         fetchCasos()
     }
+
+ */
 
 
     fun getCasoInfo(id: Int) : Caso? {
@@ -48,7 +51,7 @@ class casosClienteViewModel() : ViewModel() {
     }
 
 
-    private fun fetchCasos(){
+    fun fetchCasos(id: Int){
         viewModelScope.launch {
 
             _state = state.copy(isLoading = true) // Inicia el estado de carga
@@ -57,9 +60,8 @@ class casosClienteViewModel() : ViewModel() {
 
             try {
                 // Obtener una lista
-                val fetchedCasos = supabaseCasoCliente
-                    .from("casos")
-                    .select(){ filter{ eq("id_cliente", UserID)}}
+                val fetchedCasos = supabaseCasoCliente.from("casos")
+                    .select(){ filter{ eq("id_cliente", id)}}
                     .decodeList<Caso>()
                 _state = state.copy(casos = fetchedCasos, isLoading = false)
 
@@ -75,6 +77,3 @@ class casosClienteViewModel() : ViewModel() {
     }
 }
 
-fun setUserID2(userID: Int){
-    UserID = userID
-}

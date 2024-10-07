@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
@@ -19,13 +20,15 @@ import com.example.legalmatch.ui.theme.GhostWhite
 private const val TAG = "MainActivity"
 
 @Composable
-fun CasosClienteScreen(navController: NavController, casosViewModel: casosClienteViewModel) {
+fun CasosClienteScreen(navController: NavController, loginVM: LoginViewModel) {
 
-    val state = casosViewModel.state.copy()
+    loginVM.getCasosRelacionados()
+    val state = loginVM.loginState.collectAsState()
 
     // Mostrar el contenido según el estado actual
-    if (state.isLoading) {
+    if (state.value.isLoading) {
         CircularProgressIndicator()
+        return
     }
 
     Scaffold(
@@ -38,7 +41,7 @@ fun CasosClienteScreen(navController: NavController, casosViewModel: casosClient
                 .fillMaxSize()
                 .background(color = GhostWhite)
         ) {
-            items(state.casos) { caso -> // Cambié "Caso" a "caso" para mayor claridad
+            items(state.value.casosRelacionados) { caso -> // Cambié "Caso" a "caso" para mayor claridad
                 ItemCard(
                     title = caso.delito,
                     description = caso.descripcion,
@@ -48,11 +51,3 @@ fun CasosClienteScreen(navController: NavController, casosViewModel: casosClient
         }
     }
 }
-
-/*
-@Preview
-@Composable
-fun PreviewCasosScreen() {
-    CasosScreen()
-}
-*/

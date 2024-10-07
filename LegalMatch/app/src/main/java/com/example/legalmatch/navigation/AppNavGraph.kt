@@ -1,5 +1,6 @@
 package com.example.app.navigation
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -29,6 +30,7 @@ import com.example.proyectobueno.views.RegisterScreen
 
 val TAG = "MainActivity"
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaViewModel) {
@@ -86,7 +88,8 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         // Vistas Cliente
         composable(Routes.CasosCliente.route){
             Log.d(TAG, "Navigating to Casos Cliente")
-            CasosClienteScreen(navController, casosClienteViewModel())
+            //val casosclientevm : casosClienteViewModel = viewModel()
+            CasosClienteScreen(navController, loginViewModel)
         }
         composable(Routes.PerfilCliente.route){
             Log.d(TAG, "Navigating to Perfil Clientes")

@@ -45,6 +45,7 @@ class AsesoriaViewModel : ViewModel() {
                     }
                     .decodeList<Asesoria>()
                 _state = state.copy(asesorias = fetchedAsesorias, isLoading = false)
+                Log.d(TAG, fetchedAsesorias[0].titulo)
             } catch (e: Exception) { errorMessage(e) }
         }
     }
