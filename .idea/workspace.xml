@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d7283fc-b1d5-42fc-8b1a-e7506c5a3e39" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LegalMatch/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LegalMatch/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LegalMatch/app/src/main/java/com/example/legalmatch/ui/screens/loginScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/LegalMatch/app/src/main/java/com/example/legalmatch/ui/screens/loginScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,10 +19,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 2
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="2mqFlAJDwkrfZ23e51qxwipi9GZ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -35,7 +35,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "AvanceJorge",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Jorge/Repositorio-Integracion-Seguridad-403/LegalMatch"
   }

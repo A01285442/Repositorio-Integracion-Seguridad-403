@@ -1,5 +1,6 @@
 package com.example.legalmatch.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,9 +11,7 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
 
 // Supabase
 val supabase = createSupabaseClient(
@@ -25,48 +24,58 @@ val supabase = createSupabaseClient(
 
 private const val TAG = "MainActivity"
 
+data class CasoState(
+    val casos: List<Caso> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String = ""
+
+)
+
 class CasosViewModel() : ViewModel() {
 
-    var casos by mutableStateOf(listOf<Caso>())
-        private set
+    private var _state by mutableStateOf(CasoState())
+    val state: CasoState get() = _state
 
-    var isLoading by mutableStateOf(true)
-        private  set
-
-    var errorMessage by mutableStateOf<String?>(null)
-        private set
-
-    fun getCasoInfo(id: Int) : Caso {
-        var casoDetalle = casos.firstOrNull { it.id == id }
-        if (casoDetalle == null){
-            casoDetalle = Caso("dsdsjh",
-                "judicial",
-                false,
-                LocalDateTime(1,1,1,1,1,1),
-                "NaN",
-                "NaN",
-                "direccionUI",
-                "drive_link",
-                "",
-                0,
-                0,
-                0,
-                "",
-                "",
-                "",
-                ""
-            )
-        }
-        return casoDetalle
+    init {
+        fetchCasos()
     }
 
 
-    init {
+    fun getCasoInfo(id: Int) : Caso? {
+        return state.copy().casos.firstOrNull{it.id == id}
+    }
+    fun cerrarCaso(id: Int) {
+        viewModelScope.launch {
+            try {
+                supabase.from("casos")
+                    .update({
+                        set("caso_cerrado", true)
+                    }) {
+                        filter {
+                            eq("id", id)
+                        }
+                    }
+            } catch (e: Exception) {
+                Log.d(TAG, "Error: ${e.message}")
+                e.message?.let {
+                    _state = state.copy(
+                        errorMessage = e.message!!,
+                        isLoading = false
+                    )
+                }
+            } finally {
+                fetchCasos()
+            }
+        }
+    }
+
+
+
+
+    private fun fetchCasos(){
         viewModelScope.launch {
 
-            isLoading = true // Inicia el estado de carga
-
-            //delay(1000)
+            _state = state.copy(isLoading = true) // Inicia el estado de carga
 
             // Obtenemos información a través de la base de datos
 
@@ -75,14 +84,16 @@ class CasosViewModel() : ViewModel() {
                 val fetchedCasos = supabase.from("casos")
                     .select()
                     .decodeList<Caso>()
-                casos = fetchedCasos
-                isLoading = false
+                _state = state.copy(casos = fetchedCasos, isLoading = false)
+
             } catch (e: Exception) {
-                errorMessage = e.message
-                isLoading = false
+                e.message?.let {
+                    _state = state.copy(
+                        errorMessage = e.message!!,
+                        isLoading = false
+                    )
+                }
             }
         }
     }
-
-
 }
