@@ -1,5 +1,6 @@
 package com.example.legalmatch.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -35,13 +36,43 @@ class CasosViewModel() : ViewModel() {
     private var _state by mutableStateOf(CasoState())
     val state: CasoState get() = _state
 
+    init {
+        fetchCasos()
+    }
+
 
     fun getCasoInfo(id: Int) : Caso? {
         return state.copy().casos.firstOrNull{it.id == id}
     }
+    fun cerrarCaso(id: Int) {
+        viewModelScope.launch {
+            try {
+                supabase.from("casos")
+                    .update({
+                        set("caso_cerrado", true)
+                    }) {
+                        filter {
+                            eq("id", id)
+                        }
+                    }
+            } catch (e: Exception) {
+                Log.d(TAG, "Error: ${e.message}")
+                e.message?.let {
+                    _state = state.copy(
+                        errorMessage = e.message!!,
+                        isLoading = false
+                    )
+                }
+            } finally {
+                fetchCasos()
+            }
+        }
+    }
 
 
-    init {
+
+
+    private fun fetchCasos(){
         viewModelScope.launch {
 
             _state = state.copy(isLoading = true) // Inicia el estado de carga

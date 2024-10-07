@@ -9,6 +9,7 @@ sealed class Routes(val route: String) {
     object CasoDetalle : Routes("detalle/{itemId}") {
         fun createRoute(itemId: Int) = "detalle/$itemId"
     }
+    object ListaEstudiantes : Routes("estudiantes")
 
 
     // Vistas de Inicio de Sesión

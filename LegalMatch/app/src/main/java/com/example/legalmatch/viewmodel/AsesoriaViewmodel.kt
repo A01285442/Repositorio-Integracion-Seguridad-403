@@ -9,14 +9,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.legalmatch.data.api.models.Asesoria
-import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.data.api.models.SendCaso
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import kotlin.math.log
 
 
 private const val TAG = "MainActivity"
@@ -31,15 +28,12 @@ class AsesoriaViewModel : ViewModel() {
     private var _state by mutableStateOf(AsesoriaState())
     val state: AsesoriaState get() = _state
 
-    init {
-        fetchAsesorias()
-    }
+    init { fetchAsesorias() }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun fetchAsesorias() {
 
         viewModelScope.launch {
-            Log.d(TAG, "Iniciando fetch")
             try {
                 // Código para obtener asesorías
                 val fetchedAsesorias = supabase.from("asesorias")
@@ -51,10 +45,7 @@ class AsesoriaViewModel : ViewModel() {
                     }
                     .decodeList<Asesoria>()
                 _state = state.copy(asesorias = fetchedAsesorias, isLoading = false)
-            } catch (e: Exception) {
-                Log.d(TAG,"Error: ${e.message}")
-                _state = state.copy(isLoading = false) // Aquí también se usa correctamente
-            }
+            } catch (e: Exception) { errorMessage(e) }
         }
     }
 
@@ -79,7 +70,7 @@ class AsesoriaViewModel : ViewModel() {
 
             // Se inserta el nuevo caso en la base de datos
             try { supabase.postgrest["casos"].insert(caso) }
-            catch (e:Exception) { Log.d(TAG,"Error: $e") }
+            catch (e:Exception) { errorMessage(e) }
 
             // Se marca la asesoría como finalizada
             try { supabase.from("asesorias")
@@ -87,9 +78,7 @@ class AsesoriaViewModel : ViewModel() {
                     filter { eq("id", asesoria.id) }
                 }
                 fetchAsesorias()
-            } catch (e: Exception){
-                Log.d(TAG,"Error: $e")
-            }
+            } catch (e: Exception){ errorMessage(e) }
 
 
         }
@@ -106,10 +95,15 @@ class AsesoriaViewModel : ViewModel() {
                     }
                 }
                 fetchAsesorias()
-            } catch (e:Exception){
-                Log.d(TAG, "Error: $e")
-            }
+            } catch (e:Exception){ errorMessage(e) }
         }
 
     }
+
+    fun errorMessage(error: Exception){
+        Log.d(TAG, "Error: ${error.message}")
+        _state = state.copy(isLoading = false)
+
+    }
 }
+
