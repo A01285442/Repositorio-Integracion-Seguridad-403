@@ -3,37 +3,6 @@ package com.example.proyectobueno.views
 import android.app.DatePickerDialog
 import android.os.Build
 import android.util.Log
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DisplayMode
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -129,104 +98,8 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GenderScreen(gender: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
-    val genderOptions = listOf("Hombre", "Mujer", "Otro")
-    var expanded by remember { mutableStateOf(false) }
-    var selectedGender by remember { mutableStateOf(gender) }
-
-
-    RegisterTemplate(
-        progress = 3,
-        currentStep = 3,
-        label = "Cual es tu género",
-        value = selectedGender,
-        onValueChange = onValueChange,
-        onContinue = onContinue,
-        inputType = InputType.TYPE_MASK_CLASS,
-
-    )
-    //{
-//        Box(modifier = Modifier.fillMaxWidth()) {
-//            ExposedDropdownMenuBox(
-//                expanded = expanded,
-//                onExpandedChange = {
-//                    expanded = !expanded
-//                }
-//            ) {
-//                TextField(
-//                    readOnly = true,
-//                    value = selectedGender,
-//                    onValueChange = { },
-//                    label = { Text("Selecciona tu género") },
-//                    trailingIcon = {
-//                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-//                    },
-//                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .menuAnchor()
-//                        .clickable { expanded = !expanded }
-//                )
-//                ExposedDropdownMenu(
-//                    expanded = expanded,
-//                    onDismissRequest = {
-//                        expanded = false
-//                    }
-//                ) {
-//                    genderOptions.forEach { option ->
-//                        DropdownMenuItem(
-//                            onClick = {
-//                                selectedGender = option
-//                                onValueChange(option)
-//                                expanded = false      
-//                            },
-//                            text = { Text(text = option) }
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-}
-
-@Composable
-fun EmailScreen(email: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
-
-    RegisterTemplate(
-        progress = 4,
-        currentStep = 4,
-        label = "Tu E-mail",
-        value = email,
-        onValueChange = onValueChange,
-        onContinue = onContinue,
-        inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-    )
-
-}
-
-@Composable
-fun PasswordScreen(password: String, onValueChange: (String) -> Unit, onContinue: () -> Unit) {
-
-    RegisterTemplate(
-        progress = 5,
-        currentStep = 5,
-        label = "Tu contraseña",
-        value = password,
-        onValueChange = onValueChange,
-        visualTransformation = PasswordVisualTransformation(),
-        onContinue = onContinue,
-        inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RegisterTemplate(
-    progress: Int,
-    currentStep: Int,
+fun InputScreen(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
@@ -254,7 +127,6 @@ fun RegisterTemplate(
                 value = value,
                 onValueChange = onValueChange,
                 label = { Text(label) },
-                    visualTransformation = visualTransformation,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
