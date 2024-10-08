@@ -46,19 +46,19 @@ import com.example.legalmatch.viewmodel.EdadStatsState
 import com.example.legalmatch.viewmodel.GraficasViewModel
 import com.example.legalmatch.viewmodel.StatsState
 import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.MPPointF
-import com.himanshoe.charty.bar.BarChart
-import com.himanshoe.charty.bar.model.BarData
-import com.himanshoe.charty.common.config.AxisConfig
-import kotlinx.coroutines.delay
-import com.himanshoe.charty.common.ChartData
-import com.himanshoe.charty.common.ChartDataCollection
 
 
 
@@ -126,6 +126,9 @@ fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewMode
                             PieChartViewYears(stats = edadStats, modifier = Modifier.size(300.dp))
                         }
                     }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(40.dp))
                 }
 
                 item {
@@ -306,44 +309,56 @@ fun PieChartViewYears(stats: List<EdadStatsState>, modifier: Modifier = Modifier
 fun BarChartView(stats: List<CasoUsuario>, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(
-            text = "Datos de Barras",
+            text = "Estatus de Casos",
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
             )
         )
+
         // Agrupar los casos por estado
         val groupedStats = stats.groupBy { it.estado }
 
-        // Aqui se crea la lista para las barras
-        val barDataList = groupedStats.map { (estado, casos) ->
-            BarData(
-                xValue = estado,
-                yValue = casos.size.toFloat(),
-            )
+        // Crear la lista de entradas para las barras
+        val barEntries = groupedStats.map { (estado, casos) ->
+            BarEntry(groupedStats.keys.indexOf(estado).toFloat(), casos.size.toFloat())
         }
 
-        val dataCollection = ChartDataCollection(data = barDataList)
+        // Crear un conjunto de datos para el gráfico
+        val barDataSet = BarDataSet(barEntries, "").apply {
+            color = Color.BLUE
+            valueTextColor = Color.BLACK
+            valueTextSize = 12f
+        }
 
-        BarChart(
-            dataCollection = dataCollection,
+        // Crear los datos del gráfico
+        val barData = BarData(barDataSet)
+
+        AndroidView(
+            factory = { context ->
+                BarChart(context).apply {
+                    this.data = barData
+                    description.isEnabled = false
+                    xAxis.valueFormatter = IndexAxisValueFormatter(groupedStats.keys.toList())
+                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                    axisRight.isEnabled = false
+                    axisLeft.granularity = 1f
+                    setFitBars(true)
+                    animateY(1000)
+                }
+            },
+            update = { barChart ->
+                barChart.data = barData
+                barChart.invalidate()
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp),
-            barSpacing = 8.dp,
-            padding = 16.dp,
-//            barColor = androidx.compose.ui.graphics.Color.Blue,
-            axisConfig = AxisConfig(
-                showAxes = true,
-                showGridLines = true,
-                showGridLabel = true,
-                axisStroke = 1f,
-                minLabelCount = 5,
-                axisColor = androidx.compose.ui.graphics.Color.Gray
-            )
+                .height(300.dp)
         )
     }
 }
+
+
 
 
