@@ -17,8 +17,7 @@ import com.example.legalmatch.ui.screens.CasoDetalleScreen
 import com.example.legalmatch.ui.screens.CasosClienteScreen
 import com.example.legalmatch.ui.screens.CasosScreen
 import com.example.legalmatch.ui.screens.CasosViewModel
-import com.example.legalmatch.ui.screens.InfoScreen
-import com.example.legalmatch.ui.screens.InfoScreenPreview
+import com.example.legalmatch.ui.screens.FormAsesoriaScreen
 import com.example.legalmatch.ui.screens.ListaEstudiantesScreen
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.screens.PerfilClienteScreen
@@ -26,7 +25,7 @@ import com.example.legalmatch.ui.screens.PerfilScreen
 import com.example.legalmatch.ui.screens.StatsScreen
 import com.example.legalmatch.ui.screens.casosClienteViewModel
 import com.example.legalmatch.viewmodel.GraficasViewModel
-import com.example.legalmatch.viewmodel.EstudiantesViewmodel
+import com.example.legalmatch.viewmodel.UsuariosViewModel
 import com.example.proyectobueno.views.LoginScreen
 import com.example.proyectobueno.views.RegisterScreen
 
@@ -39,6 +38,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
 
     val loginViewModel: LoginViewModel = viewModel()
     val casosViewModel : CasosViewModel = viewModel()
+    val usuariosViewModel: UsuariosViewModel = viewModel()
 
 
     NavHost(
@@ -79,12 +79,12 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             val itemId = backStackEntry.arguments?.getInt("itemId")
             if (itemId != null) {
                 Log.d(TAG, "Navigating to Caso Detalle")
-                CasoDetalleScreen(navController, casosViewModel, itemId)
+                CasoDetalleScreen(navController, casosViewModel, itemId, usuariosViewModel)
             }
         }
         composable(Routes.ListaEstudiantes.route) {
             Log.d(TAG, "Navigating to Lista de Estudiantes")
-            ListaEstudiantesScreen(navController, EstudiantesViewmodel())
+            ListaEstudiantesScreen(navController, UsuariosViewModel())
         }
 
         // Vistas Cliente
@@ -97,10 +97,9 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             Log.d(TAG, "Navigating to Perfil Clientes")
             PerfilClienteScreen(navController, loginViewModel)
         }
-
-        composable(Routes.Info.route){
-            Log.d(TAG, "Navigating to info")
-            InfoScreen(navController)
+        composable(Routes.FormAsesoria.route){
+            Log.d(TAG, "Navigating to Forms Asesorías")
+            FormAsesoriaScreen(navController)
         }
 
     }

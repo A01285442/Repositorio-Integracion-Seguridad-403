@@ -86,14 +86,17 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
             val userCreationDate = loginState.userClient?.created_at?.date
             val todaysDate = LocalDate.now()
-            var res = ""
+            var num = ""
+            var text = ""
 
             userCreationDate?.let {
                 if (userCreationDate.year - todaysDate.year != 0){
-                    res = (todaysDate.year - userCreationDate.year).toString() + " años"
+                    num = (todaysDate.year - userCreationDate.year).toString()
+                    text = "años"
                 }
                 else {
-                    res = (todaysDate.dayOfYear - userCreationDate.dayOfYear).toString() + " días"
+                    num = (todaysDate.dayOfYear - userCreationDate.dayOfYear).toString()
+                    text = "dias"
                 }
             }
 
@@ -104,19 +107,12 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProfileStat(text = res , description = "En Legal Match")
-                ProfileStat(text = "4.7 ★", description = "12 Reseñas")
-                ProfileStat(text = "62", description = "Casos cerrados")
+                ProfileStat(big = num, medium = text, description = "En Legal Match")
+                ProfileStat(big = "4.7", medium = "★", description = "12 Reseñas")
+                ProfileStat(big = "62", medium = "",  description = "Casos cerrados")
             }
 
             HorizontalDivider()
-
-            // Opciones con switches
-            Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                SwitchOption("Recordatorio de asesoría", "Te recordaremos 1 hora antes de cada asesoría confirmada")
-                SwitchOption("Editar lista de estudiantes", "Te recordaremos 1 hora antes de cada asesoría confirmada")
-                SwitchOption("Activar Derechos", "Te recordaremos 1 hora antes de cada asesoría confirmada")
-            }
 
             // Botón para cambiar contraseña
             Button(
@@ -230,31 +226,18 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             }
 
         }
-
-
     }
 }
 
 
 @Composable
-fun ProfileStat(text: String, description: String) {
+fun ProfileStat(big: String, medium: String, description: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = text, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text(text = description, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
-    }
-}
-
-@Composable
-fun SwitchOption(option: String, description: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Text(text = option, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-            Text(text = description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+        Row {
+            Text(text = big, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            Text(text = medium, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         }
-        Switch(checked = true, onCheckedChange = { /* Acción del switch*/}) }
+
+        Text(text = description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+    }
 }
