@@ -3,6 +3,7 @@ package com.example.legalmatch.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+<<<<<<< Updated upstream
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+=======
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+>>>>>>> Stashed changes
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -44,8 +52,6 @@ import com.example.legalmatch.ui.components.ItemCard
 import com.example.legalmatch.ui.theme.GhostWhite
 import kotlin.math.sin
 
-private const val TAG = "MainActivity"
-
 @Composable
 fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
     val state = casosViewModel.state.copy()
@@ -54,7 +60,11 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
 
     // Filtrar la lista de casos según el texto de búsqueda
     val filteredCasos = state.casos.filter {
+<<<<<<< Updated upstream
         it.delito.contains(searchText, ignoreCase = true) // Filtrado por nombre (delito)
+=======
+        it.titulo.contains(searchText, ignoreCase = true) // Filtrado por nombre (delito)
+>>>>>>> Stashed changes
     }
 
     // Mostrar el contenido según el estado actual
@@ -63,7 +73,11 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
     }
 
     Scaffold(
+<<<<<<< Updated upstream
         topBar = { CustomTopBar(title = "Casos Activos", navIcon = false, actIcon = true) },
+=======
+        topBar = { CustomTopBar(title = "Casos", navIcon = false, actIcon = true) },
+>>>>>>> Stashed changes
         bottomBar = { CustomBottomBar(navController = navController) } // Usa el navController pasado
     ) { padding ->
 
@@ -73,6 +87,7 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
                 .fillMaxSize()
                 .background(color = GhostWhite)
         ) {
+<<<<<<< Updated upstream
 
             Row {
                 // Input de búsqueda
@@ -92,6 +107,17 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
                 )
             }
 
+=======
+            // Input de búsqueda
+            OutlinedTextField(
+                value = searchText,
+                onValueChange = { searchText = it }, // Actualizar el texto de búsqueda
+                label = { Text("Buscar por nombre de caso") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+>>>>>>> Stashed changes
 
             // Lista de casos filtrados
             LazyColumn(
@@ -101,7 +127,11 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
             ) {
                 items(filteredCasos) { caso -> // Mostrar solo los casos filtrados
                     ItemCard(
+<<<<<<< Updated upstream
                         title = caso.delito,
+=======
+                        title = caso.titulo,
+>>>>>>> Stashed changes
                         description = caso.descripcion,
                         onClick = { navController.navigate(Routes.CasoDetalle.createRoute(caso.id)) }
                     )

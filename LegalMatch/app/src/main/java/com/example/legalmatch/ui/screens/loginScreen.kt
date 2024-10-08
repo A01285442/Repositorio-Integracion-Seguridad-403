@@ -113,6 +113,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
         Button(
             onClick = {
                 if (username.isNotEmpty() && password.isNotEmpty()) {
+<<<<<<< Updated upstream
                     Log.d(TAG, "Probando Login")
                     viewModel.login(
                         username.lowercase(),
@@ -123,6 +124,11 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
                         onLoginSuccessCliente = {
                             navController.navigate(Routes.CasosCliente.route)
                         }
+=======
+                    viewModel.login(username.lowercase(), password, onLoginSuccess = {
+                        navController.navigate(Routes.Asesorias.route)
+                    }
+>>>>>>> Stashed changes
                     )
                 } else {
                     loginError = true

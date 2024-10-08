@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -322,7 +323,8 @@ fun SexScreen(value: String, onValueChange: (String) -> Unit, onContinue: () -> 
             Text(
                 text = "Selecciona tu sexo",
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = AzulTec
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -334,6 +336,8 @@ fun SexScreen(value: String, onValueChange: (String) -> Unit, onContinue: () -> 
                     onValueChange(gender)
                 }
             )
+
+            Text("*Esta información debe igualar tu identificación oficial", fontSize = 10.sp)
 
             Spacer(modifier = Modifier.height(16.dp))
 

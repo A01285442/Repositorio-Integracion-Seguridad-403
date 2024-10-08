@@ -18,6 +18,15 @@ sealed class Routes(val route: String) {
     object  Register : Routes("register")
 
     // Vistas del cliente
+<<<<<<< Updated upstream
     object CasosCliente : Routes("casosClientes")
     object PerfilCliente : Routes("perfilCliente")
+=======
+    object Cliente : Routes("Cliente")
+
+
+
+
+
+>>>>>>> Stashed changes
 }

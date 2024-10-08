@@ -17,6 +17,7 @@ import com.example.legalmatch.ui.screens.CasoDetalleScreen
 import com.example.legalmatch.ui.screens.CasosClienteScreen
 import com.example.legalmatch.ui.screens.CasosScreen
 import com.example.legalmatch.ui.screens.CasosViewModel
+import com.example.legalmatch.ui.screens.ClienteScreen
 import com.example.legalmatch.ui.screens.ListaEstudiantesScreen
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.screens.PerfilClienteScreen
@@ -78,7 +79,11 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             val itemId = backStackEntry.arguments?.getInt("itemId")
             if (itemId != null) {
                 Log.d(TAG, "Navigating to Caso Detalle")
+<<<<<<< Updated upstream
                 CasoDetalleScreen(navController, casosViewModel, itemId, usuariosViewModel)
+=======
+                CasoDetalleScreen(navController, casosViewModel, usuariosViewModel = UsuariosViewModel(), itemId)
+>>>>>>> Stashed changes
             }
         }
         composable(Routes.ListaEstudiantes.route) {
@@ -87,6 +92,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         }
 
         // Vistas Cliente
+<<<<<<< Updated upstream
         composable(Routes.CasosCliente.route){
             Log.d(TAG, "Navigating to Casos Cliente")
             //val casosclientevm : casosClienteViewModel = viewModel()
@@ -95,6 +101,11 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         composable(Routes.PerfilCliente.route){
             Log.d(TAG, "Navigating to Perfil Clientes")
             PerfilClienteScreen(navController, loginViewModel)
+=======
+        composable(Routes.Cliente.route){
+            Log.d(TAG, "Navigating to Cliente")
+            ClienteScreen(navController)
+>>>>>>> Stashed changes
         }
 
     }

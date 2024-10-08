@@ -20,7 +20,17 @@ import com.example.legalmatch.ui.theme.AzulTec
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+<<<<<<< Updated upstream
 fun CustomTopBar(title: String, navIcon: Boolean, actIcon: Boolean, navController: NavController = rememberNavController(), rutaBackButton: String = "", rutaActButton: String = "") {
+=======
+fun CustomTopBar(
+    title: String,
+    navIcon: Boolean,
+    actIcon: Boolean,
+    navController: NavController = rememberNavController(),
+    rutaBackButton: String = ""
+) {
+>>>>>>> Stashed changes
     CenterAlignedTopAppBar(
         modifier = Modifier.shadow(8.dp).height(90.dp),
         colors = TopAppBarColors(

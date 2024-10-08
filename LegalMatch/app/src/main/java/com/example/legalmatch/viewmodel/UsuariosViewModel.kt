@@ -18,8 +18,13 @@ private const val TAG = "MainActivity"
 
 data class EstudiantesState(
     val estudiantes: List<Usuario> = emptyList(),
+<<<<<<< Updated upstream
     val infoCliente: Usuario = Usuario("","",LocalDateTime(1,1,1,1,1,1), LocalDateTime(1,1,1,1,1,1), 0, "","","estudiante", "hombre"),
     val infoAbogado: Usuario = Usuario("","",LocalDateTime(1,1,1,1,1,1), LocalDateTime(1,1,1,1,1,1), 0, "","","estudiante", "hombre"),
+=======
+    val usuarioEspecifico: Usuario = Usuario("","",
+        LocalDateTime(1,1,1,1,1,1),LocalDateTime(1,1,1,1,1,1),0,"","","",""),
+>>>>>>> Stashed changes
     val isLoading: Boolean = false
 )
 
@@ -88,6 +93,7 @@ class UsuariosViewModel : ViewModel(){
         }
     }
 
+<<<<<<< Updated upstream
     fun getClientInfo(id: Int){
         viewModelScope.launch {
             try {
@@ -102,6 +108,20 @@ class UsuariosViewModel : ViewModel(){
             } catch (e: Exception) {
                 Log.d(TAG,"Error: ${e.message}")
                 _state = state.copy(isLoading = false) // Aquí también se usa correctamente
+=======
+     fun getUsuario(id: Int) {
+        viewModelScope.launch {
+            try {
+                val usuario = supabase.from("usuarios")
+                    .select(){
+                        filter { eq("id", id) }
+                    }
+                    .decodeSingleOrNull<Usuario>()
+                _state = usuario?.let { state.copy(usuarioEspecifico = it) }!!
+
+            } catch (e: Exception) {
+                Log.d(TAG, "Error: ${e.message}")
+>>>>>>> Stashed changes
             }
         }
     }
