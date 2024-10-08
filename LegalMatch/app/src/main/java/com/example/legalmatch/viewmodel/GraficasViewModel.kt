@@ -31,20 +31,31 @@ val supabase = createSupabaseClient(
 
 private const val TAG = "MainActivity"
 
+//Edad
 @Serializable
 data class Usuario(
     val sexo: String,
     val fecha_nacimiento: String
 )
 
+//sexo
 data class StatsState(
     val sexo: String,
     val count: Int
 )
 
+//Edad
 data class EdadStatsState(
     val rangoEdad: String,
     val count: Int
+)
+
+//Casos completados
+@Serializable
+data class CasoUsuario(
+    val estado: String,
+    val fecha_asesoria: String
+
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -57,6 +68,7 @@ fun calcularEdad(fechaNacimiento: String): Int {
 
 @RequiresApi(Build.VERSION_CODES.O)
 class GraficasViewModel : ViewModel() {
+    //Genero
     private val _statsState = MutableStateFlow<List<StatsState>>(emptyList())
     val statsState: StateFlow<List<StatsState>> get() = _statsState
 
@@ -64,12 +76,17 @@ class GraficasViewModel : ViewModel() {
     private val _edadStatsState = MutableStateFlow<List<EdadStatsState>>(emptyList())
     val edadStatsState: StateFlow<List<EdadStatsState>> get() = _edadStatsState
 
+    // Casos completados
+    private val _casosStatsState = MutableStateFlow<List<CasoUsuario>>(emptyList())
+    val casosStatsState: StateFlow<List<CasoUsuario>> get() = _casosStatsState
+
     init {
         viewModelScope.launch {
             delay(1000)
 
             fetchSexoCounts()
             fetchEdadCounts()
+            fetchCaseStatus()
         }
     }
 
@@ -116,6 +133,33 @@ class GraficasViewModel : ViewModel() {
 
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching edad counts: ${e.message}", e)
+            }
+        }
+    }
+
+    fun fetchCaseStatus(){
+        viewModelScope.launch{
+            try{
+                val casos = supabase.from("asesorias")
+                    .select()
+                    .decodeList<CasoUsuario>()
+
+                //Funcion para determinar los casos de los meses
+                val groupedMonths = casos.groupBy { caso ->
+                    val month = caso.fecha_asesoria.substring(0, 7) // se toma el formtato de "YYYY-MM"
+                    Pair(month, caso.estado) //Agrupado
+                }
+                val casosPorMes = groupedMonths.mapValues { (_, casos) -> casos.size } //Conteo de casos por mes
+
+                casosPorMes.forEach { (mesEstado, cantidad) -> // Se obtiene con el foreach el mes y la cantidad de recurencia
+                    val (mes,estado) = mesEstado
+                    Log.d(TAG, "Mes: $mes, Estado: $estado, Casos: $cantidad")
+                }
+                _casosStatsState.value = casos //Checar si esto no es lo que manda a llamar tanto al viewmodel
+
+
+            } catch (e: Exception){
+                Log.e(TAG, "Error fetching case status: ${e.message}", e)
             }
         }
     }

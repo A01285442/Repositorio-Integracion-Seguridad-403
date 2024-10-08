@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,6 +41,7 @@ import androidx.navigation.NavController
 import com.example.legalmatch.R
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.viewmodel.CasoUsuario
 import com.example.legalmatch.viewmodel.EdadStatsState
 import com.example.legalmatch.viewmodel.GraficasViewModel
 import com.example.legalmatch.viewmodel.StatsState
@@ -51,7 +53,13 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.MPPointF
+import com.himanshoe.charty.bar.BarChart
+import com.himanshoe.charty.bar.model.BarData
+import com.himanshoe.charty.common.config.AxisConfig
 import kotlinx.coroutines.delay
+import com.himanshoe.charty.common.ChartData
+import com.himanshoe.charty.common.ChartDataCollection
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -62,6 +70,7 @@ fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewMode
     val isLoading = remember { mutableStateOf(true) }
     val errorMessage = remember { mutableStateOf<String?>(null) }
     val edadStats by graficasViewModel.edadStatsState.collectAsState()
+    val statusCase by graficasViewModel.casosStatsState.collectAsState()
 
     Scaffold(
         topBar = { CustomTopBar(title = "Estadísticas", navIcon = false, actIcon = false) },
@@ -117,6 +126,19 @@ fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewMode
                             PieChartViewYears(stats = edadStats, modifier = Modifier.size(300.dp))
                         }
                     }
+                }
+
+                item {
+                    when {
+                        statusCase.isEmpty() -> {
+                            isLoading.value = true
+                            errorMessage.value = "No hay datos para mostrar"
+                        }
+                        else -> {
+                            BarChartView(stats = statusCase, modifier = Modifier.size(300.dp))
+                        }
+                    }
+
                 }
             }
 
@@ -279,3 +301,49 @@ fun PieChartViewYears(stats: List<EdadStatsState>, modifier: Modifier = Modifier
         )
     }
 }
+
+@Composable
+fun BarChartView(stats: List<CasoUsuario>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        Text(
+            text = "Datos de Barras",
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            style = TextStyle(
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        )
+        // Agrupar los casos por estado
+        val groupedStats = stats.groupBy { it.estado }
+
+        // Aqui se crea la lista para las barras
+        val barDataList = groupedStats.map { (estado, casos) ->
+            BarData(
+                xValue = estado,
+                yValue = casos.size.toFloat(),
+            )
+        }
+
+        val dataCollection = ChartDataCollection(data = barDataList)
+
+        BarChart(
+            dataCollection = dataCollection,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp),
+            barSpacing = 8.dp,
+            padding = 16.dp,
+//            barColor = androidx.compose.ui.graphics.Color.Blue,
+            axisConfig = AxisConfig(
+                showAxes = true,
+                showGridLines = true,
+                showGridLabel = true,
+                axisStroke = 1f,
+                minLabelCount = 5,
+                axisColor = androidx.compose.ui.graphics.Color.Gray
+            )
+        )
+    }
+}
+
+
