@@ -41,6 +41,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.data.api.models.Caso
+import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.viewmodel.UsuariosViewModel
@@ -50,20 +51,35 @@ import com.example.legalmatch.viewmodel.UsuariosViewModel
 @Composable
 fun CasoDetalleScreen(
     navController: NavController,
+<<<<<<< Updated upstream
     casosVM: CasosViewModel,
+=======
+    casoViewModel: CasosViewModel,
+    usuariosViewModel: UsuariosViewModel,
+>>>>>>> Stashed changes
     casoId: Int,
     usuariosVM: UsuariosViewModel
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState() // Estado del scroll
 
+<<<<<<< Updated upstream
     val caso = casosVM.getCasoInfo(casoId)
+=======
+    val caso = casoViewModel.getCasoInfo(casoId)
+>>>>>>> Stashed changes
     if (caso == null){
         Text("Caso no encontrado. Favor de reiniciar la aplicación.")
         return
     }
+<<<<<<< Updated upstream
     usuariosVM.getClientInfo(caso.id_cliente)
     val cliente = usuariosVM.state.infoCliente
+=======
+    usuariosViewModel.getUsuario(caso.id_cliente)
+    val cliente = usuariosViewModel.state.usuarioEspecifico
+
+>>>>>>> Stashed changes
 
     Scaffold(
         topBar = {
@@ -82,54 +98,76 @@ fun CasoDetalleScreen(
             // Información básica
             Text(
                 text = caso.titulo,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             Text(
                 text =
                     "Delito: ${caso.delito}" +
+<<<<<<< Updated upstream
                     "\nNUC: ${caso.nuc}" +
+=======
+                    "\nNum. Único de Causa: ${caso.nuc}" +
+>>>>>>> Stashed changes
                     "\nCarpeta Judicial: ${caso.c_judicial}" +
                     "\nCarpeta de Investigación: ${caso.c_investigacion}" +
-                    "\nAcceso a Fiscalía Virtual: ${caso.fiscalia_virtual}" +
+                    "\nFiscalía Virtual: ${caso.fiscalia_virtual}" +
                     "\nContraseña Fiscalía Virtual: ${caso.password_fv}" +
                     "\nFiscal Titular: ${caso.id_abogado}" +
                     "\nUnidad de investigación: ${caso.unidad_investigacion}" +
                     "\nDirección de la Unidad Inv: ${caso.direccion_ui}",
 
                 style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
 
             // Descripción del caso
             Text(
                 text = "Descripción",
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             Text(
                 text = caso.descripcion,
                 style = MaterialTheme.typography.bodySmall,
+<<<<<<< Updated upstream
                 textAlign = TextAlign.Left
+=======
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
+>>>>>>> Stashed changes
             )
 
 
             // Informacioón del cliente
             Text(
                 text = "Información del cliente",
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             Text(
                 text = "Nombre completo: ${cliente.nombre}" +
+<<<<<<< Updated upstream
                         "\nSexo: ${cliente.sexo}" +
                         "\nNacimiento: ${cliente.fecha_nacimiento.date}" +
                         "\nCorreo: ${cliente.correo}",
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Left
+=======
+                        "\nGénero: ${cliente.sexo}" +
+                        "\nNacimiento: ${cliente.fecha_nacimiento}" +
+                        "\nCorreo: ${cliente.correo}",
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
+>>>>>>> Stashed changes
             )
 
             // Añadir archivo
@@ -148,6 +186,7 @@ fun CasoDetalleScreen(
                 Text(text = "Añadir archivos")
             }
 
+<<<<<<< Updated upstream
 
             // Ver en google maps
             Button(
@@ -157,6 +196,17 @@ fun CasoDetalleScreen(
                     startActivity(context, i, null)
                 },
                 modifier = Modifier.fillMaxWidth(),
+=======
+            // Botones
+            Button(
+                onClick = {
+                    val url = caso?.direccion_ui //Agregar funcionalidad de cambiar el link para los abogados.
+                    val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    startActivity(context, i, null)
+                },
+                modifier = Modifier
+                    .fillMaxWidth(),
+>>>>>>> Stashed changes
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Blue,
                     contentColor = Color.White
@@ -164,6 +214,7 @@ fun CasoDetalleScreen(
             ) {
                 Text(text = "Ver en Google Maps")
             }
+<<<<<<< Updated upstream
 
             // Editar información
             Button(
@@ -172,6 +223,15 @@ fun CasoDetalleScreen(
                     navController.navigateUp()
                 },
                 modifier = Modifier.fillMaxWidth(),
+=======
+            Button(
+                onClick = {
+                    casoViewModel.cerrarCaso(casoId)
+                    navController.navigateUp()
+                },
+                modifier = Modifier
+                    .fillMaxWidth(),
+>>>>>>> Stashed changes
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Gray,
                     contentColor = Color.White
@@ -179,6 +239,7 @@ fun CasoDetalleScreen(
             ) {
                 Text(text = "Editar Información")
             }
+<<<<<<< Updated upstream
 
             // Cerrar caso
             Button(
@@ -187,6 +248,15 @@ fun CasoDetalleScreen(
                     navController.navigateUp()
                 },
                 modifier = Modifier.fillMaxWidth(),
+=======
+            Button(
+                onClick = {
+                    casoViewModel.cerrarCaso(casoId)
+                    navController.navigateUp()
+                },
+                modifier = Modifier
+                    .fillMaxWidth(),
+>>>>>>> Stashed changes
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Red,
                     contentColor = Color.White
@@ -199,25 +269,5 @@ fun CasoDetalleScreen(
 
 
         }
-    }
-}
-
-@Composable
-fun InfoCaso(caso: Caso){
-    Text("Número Único de Causa: ")
-    Text("Carpeta Judicial: ")
-    Text("Número Único de : ")
-    Text("Número Único de Causa: ")
-    Text("Número Único de Causa: ")
-    Text("Número Único de Causa: ")
-    Text("Número Único de Causa: ")
-    Text("Número Único de Causa: ")
-}
-
-@Composable
-fun RowInformation(tipo: String, texto: String){
-    Row {
-        Text(tipo, style = MaterialTheme.typography.bodySmall, textDecoration = TextDecoration.Underline)
-        Text(texto, style = MaterialTheme.typography.bodySmall)
     }
 }
