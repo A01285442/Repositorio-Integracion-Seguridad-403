@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,6 +19,7 @@ import com.example.legalmatch.ui.screens.CasosClienteScreen
 import com.example.legalmatch.ui.screens.CasosScreen
 import com.example.legalmatch.ui.screens.CasosViewModel
 import com.example.legalmatch.ui.screens.FormAsesoriaScreen
+import com.example.legalmatch.ui.screens.FormCasoScreen
 import com.example.legalmatch.ui.screens.ListaEstudiantesScreen
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.screens.PerfilClienteScreen
@@ -86,6 +88,11 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             Log.d(TAG, "Navigating to Lista de Estudiantes")
             ListaEstudiantesScreen(navController, UsuariosViewModel())
         }
+        composable(Routes.FormCaso.route){
+            Log.d(TAG, "Navigating to Form Caso")
+            FormCasoScreen(navController, casosViewModel)
+        }
+
 
         // Vistas Cliente
         composable(Routes.CasosCliente.route){

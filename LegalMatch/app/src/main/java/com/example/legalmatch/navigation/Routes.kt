@@ -11,6 +11,7 @@ sealed class Routes(val route: String) {
         fun createRoute(itemId: Int) = "detalle/$itemId"
     }
     object ListaEstudiantes : Routes("estudiantes")
+    object FormCaso : Routes("formCaso")
 
 
     // Vistas de Inicio de Sesión

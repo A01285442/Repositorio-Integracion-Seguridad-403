@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.legalmatch.data.api.models.Caso
+import com.example.legalmatch.data.api.models.SendCaso
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
@@ -69,6 +70,11 @@ class CasosViewModel() : ViewModel() {
         }
     }
 
+    fun createCaso(caso: SendCaso){
+        Log.d(TAG,"Caso aun no creado.")
+        fetchCasos()
+    }
+
 
 
 
@@ -82,7 +88,9 @@ class CasosViewModel() : ViewModel() {
             try {
                 // Obtener una lista
                 val fetchedCasos = supabase.from("casos")
-                    .select()
+                    .select(){ filter {
+                        eq("caso_cerrado", false)
+                    }}
                     .decodeList<Caso>()
                 _state = state.copy(casos = fetchedCasos, isLoading = false)
 

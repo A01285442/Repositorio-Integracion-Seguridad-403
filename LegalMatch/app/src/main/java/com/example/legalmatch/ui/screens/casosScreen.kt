@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
@@ -63,9 +64,30 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
     }
 
     Scaffold(
-        topBar = { CustomTopBar(title = "Casos Activos", navIcon = false, actIcon = true) },
+        topBar = {CustomTopBar(
+            title = "Casos Activos",
+            navIcon = false,
+            actIcon = true,
+            navController = navController,
+            rutaActButton = Routes.Casos.route,
+            rutaBackButton = Routes.FormCaso.route
+        ) },
         bottomBar = { CustomBottomBar(navController = navController) } // Usa el navController pasado
     ) { padding ->
+
+        if (filteredCasos.isEmpty()){
+
+            Text(
+                text = "No hay casos activos",
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp),
+            )
+
+            return@Scaffold
+        }
 
         Column(
             modifier = Modifier
