@@ -98,4 +98,5 @@ dependencies {
 
     //Graficas
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+//    implementation("com.himanshoe:charty:2.0.0-alpha01")
 }
