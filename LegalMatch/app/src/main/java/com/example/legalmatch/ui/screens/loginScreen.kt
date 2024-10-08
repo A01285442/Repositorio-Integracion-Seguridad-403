@@ -121,7 +121,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
                             navController.navigate(Routes.Asesorias.route)
                         },
                         onLoginSuccessCliente = {
-                            navController.navigate(Routes.Info.route)
+                            navController.navigate(Routes.CasosCliente.route)
                         }
                     )
                 } else {

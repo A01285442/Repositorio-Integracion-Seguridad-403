@@ -54,6 +54,11 @@ fun FormAsesoriaScreen(navController: NavController) {
     var selectedHour by remember { mutableStateOf("Selecciona el horario de tu cita") }
     var description by remember { mutableStateOf(TextFieldValue("")) }
 
+    //Estado para manejar eñ api
+
+    var inputText by remember { mutableStateOf("") }
+    var resultText by remember { mutableStateOf("") }
+
     LocalDateTime.now().dayOfMonth
     LocalDateTime.now().monthValue
     LocalDateTime.now().year
@@ -243,6 +248,6 @@ fun FormAsesoriaScreen(navController: NavController) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @Preview(showBackground = true)
-fun InfoScreenPreview() {
+fun FormAsesoriaScreenPreview() {
     FormAsesoriaScreen(navController = rememberNavController())
 }
