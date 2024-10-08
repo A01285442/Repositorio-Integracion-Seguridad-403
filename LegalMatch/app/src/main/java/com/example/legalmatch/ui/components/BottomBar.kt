@@ -52,7 +52,7 @@ fun CustomBottomBar(navController: NavController) {
             )
             NavigationBarItem(
                 icon = { Icon(Icons.Default.Star, contentDescription = "Estadísticas") },
-                label = { Text("Estadísticas") },
+                label = { Text("Grafico") },
                 selected = false,
                 onClick = { navController.navigate("Stats") }
             )
