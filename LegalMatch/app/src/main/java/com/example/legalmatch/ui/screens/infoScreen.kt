@@ -8,19 +8,23 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.GhostWhite
 import androidx.compose.foundation.rememberScrollState
+import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.theme.AzulTec
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +45,7 @@ fun InfoScreen(navController: NavController) {
             CustomTopBar(title = "Agendar Asesoría", navIcon = false, actIcon = false)
         },
         bottomBar = {
-            CustomBottomBar(navController = navController) // Barra inferior
+            CustomBottomBarClientes(navController = navController) // Barra inferior
         }
     ) { paddingValues ->
         // Habilitar desplazamiento
@@ -51,7 +55,7 @@ fun InfoScreen(navController: NavController) {
                 .fillMaxSize()
                 .background(color = GhostWhite)
                 .verticalScroll(rememberScrollState()) // Habilitar scroll vertical
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
@@ -63,14 +67,19 @@ fun InfoScreen(navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary)
-                    .padding(8.dp)
+                    .height(48.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
             ) {
                 TextButton(
                     onClick = { expandedRole = !expandedRole },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = selectedRole)
+                    Text(
+                        text = selectedRole,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
                 DropdownMenu(
@@ -96,14 +105,19 @@ fun InfoScreen(navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary)
-                    .padding(8.dp)
+                    .height(48.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
             ) {
                 TextButton(
                     onClick = { expandedDate = !expandedDate },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = selectedDate)
+                    Text(
+                        text = selectedDate,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
                 DropdownMenu(
@@ -129,14 +143,19 @@ fun InfoScreen(navController: NavController) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary)
-                    .padding(8.dp)
+                    .height(48.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
             ) {
                 TextButton(
                     onClick = { expandedHour = !expandedHour },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = selectedHour)
+                    Text(
+                        text = selectedHour,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
                 DropdownMenu(
@@ -163,7 +182,7 @@ fun InfoScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.primary)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                     .padding(8.dp)
             )
 
@@ -172,9 +191,13 @@ fun InfoScreen(navController: NavController) {
                 onClick = { /* Acciones para agendar asesoría */ },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
+                    contentColor = Color.White),
+
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(vertical = 4.dp),
+                shape = RoundedCornerShape(18.dp)
             ) {
                 Text(text = "Agendar Asesoría", fontSize = 18.sp)
             }
@@ -187,4 +210,3 @@ fun InfoScreen(navController: NavController) {
 fun InfoScreenPreview() {
     InfoScreen(navController = rememberNavController())
 }
-
