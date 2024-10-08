@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class Asesoria(
     val c_investigacion: String,
     val c_judicial: String,
-    val cancelado: Boolean,
+    val estado: String,
     val cliente_confirmado: Boolean,
     val cliente_denuncio: Boolean,
     val created_at: LocalDateTime,

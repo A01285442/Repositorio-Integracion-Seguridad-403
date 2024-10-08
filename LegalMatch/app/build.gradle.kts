@@ -12,6 +12,9 @@ android {
         buildConfigField("String", "SUPABASE_URL", "\"https://wbhyplodhfxcyeochnpf.supabase.co\"")
         buildConfigField("String", "SUPABASE_ANON_KEY", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiaHlwbG9kaGZ4Y3llb2NobnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU0MjExNTUsImV4cCI6MjA0MDk5NzE1NX0.sqMEMPdCx9u-kC0TI0OLWKm1KXZjSkeDS1N3bQiG-jI\"")
 
+        // Uso de SVG
+        //vectorDrawables.useSupportLibrary = true
+
         applicationId = "com.example.legalmatch"
         minSdk = 24
         targetSdk = 34
@@ -66,6 +69,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -88,4 +92,11 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
 
     implementation(kotlin("script-runtime"))
+
+    // Uso de SVG
+    //implementation("com.android.support:appcompat-v7:23.2.0")
+
+    //Graficas
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+//    implementation("com.himanshoe:charty:2.0.0-alpha01")
 }

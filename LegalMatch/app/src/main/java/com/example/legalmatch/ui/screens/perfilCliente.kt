@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import okio.utf8Size
@@ -46,7 +47,7 @@ private const val TAG = "MainActivity"
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
+fun PerfilClienteScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
     val loginState by loginViewModel.loginState.collectAsState()
     var showDialogCambiarContraseña by remember { mutableStateOf(false) }
@@ -57,7 +58,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
-        bottomBar = { CustomBottomBar(navController=navController) }
+        bottomBar = { CustomBottomBarClientes(navController=navController) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -86,30 +87,15 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
             val userCreationDate = loginState.userClient?.created_at?.date
             val todaysDate = LocalDate.now()
-            var num = ""
-            var text = ""
+            var res = ""
 
             userCreationDate?.let {
                 if (userCreationDate.year - todaysDate.year != 0){
-                    num = (todaysDate.year - userCreationDate.year).toString()
-                    text = "años"
+                    res = (todaysDate.year - userCreationDate.year).toString() + " años"
                 }
                 else {
-                    num = (todaysDate.dayOfYear - userCreationDate.dayOfYear).toString()
-                    text = "dias"
+                    res = (todaysDate.dayOfYear - userCreationDate.dayOfYear).toString() + " días"
                 }
-            }
-
-
-
-            // Stats (años, reseñas, casos cerrados)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ProfileStat(big = num, medium = text, description = "En Legal Match")
-                ProfileStat(big = "4.7", medium = "★", description = "12 Reseñas")
-                ProfileStat(big = "62", medium = "",  description = "Casos cerrados")
             }
 
             HorizontalDivider()
@@ -129,19 +115,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             ) {
                 Text("Cambiar contraseña")
             }
-
-            // Botón para añadir estudiantes
-            Button(
-                onClick = {navController.navigate(Routes.ListaEstudiantes.route)},
-                colors = ButtonDefaults.buttonColors(containerColor = AzulTec),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
-            ) {
-                Text("Editar Estudiantes")
-            }
-
+0
             // Botón de cerrar sesión
             Button(
                 onClick = { loginViewModel.closeSession(then = {
@@ -226,18 +200,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             }
 
         }
-    }
-}
 
 
-@Composable
-fun ProfileStat(big: String, medium: String, description: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row {
-            Text(text = big, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-            Text(text = medium, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        }
-
-        Text(text = description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
     }
 }

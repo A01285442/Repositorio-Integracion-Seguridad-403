@@ -6,15 +6,19 @@ sealed class Routes(val route: String) {
     object Asesorias : Routes("asesorias")
     object Casos : Routes("casos")
     object Perfil : Routes("perfil")
+    object Stats : Routes("Stats")
     object CasoDetalle : Routes("detalle/{itemId}") {
         fun createRoute(itemId: Int) = "detalle/$itemId"
     }
-
-    // Vistas del Cliente
-    object CasosCliente : Routes("casosCliente")
+    object ListaEstudiantes : Routes("estudiantes")
 
 
     // Vistas de Inicio de Sesión
     object  Login : Routes("login")
     object  Register : Routes("register")
+
+    // Vistas del cliente
+    object CasosCliente : Routes("casosClientes")
+    object PerfilCliente : Routes("perfilCliente")
+    object FormAsesoria : Routes("formAsesoria")
 }
