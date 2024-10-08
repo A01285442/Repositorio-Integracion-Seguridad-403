@@ -47,14 +47,14 @@ fun ItemCard(title: String, description: String, onClick: () -> Unit) {
             Text(text = title, fontWeight = FontWeight.Bold)
             //Text(text = description)
             val maxChar = 150
-            if (showFullDescription) { Text(text = description) }
+            if (showFullDescription) { Text(text = description, style = MaterialTheme.typography.bodySmall) }
             else {
                 val truncatedDescription = if (description.length > maxChar) {
                     description.substring(0, maxChar).plus("...")
                 } else {
                     description
                 }
-                Text(text = truncatedDescription)
+                Text(text = truncatedDescription, style = MaterialTheme.typography.bodySmall)
             }
 
         }

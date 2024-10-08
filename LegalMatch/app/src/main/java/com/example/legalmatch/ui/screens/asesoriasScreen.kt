@@ -63,9 +63,17 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
         }
     } else {
         Scaffold(
-            topBar = { CustomTopBar(title = "Asesorías", navIcon = false, actIcon = false) },
+            topBar = { CustomTopBar(title = "Asesorías Pendientes", navIcon = false, actIcon = false) },
             bottomBar = { CustomBottomBar(navController = navController) }
         ) { padding ->
+            val asesoriaList = state.asesorias
+
+            if (asesoriaList.size <= 0){
+                Card {
+                    Text("No hay nada que mostrar.")
+                }
+            }
+
             LazyColumn(
                 modifier = Modifier
                     .padding(padding)
@@ -73,7 +81,7 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
                     .background(color = GhostWhite),
             ) {
                 val now = LocalDateTime.now()
-                val asesoriaList = state.asesorias
+
 
                 val mesesEspanol = listOf("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
 
@@ -81,6 +89,8 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
                 var subtituloHoyMostrado = false
                 var subtituloMananaMostrado = false
                 var subtituloOtroDiaMostrado = false
+
+
 
                 items(asesoriaList) { asesoria ->
                     if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear - 1) {
