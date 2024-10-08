@@ -88,7 +88,8 @@ fun CasoDetalleScreen(
             )
             Text(
                 text =
-                    "NUC: ${caso.nuc}" +
+                    "Delito: ${caso.delito}" +
+                    "\nNUC: ${caso.nuc}" +
                     "\nCarpeta Judicial: ${caso.c_judicial}" +
                     "\nCarpeta de Investigación: ${caso.c_investigacion}" +
                     "\nAcceso a Fiscalía Virtual: ${caso.fiscalia_virtual}" +
