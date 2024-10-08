@@ -38,7 +38,8 @@ fun CasosClienteScreen(navController: NavController, loginVM: LoginViewModel) {
                 title = "Su Actividad",
                 navIcon = false,
                 actIcon = true,
-                navController = navController, /*rutaActButton = Routes.CrearCasoCliente.route)*/
+                navController = navController,
+                rutaActButton = Routes.FormAsesoria.route
             )
         },
         bottomBar = { CustomBottomBarClientes(navController = navController) } // Usa el navController pasado

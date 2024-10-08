@@ -226,8 +226,6 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             }
 
         }
-
-
     }
 }
 
