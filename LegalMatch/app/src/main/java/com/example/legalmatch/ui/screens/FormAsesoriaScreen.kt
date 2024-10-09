@@ -42,7 +42,26 @@ import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
+import java.io.OutputStreamWriter
+import org.json.JSONObject
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,8 +75,8 @@ fun FormAsesoriaScreen(navController: NavController) {
 
     //Estado para manejar eñ api
 
-    var inputText by remember { mutableStateOf("") }
-    var resultText by remember { mutableStateOf("") }
+    var correctedText by remember { mutableStateOf("") }
+
 
     LocalDateTime.now().dayOfMonth
     LocalDateTime.now().monthValue
@@ -225,6 +244,33 @@ fun FormAsesoriaScreen(navController: NavController) {
                     .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                     .padding(8.dp)
             )
+            // Botón para enviar el texto a la IA
+            Button(
+                onClick = {
+                    makeApiRequest(description.text) { result ->
+                        correctedText = result
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
+            ) {
+                Text(text = "Enviar texto a IA", fontSize = 18.sp)
+            }
+
+            // Mostrar el texto corregido
+            Text(text = "Texto corregido por la IA:", fontSize = 18.sp)
+            BasicTextField(
+                value = correctedText,
+                onValueChange = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.medium)
+                    .padding(8.dp),
+                enabled = false // Hacer el campo solo de lectura
+            )
 
             // Botón para agendar asesoría
             Button(
@@ -243,6 +289,78 @@ fun FormAsesoriaScreen(navController: NavController) {
             }
         }
     }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+fun makeApiRequest(ask: String, onResult: (String) -> Unit) {
+    kotlinx.coroutines.GlobalScope.launch(Dispatchers.IO) {
+        val apiKey = "AIzaSyD2BLAqAzEH5-76h16dSpf5sLJkxlcqw7k"
+        val url = URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey")
+        val jsonInputString = """
+            {
+                "contents": [
+                    {
+                        "role": "user",
+                        "parts": [
+                            {"text": "Te proporcionare informacion a continuacion, esta informacion es la descripcion de un caso penal escrita por una persona que ocupa asesoria legal. De esta informacion ocupo que me proves un titulo, que tipo de delito es y una descripcion modificada si tiene falta de ortografia o si la descripcion proveida no es coherente. La descripcion no debe de pasar de 200 palabras y de una escala del 1 al 10 me debes de decir que tanto modificaste la descripcion. Todo me lo debes de dar en este orden y debe de tener un salto de linea en cada parte."}
+                        ]
+                    },
+                    {
+                        "role": "user",
+                        "parts": [
+                            {"text": "$ask"}
+                        ]
+                    }
+                ]
+            }
+        """.trimIndent()
+
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+        connection.setRequestProperty("Content-Type", "application/json")
+        connection.doOutput = true
+
+        withContext(Dispatchers.IO) {
+            OutputStreamWriter(connection.outputStream).use { writer ->
+                writer.write(jsonInputString)
+                writer.flush()
+            }
+        }
+
+        val responseCode = connection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val responseText = connection.inputStream.bufferedReader().use { it.readText() }
+            val jsonResponse = parseResponse(responseText)
+            withContext(Dispatchers.Main) {
+                onResult(jsonResponse)
+            }
+        } else {
+            withContext(Dispatchers.Main) {
+                onResult("Error: $responseCode")
+            }
+        }
+        connection.disconnect()
+    }
+}
+
+fun parseResponse(response: String): String {
+    try {
+        val jsonObject = JSONObject(response)
+        val candidates = jsonObject.getJSONArray("candidates")
+        if (candidates.length() > 0) {
+            val firstCandidate = candidates.getJSONObject(0)
+            val content = firstCandidate.getJSONObject("content")
+            val parts = content.getJSONArray("parts")
+            if (parts.length() > 0) {
+                val firstPart = parts.getJSONObject(0)
+                return firstPart.getString("text")
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return "Error al parsear la respuesta."
+    }
+    return "No se encontró contenido relevante."
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
