@@ -12,6 +12,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.legalmatch.Noticias.AddNewsScreen
+import com.example.legalmatch.Noticias.NoticiasScreen
+import com.example.legalmatch.Noticias.NoticiasViewModel
 import com.example.legalmatch.ui.screens.AsesoriaScreen
 import com.example.legalmatch.ui.screens.AsesoriaViewModel
 import com.example.legalmatch.ui.screens.CasoDetalleScreen
@@ -91,6 +94,15 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         composable(Routes.FormCaso.route){
             Log.d(TAG, "Navigating to Form Caso")
             FormCasoScreen(navController, casosViewModel)
+        }
+        composable(Routes.Noticias.route){
+            Log.d(TAG, "Navigating to Noticias")
+            NoticiasScreen(navController, NoticiasViewModel())
+        }
+        composable(Routes.AddNews.route){
+            Log.d(TAG, "Navigating to Add News")
+            val noticiasViewModel: NoticiasViewModel = viewModel()
+            AddNewsScreen(noticiasViewModel = noticiasViewModel, navController = navController)
         }
 
 

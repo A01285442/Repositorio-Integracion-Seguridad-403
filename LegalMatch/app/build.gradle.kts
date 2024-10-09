@@ -99,4 +99,12 @@ dependencies {
     //Graficas
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 //    implementation("com.himanshoe:charty:2.0.0-alpha01")
+
+    //News
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-rc01")
+
+    //Imagenes Storage
+//    implementation("io.github.jan-tennert.supabase:storage-kt:3.0.0")
+
 }
