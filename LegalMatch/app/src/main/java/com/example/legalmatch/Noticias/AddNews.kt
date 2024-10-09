@@ -15,10 +15,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.example.legalmatch.ui.components.CustomTopBar
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -27,6 +30,8 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
     var descripcion by remember { mutableStateOf("") }
     var imagenUri by remember { mutableStateOf<Uri?>(null) }
 
+    val context = LocalContext.current
+
     // Intent launcher para seleccionar imagen
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -34,6 +39,10 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
                 imagenUri = uri
+
+                noticiasViewModel.viewModelScope.launch {
+                    noticiasViewModel.uploadImageToSupabase(context, uri)
+                }
             }
         }
     }
@@ -50,7 +59,7 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // TextField para el título
+            // título
             TextField(
                 value = titulo,
                 onValueChange = { titulo = it },
@@ -58,7 +67,7 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // TextField para la descripción
+            // descripción
             TextField(
                 value = descripcion,
                 onValueChange = { descripcion = it },
@@ -66,7 +75,7 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Botón para seleccionar una imagen
+            // imagen
             Button(
                 onClick = {
                     // Abre el intent para seleccionar imagen
@@ -90,14 +99,13 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                 )
             }
 
-            // Botón para guardar la noticia
+            // guardar la noticia
             Button(
                 onClick = {
-                    // Lógica para enviar la noticia a la base de datos
-                    noticiasViewModel.agregarNoticia(
+                    noticiasViewModel.agregarNoticia( //Se manda al DB
                         titulo = titulo,
                         descripcion = descripcion,
-                        imagenUri = imagenUri.toString() // Convertimos la Uri a string
+                        imagenUri = imagenUri.toString() // DE uri a string
                     )
                     navController.popBackStack()
                 },
