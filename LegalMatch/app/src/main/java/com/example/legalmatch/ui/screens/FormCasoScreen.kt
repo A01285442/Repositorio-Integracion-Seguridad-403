@@ -34,9 +34,15 @@ import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+
+
 
 @Composable
 fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel) {
+
     // Estado para manejar los datos del formulario
 
     var descriptionC_investigacion by remember { mutableStateOf(TextFieldValue("")) }
@@ -52,6 +58,10 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
     var description_Password by remember { mutableStateOf(TextFieldValue("")) }
     var description_Titulo by remember { mutableStateOf(TextFieldValue("")) }
     var description_UnidadInv by remember { mutableStateOf(TextFieldValue("")) }
+
+    //casosViewModel.checkIfPageExists(description_Direccion.text)
+    val result = casosViewModel.state.pageExists
+
 
     val casoAMandar = SendCaso(
         c_investigacion = descriptionC_investigacion.text,
@@ -160,7 +170,9 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
             Text(text = "Dirección de la Unidad de Investigación: (Maps URL)", fontSize = 18.sp)
             BasicTextField(
                 value = description_Direccion,
-                onValueChange = {description_Direccion = it},
+                onValueChange = {
+                    description_Direccion = it
+                                },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -192,16 +204,6 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
             BasicTextField(
                 value = description_IdAbogado,
                 onValueChange = {description_IdAbogado = it},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
-
-            Text(text = "id_cliente", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_IdCliente,
-                onValueChange = {description_IdCliente = it},
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
@@ -243,11 +245,25 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
                     .padding(8.dp)
             )
 
+            Text("Información del Cliente", style = MaterialTheme.typography.headlineMedium)
+
+            Text(text = "Nombre del cliente:", style = MaterialTheme.typography.bodyMedium)
+            BasicTextField(
+                value = description_UnidadInv,
+                onValueChange = {description_UnidadInv = it},
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
+                    .padding(8.dp)
+            )
+
             // Botón para agendar asesoría
             Button(
                 onClick = {
-                    casosViewModel.createCaso(casoAMandar)
-                    navController.navigate(Routes.Casos.route)
+                    casosViewModel.checkIfPageExists(description_Direccion.text)
+                    //casosViewModel.createCaso(casoAMandar)
+                    //navController.navigate(Routes.Casos.route)
                           },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
@@ -260,6 +276,16 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
                 shape = RoundedCornerShape(18.dp)
             ) {
                 Text(text = "Crear Caso", fontSize = 18.sp)
+            }
+
+
+
+
+
+            if(result){
+                Text("URL MAPS valido")
+            } else {
+                Text("URL MAPS no valido")
             }
         }
     }

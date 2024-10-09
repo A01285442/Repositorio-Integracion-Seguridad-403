@@ -49,6 +49,7 @@ private const val TAG = "MainActivity"
 
 @Composable
 fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
+
     val state = casosViewModel.state.copy()
 
     var searchText by remember { mutableStateOf("") } // Estado para el texto de búsqueda
@@ -69,7 +70,7 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
             navIcon = false,
             actIcon = true,
             navController = navController,
-            rutaActButton = Routes.Casos.route
+            rutaActButton = Routes.FormCaso.route
         ) },
         bottomBar = { CustomBottomBar(navController = navController) } // Usa el navController pasado
     ) { padding ->
