@@ -13,7 +13,7 @@ data class Asesoria(
     val created_at: LocalDateTime,
     val delito: String,
     val descripcion: String,
-    val fecha_asesoria: LocalDateTime,
+    val fecha_asesoria: LocalDateTime = LocalDateTime(1,1,1,1,1,1),
     val id: Int,
     val id_cliente: Int,
     val nuc: String,

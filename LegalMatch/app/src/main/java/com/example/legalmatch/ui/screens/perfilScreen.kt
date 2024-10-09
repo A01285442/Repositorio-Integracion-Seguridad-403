@@ -40,6 +40,7 @@ import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import okio.utf8Size
 import java.time.LocalDate
+import kotlin.math.log
 
 private const val TAG = "MainActivity"
 
@@ -54,6 +55,12 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
     var nuevaContraseña by remember { mutableStateOf("") }
     var nuevaContraseña2 by remember { mutableStateOf("") }
     var botonCambiar by remember { mutableStateOf(false)}
+
+    if (loginState.userClient == null){
+        return
+    }
+
+    val esFiscal = loginState.userClient!!.rol == "abogado"
 
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
@@ -130,17 +137,21 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                 Text("Cambiar contraseña")
             }
 
-            // Botón para añadir estudiantes
-            Button(
-                onClick = {navController.navigate(Routes.ListaEstudiantes.route)},
-                colors = ButtonDefaults.buttonColors(containerColor = AzulTec),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
-            ) {
-                Text("Editar Estudiantes")
+
+            if(esFiscal){
+                Button(
+                    onClick = {navController.navigate(Routes.ListaEstudiantes.route)},
+                    colors = ButtonDefaults.buttonColors(containerColor = AzulTec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
+                ) {
+                    Text("Editar Estudiantes")
+                }
             }
+
+
 
             // Botón de cerrar sesión
             Button(

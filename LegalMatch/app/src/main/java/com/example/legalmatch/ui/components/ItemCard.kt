@@ -20,10 +20,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ItemCard(title: String, description: String, onClick: () -> Unit) {
+fun ItemCard(
+    title: String,
+    description: String,
+    onClick: () -> Unit
+) {
 
     var showFullDescription by remember { mutableStateOf(false) }
 
@@ -44,9 +49,9 @@ fun ItemCard(title: String, description: String, onClick: () -> Unit) {
 
         Column(modifier = Modifier.padding(16.dp)) {
 
-            Text(text = title, fontWeight = FontWeight.Bold)
+            Text(text = title, style = MaterialTheme.typography.titleSmall)
             //Text(text = description)
-            val maxChar = 150
+            val maxChar = 200
             if (showFullDescription) { Text(text = description, style = MaterialTheme.typography.bodySmall) }
             else {
                 val truncatedDescription = if (description.length > maxChar) {
@@ -71,9 +76,13 @@ fun ItemCard(title: String, description: String, onClick: () -> Unit) {
                 Text(
                     text = if (showFullDescription) "Ver menos" else "Ver más",
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(0.dp)
+                    modifier = Modifier.padding(0.dp),
+                    textAlign = TextAlign.Justify
                 )
             }
         }
+
+
+
     }
 }
