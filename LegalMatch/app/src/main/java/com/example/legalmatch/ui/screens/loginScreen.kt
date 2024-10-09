@@ -78,8 +78,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
         )
 
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = "LogoAxel",
+            painter = painterResource(id = R.drawable.balance),
+            contentDescription = "LogoBalanza",
             modifier = Modifier.height(300.dp)
 
         )

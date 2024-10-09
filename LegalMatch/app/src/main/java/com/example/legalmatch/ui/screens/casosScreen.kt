@@ -69,8 +69,7 @@ fun CasosScreen(navController: NavController, casosViewModel: CasosViewModel) {
             navIcon = false,
             actIcon = true,
             navController = navController,
-            rutaActButton = Routes.Casos.route,
-            rutaBackButton = Routes.FormCaso.route
+            rutaActButton = Routes.Casos.route
         ) },
         bottomBar = { CustomBottomBar(navController = navController) } // Usa el navController pasado
     ) { padding ->

@@ -3,6 +3,7 @@ package com.example.legalmatch.ui.screens
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -67,7 +68,7 @@ fun CasoDetalleScreen(
 
     Scaffold(
         topBar = {
-            CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController = navController, rutaBackButton = Routes.Casos.route)
+            CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController = navController)
         },
         bottomBar = { CustomBottomBar(navController=navController) }
     ) { InnerPadding ->
@@ -77,14 +78,14 @@ fun CasoDetalleScreen(
                 .padding((InnerPadding))
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.SpaceBetween
         ) {
             // Información básica
             Text(
                 text = caso.titulo,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             Text(
                 text =
@@ -107,12 +108,13 @@ fun CasoDetalleScreen(
                 text = "Descripción",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             Text(
                 text = caso.descripcion,
                 style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Justify
             )
 
 
@@ -121,7 +123,8 @@ fun CasoDetalleScreen(
                 text = "Información del cliente",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             Text(
                 text = "Nombre completo: ${cliente.nombre}" +
@@ -168,8 +171,7 @@ fun CasoDetalleScreen(
             // Editar información
             Button(
                 onClick = {
-                    casosVM.cerrarCaso(casoId)
-                    navController.navigateUp()
+                    navController.navigate(Routes.FormCaso.route)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
@@ -179,6 +181,15 @@ fun CasoDetalleScreen(
             ) {
                 Text(text = "Editar Información")
             }
+            Button(
+                onClick = { Log.d("MainActivity","xd")
+                    navController.navigate(Routes.EstudiantesInvolucrados.createRoute(casoId)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Gray,
+                    contentColor = Color.White
+                )
+            ) { Text(text = "Estudiantes Involucrados") }
 
             // Cerrar caso
             Button(

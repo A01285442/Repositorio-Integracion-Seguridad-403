@@ -12,6 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.legalmatch.ui.screens.AsesoriaDetalleScreen
 import com.example.legalmatch.Noticias.AddNewsScreen
 import com.example.legalmatch.Noticias.NoticiasScreen
 import com.example.legalmatch.Noticias.NoticiasViewModel
@@ -21,6 +22,7 @@ import com.example.legalmatch.ui.screens.CasoDetalleScreen
 import com.example.legalmatch.ui.screens.CasosClienteScreen
 import com.example.legalmatch.ui.screens.CasosScreen
 import com.example.legalmatch.ui.screens.CasosViewModel
+import com.example.legalmatch.ui.screens.EstudiantesInvolucradosScreen
 import com.example.legalmatch.ui.screens.FormAsesoriaScreen
 import com.example.legalmatch.ui.screens.FormCasoScreen
 import com.example.legalmatch.ui.screens.ListaEstudiantesScreen
@@ -29,6 +31,7 @@ import com.example.legalmatch.ui.screens.PerfilClienteScreen
 import com.example.legalmatch.ui.screens.PerfilScreen
 import com.example.legalmatch.ui.screens.StatsScreen
 import com.example.legalmatch.ui.screens.casosClienteViewModel
+import com.example.legalmatch.viewmodel.EstudiantesInvolucradosViewModel
 import com.example.legalmatch.viewmodel.GraficasViewModel
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 import com.example.proyectobueno.views.LoginScreen
@@ -41,9 +44,10 @@ val TAG = "MainActivity"
 @Composable
 fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaViewModel) {
 
-    val loginViewModel: LoginViewModel = viewModel()
-    val casosViewModel : CasosViewModel = viewModel()
-    val usuariosViewModel: UsuariosViewModel = viewModel()
+
+    val loginViewModel: LoginViewModel = viewModel() // Almacena la información del usuario
+    val casosViewModel : CasosViewModel = viewModel() // Almacena información de casos
+    val usuariosViewModel: UsuariosViewModel = viewModel() // Almacena información de otros usuarios
 
 
     NavHost(
@@ -51,7 +55,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         startDestination = Routes.Login.route
     ) {
 
-        // Login
+        // VISTAS DE INICIO DE SESIÓN
         composable(Routes.Login.route){
             Log.d(TAG, "Navigating to Login")
             LoginScreen(navController, loginViewModel)
@@ -61,7 +65,8 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             RegisterScreen(navController, loginViewModel)
         }
 
-        // Vistas Abogado
+        // VISTAS DE ABOGADO PRINCIPALES
+
         composable(Routes.Asesorias.route) {
             Log.d(TAG, "Navigating to Asesorias")
             AsesoriaScreen(navController, asesoriasViewModel,loginViewModel)
@@ -71,12 +76,15 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             CasosScreen(navController, casosViewModel)
         }
         composable(Routes.Stats.route){
-            StatsScreen(navController, GraficasViewModel())
+            val graficasViewModel: GraficasViewModel = viewModel()
+            StatsScreen(navController, graficasViewModel )
         }
         composable(Routes.Perfil.route){
             Log.d(TAG, "Navigating to Perfil")
             PerfilScreen(navController, loginViewModel)
         }
+
+        // VISTAS DE ABOGADO SECUNDARIAS
         composable(
             route = Routes.CasoDetalle.route,
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
@@ -85,6 +93,16 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             if (itemId != null) {
                 Log.d(TAG, "Navigating to Caso Detalle")
                 CasoDetalleScreen(navController, casosViewModel, itemId, usuariosViewModel)
+            }
+        }
+        composable(
+            route = Routes.AsesoriaDetalle.route,
+            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+        ) { _backStackEntry ->
+            val itemId = _backStackEntry.arguments?.getInt("itemId")
+            if (itemId != null) {
+                Log.d(TAG, "Navigating to Asesoría Detalle")
+                AsesoriaDetalleScreen(navController, asesoriasViewModel, itemId, usuariosViewModel)
             }
         }
         composable(Routes.ListaEstudiantes.route) {
@@ -104,9 +122,20 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             val noticiasViewModel: NoticiasViewModel = viewModel()
             AddNewsScreen(noticiasViewModel = noticiasViewModel, navController = navController)
         }
+        composable(
+            route = Routes.EstudiantesInvolucrados.route,
+            arguments = listOf(navArgument("itemId"){type = NavType.IntType})
+        ) { entradaAtras ->
+            val itemId = entradaAtras.arguments?.getInt("itemId")
+            if (itemId != null) {
+                Log.d(TAG, "Navigating to Estudiantes Involucrados")
+                val estudiantesInvolucradosViewModel: EstudiantesInvolucradosViewModel = viewModel()
+                EstudiantesInvolucradosScreen(navController, usuariosViewModel, itemId, estudiantesInvolucradosViewModel)
+            }
+        }
 
 
-        // Vistas Cliente
+        // VISTAS DE CLIENTE PRINCIPALES
         composable(Routes.CasosCliente.route){
             Log.d(TAG, "Navigating to Casos Cliente")
             //val casosclientevm : casosClienteViewModel = viewModel()

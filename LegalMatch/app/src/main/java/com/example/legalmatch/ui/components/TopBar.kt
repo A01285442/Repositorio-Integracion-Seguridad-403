@@ -20,7 +20,13 @@ import com.example.legalmatch.ui.theme.AzulTec
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopBar(title: String, navIcon: Boolean, actIcon: Boolean, navController: NavController = rememberNavController(), rutaBackButton: String = "", rutaActButton: String = "") {
+fun CustomTopBar(
+    title: String,
+    navIcon: Boolean,
+    actIcon: Boolean,
+    navController: NavController = rememberNavController(),
+    rutaActButton: String = ""
+) {
     CenterAlignedTopAppBar(
         modifier = Modifier.shadow(8.dp).height(90.dp),
         colors = TopAppBarColors(
@@ -36,7 +42,7 @@ fun CustomTopBar(title: String, navIcon: Boolean, actIcon: Boolean, navControlle
 
         navigationIcon = {
             if(navIcon){
-                IconButton(onClick = { navController.navigate(route = rutaBackButton) }) {
+                IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Localized description"
