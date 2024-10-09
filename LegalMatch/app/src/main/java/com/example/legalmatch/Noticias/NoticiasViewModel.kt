@@ -26,9 +26,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-val supabaseAxel = createSupabaseClient(
-    supabaseUrl = "https://zqhgzbtzpdocuenpiqsj.supabase.co",
-    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxaGd6YnR6cGRvY3VlbnBpcXNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjg0NDgyNjIsImV4cCI6MjA0NDAyNDI2Mn0.2JVMpHzlKjDIasi6kCq3lw1vXmOERS6NhvDz4avaZBI",
+val supabase = createSupabaseClient(
+    supabaseUrl = "https://wbhyplodhfxcyeochnpf.supabase.co",
+    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiaHlwbG9kaGZ4Y3llb2NobnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU0MjExNTUsImV4cCI6MjA0MDk5NzE1NX0.sqMEMPdCx9u-kC0TI0OLWKm1KXZjSkeDS1N3bQiG-jI",
 ) {
     install(Auth)
     install(Postgrest)
@@ -73,7 +73,7 @@ class NoticiasViewModel : ViewModel() {
     fun fetchNoticias() {
         viewModelScope.launch {
             try {
-                val noticias = supabaseAxel.from("noticias")
+                val noticias = supabase.from("noticias")
                     .select()
                     .decodeList<Noticia>()
 
@@ -86,9 +86,12 @@ class NoticiasViewModel : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun agregarNoticia(titulo: String, descripcion: String, imagenUri: String?) {
+    fun agregarNoticia(titulo: String, descripcion: String, imagenUri: Uri?, context: Context){
         viewModelScope.launch {
             try {
+                var imageUrl: String? = null
+
+
 
 
                 val nuevaNoticia = Noticia(
@@ -96,11 +99,11 @@ class NoticiasViewModel : ViewModel() {
                     titulo = titulo,
                     descripcion = descripcion,
                     fecha = getCurrentDate(),
-                    imagenurl = imagenUri // La URL de la imagen será la URI en formato string
+                    imagenurl = imageUrl // La URL de la imagen será la URI en formato string
                 )
 
                 // Inserta la noticia en la base de datos
-                val response = supabaseAxel.from("noticias")
+                val response = supabase.from("noticias")
                     .insert(nuevaNoticia)
                 Log.d(TAG, "Noticia agregada: $response")
 
@@ -116,12 +119,12 @@ class NoticiasViewModel : ViewModel() {
     fun actualizarNoticia(id: Int, noticia: Noticia) {
         viewModelScope.launch {
             try {
-                val response = supabaseAxel.from("noticias")
+                val response = supabase.from("noticias")
                     .update(noticia)
                     .decodeList<Noticia>()
 
                 Log.d(TAG, "Noticia actualizada: $response")
-                fetchNoticias() // Refresh the list after updating
+                fetchNoticias()
             } catch (e: Exception) {
                 Log.e(TAG, "Error updating noticia: ${e.message}", e)
             }
@@ -131,7 +134,7 @@ class NoticiasViewModel : ViewModel() {
     fun eliminarNoticia(id: Int) {
         viewModelScope.launch {
             try {
-                val response = supabaseAxel.from("noticias")
+                val response = supabase.from("noticias")
                     .delete()
                     .decodeList<Noticia>()
                 Log.d(TAG, "Noticia eliminada: $response")
@@ -149,13 +152,13 @@ class NoticiasViewModel : ViewModel() {
         imageBytes?.let {
             val fileName = "images/${UUID.randomUUID()}.png"
             try {
-                val uploadResponse = supabaseAxel.storage.from("NoticiasImagenes")
+                supabase.storage.from("NoticiasImagenes")
                     .upload(fileName, imageBytes)
 
                 Log.d("Upload", "Imagen subida con éxito: $fileName")
 
                 // Obtiene la URL pública de la imagen
-                val imageUrl = supabaseAxel.storage.from("NoticiasImagenes")
+                val imageUrl = supabase.storage.from("NoticiasImagenes")
                     .publicUrl(fileName)
                     .toString()
 
@@ -170,7 +173,7 @@ class NoticiasViewModel : ViewModel() {
                 )
 
                 // Inserta la noticia en la base de datos
-                val response = supabaseAxel.from("noticias")
+                val response = supabase.from("noticias")
                     .insert(nuevaNoticia)
 
                 Log.d("Upload", "Noticia agregada: $response")

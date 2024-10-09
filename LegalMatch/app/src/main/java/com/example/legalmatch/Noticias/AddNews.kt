@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -102,17 +103,24 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
             // guardar la noticia
             Button(
                 onClick = {
-                    noticiasViewModel.agregarNoticia( //Se manda al DB
-                        titulo = titulo,
-                        descripcion = descripcion,
-                        imagenUri = imagenUri.toString() // DE uri a string
-                    )
-                    navController.popBackStack()
+                    // Verifica que los campos no estén vacíos antes de guardar
+                    if (titulo.isNotEmpty() && descripcion.isNotEmpty() && imagenUri != null) {
+                        noticiasViewModel.agregarNoticia( // Se manda al DB
+                            titulo = titulo,
+                            descripcion = descripcion,
+                            imagenUri = imagenUri, // Aquí pasa el Uri directamente
+                            context = context // Pasa el contexto para la función de subir imagen
+                        )
+                        navController.popBackStack() // Navega hacia atrás después de guardar
+                    } else {
+                        Toast.makeText(context, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Guardar Noticia")
             }
+
         }
     }
 }
