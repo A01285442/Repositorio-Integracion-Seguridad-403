@@ -111,7 +111,7 @@ fun FormAsesoriaScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            CustomTopBar(title = "Agendar Asesoría", navIcon = false, actIcon = false)
+            CustomTopBar(title = "Agendar Asesoría", navIcon = true, actIcon = false, navController = navController)
         },
         bottomBar = {
             CustomBottomBarClientes(navController = navController) // Barra inferior
