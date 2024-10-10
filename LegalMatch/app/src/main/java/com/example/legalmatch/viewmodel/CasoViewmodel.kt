@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.data.api.models.SendCaso
 import io.github.jan.supabase.createSupabaseClient
@@ -116,14 +117,27 @@ class CasosViewModel() : ViewModel() {
     }
 
     fun createCaso(caso: SendCaso){
-        Log.d(TAG,"Caso aun no creado.")
+        viewModelScope.launch {
+        _state = state.copy(isLoading = true)
+
+            try {
+                supabase.from("casos").insert(caso)
+                Log.d(TAG,"Caso creado.")
+            } catch (e: Exception) {
+                Log.d(TAG, "Error: ${e.message}")
+            } finally {
+                _state = state.copy(isLoading = false)
+            }
+            delay(500)
+        }
+
         fetchCasos()
     }
 
 
 
 
-    private fun fetchCasos(){
+    fun fetchCasos(){
         viewModelScope.launch {
 
             _state = state.copy(isLoading = true) // Inicia el estado de carga

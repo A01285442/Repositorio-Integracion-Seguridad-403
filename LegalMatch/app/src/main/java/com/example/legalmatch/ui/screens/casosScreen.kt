@@ -41,6 +41,7 @@ fun CasosScreen(
     // Mostrar el contenido según el estado actual
     if (state.isLoading) {
         CircularProgressIndicator()
+        return
     }
 
     Scaffold(

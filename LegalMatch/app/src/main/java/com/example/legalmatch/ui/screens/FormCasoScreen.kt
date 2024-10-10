@@ -1,5 +1,6 @@
 package com.example.legalmatch.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,9 @@ import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
 import androidx.compose.runtime.mutableStateOf
+import com.example.legalmatch.data.api.models.SendUsuario
+import kotlinx.coroutines.delay
+import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel) {
@@ -61,8 +65,11 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
     var correo by remember { mutableStateOf(TextFieldValue("")) }
     var sexo by remember { mutableStateOf(TextFieldValue("")) }
 
-    //casosViewModel.checkIfPageExists(description_Direccion.text)
-    val result = casosViewModel.state.pageExists
+    // Errores
+    var errorMessage1 by remember {mutableStateOf("")}
+    var errorMessage2 by remember {mutableStateOf("")}
+    var errorMessage3 by remember {mutableStateOf("")}
+    var errorMessage4 by remember {mutableStateOf("")}
 
 
     val casoAMandar = SendCaso(
@@ -77,9 +84,18 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
         nuc = nuc.text,
         password_fv = password.text,
         unidad_investigacion = unidadInv.text,
-        id_cliente = 0,
-        id_abogado = 0,
+        id_cliente = 1,
+        id_abogado = 1,
         caso_cerrado = false,
+    )
+    val usuarioAMandar = SendUsuario(
+        nombre = nombre.text,
+        contraseña = "LEGALMATCH",
+        correo = correo.text,
+        fecha_nacimiento = LocalDateTime(1,1,1,1,1,1),
+        matricula = "",
+        rol = "cliente",
+        sexo = sexo.text
     )
 
 
@@ -122,6 +138,9 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
                 singleLine = false,
                 height = 100
             )
+
+            if (errorMessage2.isNotBlank()){ Text(errorMessage2, color = Color.Red) }
+
             InputField(
                 label = "Carpeta de investigación:",
                 value = cInvestigacion,
@@ -142,13 +161,16 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
                 value = direccion,
                 onValueChange = { direccion = it }
             )
-            if (direccion.text.isBlank()){} else if(!result){ Text("URL MAPS no valido") }
+            if (errorMessage3.isNotBlank()){ Text(errorMessage3, color = Color.Red) }
 
             InputField(
                 label = "Carpeta Google Drive: (url):",
                 value = drive,
                 onValueChange = { drive = it }
             )
+
+            if (errorMessage4.isNotBlank()){ Text(errorMessage4, color = Color.Red) }
+
             InputField(
                 label = "Fiscalía Virtual:",
                 value = fiscalia,
@@ -167,7 +189,7 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
             InputField(
                 label = "Unidad de Investigación:",
                 value = unidadInv,
-                onValueChange = { cInvestigacion = it }
+                onValueChange = { unidadInv = it }
             )
 
             Text("Información del Cliente", style = MaterialTheme.typography.titleLarge)
@@ -182,6 +204,8 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
                 value = correo,
                 onValueChange = { correo = it }
             )
+
+            if (errorMessage1.isNotBlank()){ Text(errorMessage1, color = Color.Red) }
 
             Text(text = "Sexo del cliente:", style = MaterialTheme.typography.bodyMedium)
             val sexo: List<String> = listOf("Hombre", "Mujer")
@@ -203,9 +227,22 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
             // Botón para agendar asesoría
             Button(
                 onClick = {
-                    casosViewModel.checkIfPageExists(direccion.text)
-                    //casosViewModel.createCaso(casoAMandar)
-                    //navController.navigate(Routes.Casos.route)
+                    errorMessage1 = if(nombre.text.isBlank() || correo.text.isBlank()){
+                        "Nombre y correo son obligatorios" } else { "" }
+                    errorMessage2 = if(titulo.text.isBlank() || descripcion.text.isBlank()){
+                        "Titulo y descripcion son obligatorios" } else { "" }
+                    errorMessage3 = if(!direccion.text.startsWith("https://") or direccion.text.isBlank()){
+                        "Direccion no valida" } else { "" }
+                    errorMessage4 = if(!drive.text.startsWith("https://") or drive.text.isBlank()){
+                        "Drive no valido" } else { "" }
+
+                    if(errorMessage1.isBlank() and errorMessage2.isBlank() and errorMessage3.isBlank() and errorMessage4.isBlank()){
+                        Log.d("MainActivity", "Se ha creado el caso")
+                        casosViewModel.createCaso(casoAMandar)
+
+                        navController.navigate(Routes.Casos.route)
+
+                    } else {return@Button}
                           },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
@@ -219,11 +256,6 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
             ) {
                 Text(text = "Crear Caso", fontSize = 18.sp)
             }
-
-
-
-
-
 
         }
     }
