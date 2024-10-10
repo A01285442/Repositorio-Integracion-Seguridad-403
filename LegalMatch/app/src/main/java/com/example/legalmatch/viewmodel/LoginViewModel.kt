@@ -65,7 +65,7 @@ class LoginViewModel() : ViewModel() {
     }
 
     // Si identifica al usuario cambia el valor de "isAuthenticated"
-    fun login(username: String, password: String, onLoginSuccessAbogado: () -> Unit, onLoginSuccessCliente: () -> Unit) {
+    fun login(username: String, password: String, onLoginSuccessAbogado: () -> Unit, onLoginSuccessCliente: () -> Unit, onLoginError: () -> Unit) {
         Log.d(TAG, "Iniciando función login()")  // Log antes de la coroutine
         viewModelScope.launch {
             Log.d(TAG, "Iniciando coroutine")  // Log dentro de la coroutine
@@ -93,6 +93,7 @@ class LoginViewModel() : ViewModel() {
                         }
                     } else {
                         Log.d(TAG, "Contraseña Incorrecta")
+                        onLoginError()
                         _loginState.value = _loginState.value.copy(
                             errorMessage = "Contraseña Incorrecta",
                             isLoading = false
@@ -100,6 +101,7 @@ class LoginViewModel() : ViewModel() {
                     }
                 } else {
                     Log.d(TAG, "Usuario no encontrado")
+                    onLoginError()
                     _loginState.value = _loginState.value.copy(
                         errorMessage = "Usuario no encontrado",
                         isLoading = false
@@ -108,6 +110,7 @@ class LoginViewModel() : ViewModel() {
 
             } catch (e: Exception) {
                 Log.d(TAG, "Error en la autenticacion: ${e.message}")
+                onLoginError()
                 _loginState.value = _loginState.value.copy(
                     errorMessage = "Error en la autenticación: ${e.message}",
                     isLoading = false

@@ -6,16 +6,15 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.legalmatch.ui.screens.AsesoriaDetalleScreen
 import com.example.legalmatch.Noticias.AddNewsScreen
 import com.example.legalmatch.Noticias.NoticiasScreen
 import com.example.legalmatch.Noticias.NoticiasViewModel
+import com.example.legalmatch.ui.screens.AsesoriaDetalleScreen
 import com.example.legalmatch.ui.screens.AsesoriaScreen
 import com.example.legalmatch.ui.screens.AsesoriaViewModel
 import com.example.legalmatch.ui.screens.CasoDetalleScreen
@@ -30,9 +29,9 @@ import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.screens.PerfilClienteScreen
 import com.example.legalmatch.ui.screens.PerfilScreen
 import com.example.legalmatch.ui.screens.StatsScreen
-import com.example.legalmatch.ui.screens.casosClienteViewModel
 import com.example.legalmatch.viewmodel.EstudiantesInvolucradosViewModel
 import com.example.legalmatch.viewmodel.GraficasViewModel
+import com.example.legalmatch.viewmodel.SearchViewModel
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 import com.example.proyectobueno.views.LoginScreen
 import com.example.proyectobueno.views.RegisterScreen
@@ -48,7 +47,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
     val loginViewModel: LoginViewModel = viewModel() // Almacena la información del usuario
     val casosViewModel : CasosViewModel = viewModel() // Almacena información de casos
     val usuariosViewModel: UsuariosViewModel = viewModel() // Almacena información de otros usuarios
-
+    val searchBoxViewModel : SearchViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -73,7 +72,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         }
         composable(Routes.Casos.route){
             Log.d(TAG, "Navigating to Casos")
-            CasosScreen(navController, casosViewModel)
+            CasosScreen(navController, casosViewModel, searchBoxViewModel)
         }
         composable(Routes.Stats.route){
             val graficasViewModel: GraficasViewModel = viewModel()
