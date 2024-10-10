@@ -1,5 +1,6 @@
 package com.example.legalmatch.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +15,13 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,40 +41,61 @@ import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
+import androidx.compose.runtime.mutableStateOf
+import com.example.legalmatch.data.api.models.SendUsuario
+import kotlinx.coroutines.delay
+import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel) {
-    // Estado para manejar los datos del formulario
 
-    var descriptionC_investigacion by remember { mutableStateOf(TextFieldValue("")) }
-    var descriptionC_judicial by remember { mutableStateOf(TextFieldValue("")) }
-    var description_Delito by remember { mutableStateOf(TextFieldValue("")) }
-    var description by remember { mutableStateOf(TextFieldValue("")) }
-    var description_Direccion by remember { mutableStateOf(TextFieldValue("")) }
-    var description_Drive by remember { mutableStateOf(TextFieldValue("")) }
-    var description_Fiscalia by remember { mutableStateOf(TextFieldValue("")) }
-    var description_IdAbogado by remember { mutableStateOf(TextFieldValue("")) }
-    var description_IdCliente by remember { mutableStateOf(TextFieldValue("")) }
-    var description_NUC by remember { mutableStateOf(TextFieldValue("")) }
-    var description_Password by remember { mutableStateOf(TextFieldValue("")) }
-    var description_Titulo by remember { mutableStateOf(TextFieldValue("")) }
-    var description_UnidadInv by remember { mutableStateOf(TextFieldValue("")) }
+    var titulo by remember { mutableStateOf(TextFieldValue("")) }
+    var descripcion by remember { mutableStateOf(TextFieldValue("")) }
+    var cInvestigacion by remember { mutableStateOf(TextFieldValue("")) }
+    var cJudicial by remember { mutableStateOf(TextFieldValue("")) }
+    var delito by remember { mutableStateOf(TextFieldValue("")) }
+    var direccion by remember { mutableStateOf(TextFieldValue("")) }
+    var drive by remember { mutableStateOf(TextFieldValue("")) }
+    var fiscalia by remember { mutableStateOf(TextFieldValue("")) }
+    var nuc by remember { mutableStateOf(TextFieldValue("")) }
+    var password by remember { mutableStateOf(TextFieldValue("")) }
+    var unidadInv by remember { mutableStateOf(TextFieldValue("")) }
+    // Client Info
+    var nombre by remember { mutableStateOf(TextFieldValue("")) }
+    var correo by remember { mutableStateOf(TextFieldValue("")) }
+    var sexo by remember { mutableStateOf(TextFieldValue("")) }
+
+    // Errores
+    var errorMessage1 by remember {mutableStateOf("")}
+    var errorMessage2 by remember {mutableStateOf("")}
+    var errorMessage3 by remember {mutableStateOf("")}
+    var errorMessage4 by remember {mutableStateOf("")}
+
 
     val casoAMandar = SendCaso(
-        c_investigacion = descriptionC_investigacion.text,
-        c_judicial = descriptionC_judicial.text,
-        delito = description_Delito.text,
-        descripcion = description.text,
-        direccion_ui = description_Direccion.text,
-        drive_link = description_Drive.text,
-        fiscalia_virtual = description_Fiscalia.text,
-        id_abogado = description_IdAbogado.text.toIntOrNull() ?: 0,
-        id_cliente = description_IdCliente.text.toIntOrNull() ?: 0,
-        nuc = description_NUC.text,
-        password_fv = description_Password.text,
-        titulo = description_Titulo.text,
-        unidad_investigacion = descriptionC_investigacion.text,
+        titulo = titulo.text,
+        descripcion = descripcion.text,
+        c_investigacion = cInvestigacion.text,
+        c_judicial = cJudicial.text,
+        delito = delito.text,
+        direccion_ui = direccion.text,
+        drive_link = drive.text,
+        fiscalia_virtual = fiscalia.text,
+        nuc = nuc.text,
+        password_fv = password.text,
+        unidad_investigacion = unidadInv.text,
+        id_cliente = 1,
+        id_abogado = 1,
         caso_cerrado = false,
+    )
+    val usuarioAMandar = SendUsuario(
+        nombre = nombre.text,
+        contraseña = "LEGALMATCH",
+        correo = correo.text,
+        fecha_nacimiento = LocalDateTime(1,1,1,1,1,1),
+        matricula = "",
+        rol = "cliente",
+        sexo = sexo.text
     )
 
 
@@ -96,158 +124,125 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            Text("Valores obligatorios", style = MaterialTheme.typography.headlineMedium)
+            Text("Información del Caso", style = MaterialTheme.typography.titleLarge)
 
-            Text(text = "Título:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_Titulo,
-                onValueChange = {description_Titulo = it},
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
+            InputField(
+                label = "Título:",
+                value = titulo,
+                onValueChange = { titulo = it }
+            )
+            InputField(
+                label = "Descripción del caso:",
+                value = descripcion,
+                onValueChange = { descripcion = it },
+                singleLine = false,
+                height = 100
             )
 
-            Text(text = "Descripción del caso:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description,
-                onValueChange = {description = it},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
+            if (errorMessage2.isNotBlank()){ Text(errorMessage2, color = Color.Red) }
+
+            InputField(
+                label = "Carpeta de investigación:",
+                value = cInvestigacion,
+                onValueChange = { cInvestigacion = it }
+            )
+            InputField(
+                label = "Carpeta judicial:",
+                value = cJudicial,
+                onValueChange = { cJudicial = it }
+            )
+            InputField(
+                label = "Delito:",
+                value = delito,
+                onValueChange = { delito = it }
+            )
+            InputField(
+                label = "Dirección de la Unidad de Investigación: (Maps URL):",
+                value = direccion,
+                onValueChange = { direccion = it }
+            )
+            if (errorMessage3.isNotBlank()){ Text(errorMessage3, color = Color.Red) }
+
+            InputField(
+                label = "Carpeta Google Drive: (url):",
+                value = drive,
+                onValueChange = { drive = it }
             )
 
-            // Campo para la descripción del delito
-            Text(text = "Carpeta de investigación:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = descriptionC_investigacion,
-                onValueChange = { descriptionC_investigacion = it },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
+            if (errorMessage4.isNotBlank()){ Text(errorMessage4, color = Color.Red) }
+
+            InputField(
+                label = "Fiscalía Virtual:",
+                value = fiscalia,
+                onValueChange = { fiscalia = it }
+            )
+            InputField(
+                label = "Número Único de Causa:",
+                value = nuc,
+                onValueChange = { nuc = it }
+            )
+            InputField(
+                label = "Contraseña de la Fiscalía Virtual:",
+                value = password,
+                onValueChange = { password = it }
+            )
+            InputField(
+                label = "Unidad de Investigación:",
+                value = unidadInv,
+                onValueChange = { unidadInv = it }
             )
 
-            Text("Valores opcionales", style = MaterialTheme.typography.headlineMedium)
+            Text("Información del Cliente", style = MaterialTheme.typography.titleLarge)
 
-            Text(text = "Carpeta judicial:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = descriptionC_judicial,
-                onValueChange = {descriptionC_judicial = it},
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
+            InputField(
+                label = "Nombre del cliente:",
+                value = nombre,
+                onValueChange = { nombre = it }
+            )
+            InputField(
+                label = "Correo del cliente:",
+                value = correo,
+                onValueChange = { correo = it }
             )
 
-            Text(text = "Delito:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_Delito,
-                onValueChange = {description_Delito = it},
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
+            if (errorMessage1.isNotBlank()){ Text(errorMessage1, color = Color.Red) }
 
-
-            Text(text = "Dirección de la Unidad de Investigación: (Maps URL)", fontSize = 18.sp)
-            BasicTextField(
-                value = description_Direccion,
-                onValueChange = {description_Direccion = it},
-                singleLine = true,
+            Text(text = "Sexo del cliente:", style = MaterialTheme.typography.bodyMedium)
+            val sexo: List<String> = listOf("Hombre", "Mujer")
+            var sexoSeleccionado by remember { mutableStateOf("") }
+            DynamicSelectTextField(
+                selectedValue = sexoSeleccionado,
+                options = sexo,
+                label = sexoSeleccionado,
+                onValueChangedEvent = { sexoSeleccionado = it},
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
 
-            Text(text = "Carpeta Google Drive: (url)", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_Drive,
-                onValueChange = {description_Drive = it},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
-
-            Text(text = "Fiscalía Virtual", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_Fiscalia,
-                onValueChange = {description_Fiscalia = it},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
-
-            Text(text = "Fiscal Titular:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_IdAbogado,
-                onValueChange = {description_IdAbogado = it},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
-
-            Text(text = "id_cliente", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_IdCliente,
-                onValueChange = {description_IdCliente = it},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
-
-            Text(text = "Número Único de Causa:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_NUC,
-                onValueChange = {description_NUC = it},
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
-
-            Text(text = "Contraseña de la Fiscalía Virtual:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_Password,
-                onValueChange = {description_Password = it},
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
             )
 
 
+            Text("Se creará una cuenta para el cliente automáticamente. La contraseña será 'LEGALMATCH",
+                style = MaterialTheme.typography.bodySmall)
 
-            Text(text = "Unidad de Investigación:", style = MaterialTheme.typography.bodyMedium)
-            BasicTextField(
-                value = description_UnidadInv,
-                onValueChange = {description_UnidadInv = it},
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                    .padding(8.dp)
-            )
 
             // Botón para agendar asesoría
             Button(
                 onClick = {
-                    casosViewModel.createCaso(casoAMandar)
-                    navController.navigate(Routes.Casos.route)
+                    errorMessage1 = if(nombre.text.isBlank() || correo.text.isBlank()){
+                        "Nombre y correo son obligatorios" } else { "" }
+                    errorMessage2 = if(titulo.text.isBlank() || descripcion.text.isBlank()){
+                        "Titulo y descripcion son obligatorios" } else { "" }
+                    errorMessage3 = if(!direccion.text.startsWith("https://") or direccion.text.isBlank()){
+                        "Direccion no valida" } else { "" }
+                    errorMessage4 = if(!drive.text.startsWith("https://") or drive.text.isBlank()){
+                        "Drive no valido" } else { "" }
+
+                    if(errorMessage1.isBlank() and errorMessage2.isBlank() and errorMessage3.isBlank() and errorMessage4.isBlank()){
+                        Log.d("MainActivity", "Se ha creado el caso")
+                        casosViewModel.createCaso(casoAMandar)
+
+                        navController.navigate(Routes.Casos.route)
+
+                    } else {return@Button}
                           },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
@@ -260,6 +255,75 @@ fun FormCasoScreen(navController: NavController, casosViewModel: CasosViewModel)
                 shape = RoundedCornerShape(18.dp)
             ) {
                 Text(text = "Crear Caso", fontSize = 18.sp)
+            }
+
+        }
+    }
+}
+
+@Composable
+fun InputField(
+    label: String,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    singleLine: Boolean = true,
+    modifier: Modifier = Modifier,
+    height: Int = 15
+) {
+    Column {
+        Text(text = label, style = MaterialTheme.typography.bodyMedium)
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = singleLine,
+            modifier = modifier
+                .fillMaxWidth()
+                .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
+                .padding(8.dp)
+                .height(height.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DynamicSelectTextField(
+    selectedValue: String,
+    options: List<String>,
+    label: String,
+    onValueChangedEvent: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        //modifier = modifier.height(15.dp)
+    ) {
+        OutlinedTextField(
+            readOnly = true,
+            value = selectedValue,
+            onValueChange = {},
+            label = { Text(text = label) },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            colors = OutlinedTextFieldDefaults.colors(),
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            options.forEach { option: String ->
+                DropdownMenuItem(
+                    text = { Text(text = option) },
+                    onClick = {
+                        expanded = false
+                        onValueChangedEvent(option)
+                    }
+                )
             }
         }
     }

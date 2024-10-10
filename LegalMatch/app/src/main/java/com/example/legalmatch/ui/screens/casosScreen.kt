@@ -41,6 +41,7 @@ fun CasosScreen(
     // Mostrar el contenido según el estado actual
     if (state.isLoading) {
         CircularProgressIndicator()
+        return
     }
 
     Scaffold(
@@ -49,7 +50,7 @@ fun CasosScreen(
             navIcon = false,
             actIcon = true,
             navController = navController,
-            rutaActButton = Routes.Casos.route,
+            rutaActButton = Routes.FormCaso.route,
             searchButton = true,
             searchVM = searchBoxViewModel
         ) },

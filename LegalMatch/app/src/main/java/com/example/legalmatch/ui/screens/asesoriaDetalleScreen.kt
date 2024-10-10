@@ -43,7 +43,8 @@ fun AsesoriaDetalleScreen(
     navController: NavController,
     asesoriaViewModel: AsesoriaViewModel,
     casoId: Int,
-    usuariosVM: UsuariosViewModel
+    usuariosVM: UsuariosViewModel,
+    casoViewModel: CasosViewModel
 ) {
     val scrollState = rememberScrollState() // Estado del scroll
 
@@ -126,6 +127,7 @@ fun AsesoriaDetalleScreen(
                 onClick = {
                     asesoriaViewModel.aceptarcaso(asesoria)
                     navController.navigate(Routes.Casos.route)
+                    casoViewModel.fetchCasos()
                           },
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                 colors = ButtonDefaults.buttonColors(

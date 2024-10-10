@@ -14,6 +14,7 @@ import com.example.legalmatch.data.api.models.SendCaso
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Order
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 
@@ -86,6 +87,7 @@ class AsesoriaViewModel : ViewModel() {
                 }
                 fetchAsesorias()
             } catch (e: Exception){ errorMessage(e) }
+
 
 
         }
