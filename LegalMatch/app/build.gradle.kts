@@ -101,6 +101,14 @@ dependencies {
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 //    implementation("com.himanshoe:charty:2.0.0-alpha01")
 
+    //IA
+    implementation(libs.generativeai)
+    implementation(libs.androidx.activity.compose.v170)
+    implementation(libs.material3)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation (libs.json)
+
     //News
     implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-rc01")
