@@ -25,10 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import android.net.Uri
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.text.font.FontWeight
 import coil3.compose.AsyncImage
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.ui.theme.AzulTec
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -36,14 +40,14 @@ import kotlinx.coroutines.launch
 fun NoticiasScreen(navController: NavHostController, noticiasViewModel: NoticiasViewModel) {
     val noticiasState = noticiasViewModel.noticiasState.collectAsState().value
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    val isLoading = remember { mutableStateOf(true) }
+    val isLoading by noticiasViewModel.isLoading.collectAsState()
     val errorMessage = remember { mutableStateOf<String?>(null) }
 
     val getImage = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         selectedImageUri = uri
     }
 
-    val coroutineScope = rememberCoroutineScope()
+
 
     Scaffold(
         topBar = { CustomTopBar(title = "Noticias", navIcon = false, actIcon = false) },
@@ -53,7 +57,7 @@ fun NoticiasScreen(navController: NavHostController, noticiasViewModel: Noticias
                 onClick = {
                     navController.navigate("AddNews")
                 },
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = AzulTec,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Agregar noticia")
@@ -61,13 +65,26 @@ fun NoticiasScreen(navController: NavHostController, noticiasViewModel: Noticias
         },
         floatingActionButtonPosition = FabPosition.End
     ) { padding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(padding),
+            contentAlignment = Alignment.Center
         ) {
-            items(noticiasState) { noticia ->
-                NoticiaItem(noticia)
+            if(isLoading){
+                CircularProgressIndicator()
+            }
+            else{
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ){
+                    items(noticiasState){ noticia ->
+                        NoticiaItem(noticia = noticia)
+                    }
+                }
             }
         }
     }
@@ -87,9 +104,9 @@ fun NoticiaItem(noticia: Noticia) {
         ) {
             // Título de la noticia
             Text(
-                text = noticia.titulo,
+                text = noticia.titulo,fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 12.dp)
             )
 
             // Descripción de la noticia

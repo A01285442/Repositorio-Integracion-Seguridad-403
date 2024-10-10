@@ -15,11 +15,13 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.util.UUID
 import java.time.LocalDateTime
@@ -61,6 +63,9 @@ class NoticiasViewModel : ViewModel() {
     private val _noticiasState = MutableStateFlow<List<Noticia>>(emptyList())
     val noticiasState: StateFlow<List<Noticia>> get() = _noticiasState
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> get() = _isLoading
+
     init {
         viewModelScope.launch {
             delay(1000)
@@ -72,6 +77,7 @@ class NoticiasViewModel : ViewModel() {
 
     fun fetchNoticias() {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
                 val noticias = supabase.from("noticias")
                     .select()
@@ -81,33 +87,33 @@ class NoticiasViewModel : ViewModel() {
                 _noticiasState.value = noticias
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching noticias: ${e.message}", e)
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun agregarNoticia(titulo: String, descripcion: String, imagenUri: Uri?, context: Context){
+    fun agregarNoticia(titulo: String, descripcion: String, imagenUri: Uri?, context: Context) {
         viewModelScope.launch {
             try {
-                var imageUrl: String? = null
-
-
-
+                val imageUrl = if (imagenUri != null) {
+                    uploadImageToSupabase(context, imagenUri)
+                } else {
+                    null
+                }
 
                 val nuevaNoticia = Noticia(
                     id = UUID.randomUUID().toString(),
                     titulo = titulo,
                     descripcion = descripcion,
                     fecha = getCurrentDate(),
-                    imagenurl = imageUrl // La URL de la imagen será la URI en formato string
+                    imagenurl = imageUrl
                 )
 
-                // Inserta la noticia en la base de datos
-                val response = supabase.from("noticias")
-                    .insert(nuevaNoticia)
+                val response = supabase.from("noticias").insert(nuevaNoticia)
                 Log.d(TAG, "Noticia agregada: $response")
 
-                // Actualiza la lista de noticias
                 fetchNoticias()
             } catch (e: Exception) {
                 Log.e(TAG, "Error agregando noticia: ${e.message}", e)
@@ -115,19 +121,27 @@ class NoticiasViewModel : ViewModel() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun uploadImageToSupabase(context: Context, uri: Uri): String? {
+        return try {
+            val imageBytes = uriToByteArray(context, uri)
+            if (imageBytes != null) {
+                val fileName = "images/${UUID.randomUUID()}.png"
+                supabase.storage.from("NoticiasImagenes")
+                    .upload(fileName, imageBytes)
 
-    fun actualizarNoticia(id: Int, noticia: Noticia) {
-        viewModelScope.launch {
-            try {
-                val response = supabase.from("noticias")
-                    .update(noticia)
-                    .decodeList<Noticia>()
+                Log.d("Upload", "Imagen subida con éxito: $fileName")
 
-                Log.d(TAG, "Noticia actualizada: $response")
-                fetchNoticias()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error updating noticia: ${e.message}", e)
+                supabase.storage.from("NoticiasImagenes")
+                    .publicUrl(fileName)
+                    .toString()
+            } else {
+                Log.e("Upload", "Error al convertir la URI a ByteArray")
+                null
             }
+        } catch (e: Exception) {
+            Log.e("Upload", "Error subiendo imagen: ${e.message}")
+            null
         }
     }
 
@@ -138,52 +152,12 @@ class NoticiasViewModel : ViewModel() {
                     .delete()
                     .decodeList<Noticia>()
                 Log.d(TAG, "Noticia eliminada: $response")
-                fetchNoticias() // Refresh the list after deletion
+                fetchNoticias()
             } catch (e: Exception) {
                 Log.e(TAG, "Error deleting noticia: ${e.message}", e)
             }
         }
     }
-
-    //Imagenes
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun uploadImageToSupabase(context: Context, uri: Uri) {
-        val imageBytes = uriToByteArray(context, uri)
-        imageBytes?.let {
-            val fileName = "images/${UUID.randomUUID()}.png"
-            try {
-                supabase.storage.from("NoticiasImagenes")
-                    .upload(fileName, imageBytes)
-
-                Log.d("Upload", "Imagen subida con éxito: $fileName")
-
-                // Obtiene la URL pública de la imagen
-                val imageUrl = supabase.storage.from("NoticiasImagenes")
-                    .publicUrl(fileName)
-                    .toString()
-
-
-                // Crea una nueva noticia con la URL de la imagen
-                val nuevaNoticia = Noticia(
-                    id = UUID.randomUUID().toString(),
-                    titulo = "Título de la Noticia",
-                    descripcion = "Descripción de la Noticia",
-                    fecha = getCurrentDate(),
-                    imagenurl = imageUrl
-                )
-
-                // Inserta la noticia en la base de datos
-                val response = supabase.from("noticias")
-                    .insert(nuevaNoticia)
-
-                Log.d("Upload", "Noticia agregada: $response")
-                fetchNoticias() // Actualiza la lista de noticias después de la inserción
-            } catch (e: Exception) {
-                Log.e("Upload", "Error subiendo imagen: ${e.message}")
-            }
-        }
-    }
-
 
     // Convertir URI a ByteArray
     private suspend fun uriToByteArray(context: Context, uri: Uri): ByteArray? {
