@@ -67,7 +67,7 @@ fun CustomBottomBar(navController: NavController) {
                 ) },
                 ///label = { Text("Casos") },
                 selected = false,
-                onClick = { navController.navigate("casos") }
+                onClick = { navController.navigate("Noticias") }
             )
 
             NavigationBarItem(

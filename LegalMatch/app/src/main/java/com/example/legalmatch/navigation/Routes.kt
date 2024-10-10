@@ -13,6 +13,8 @@ sealed class Routes(val route: String) {
     object Stats : Routes("Stats")
 
     // VISTAS DE ABOGADO SECUNDARIAS
+    object Noticias : Routes("Noticias")
+    object AddNews : Routes("AddNews")
     object CasoDetalle : Routes("casoD/{itemId}") {
         fun createRoute(itemId: Int) = "casoD/$itemId"
     }
