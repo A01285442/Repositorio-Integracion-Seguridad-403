@@ -57,11 +57,20 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.net.HttpURLConnection
 import java.net.URL
 import java.io.OutputStreamWriter
 import org.json.JSONObject
+import android.util.Log
 
+@Serializable
+data class correcion(
+    val titulo :String,
+    val tipoDelito :String,
+    val descripcionModificada: String
+
+)
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,11 +80,12 @@ fun FormAsesoriaScreen(navController: NavController) {
     var selectedRole by remember { mutableStateOf("Selecciona un rol") }
     var selectedDate by remember { mutableStateOf("Selecciona una fecha") }
     var selectedHour by remember { mutableStateOf("Selecciona el horario de tu cita") }
-    var description by remember { mutableStateOf(TextFieldValue("")) }
+    var description by remember { mutableStateOf("") }
 
     //Estado para manejar eñ api
 
     var correctedText by remember { mutableStateOf("") }
+    var apiResult by remember { mutableStateOf<correcion?>(null) }
 
 
     LocalDateTime.now().dayOfMonth
@@ -96,7 +106,7 @@ fun FormAsesoriaScreen(navController: NavController) {
         (LocalDateTime.now().dayOfMonth +8).toString() + " de " + (LocalDateTime.now().monthValue+8).toString(),
         (LocalDateTime.now().dayOfMonth +9).toString() + " de " + (LocalDateTime.now().monthValue+9).toString(),
 
-    ) // Ejemplo de fechas
+        ) // Ejemplo de fechas
     val horarios = listOf("9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm")
 
     Scaffold(
@@ -244,37 +254,13 @@ fun FormAsesoriaScreen(navController: NavController) {
                     .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                     .padding(8.dp)
             )
-            // Botón para enviar el texto a la IA
-            Button(
-                onClick = {
-                    makeApiRequest(description.text) { result ->
-                        correctedText = result
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
-            ) {
-                Text(text = "Enviar texto a IA", fontSize = 18.sp)
-            }
-
-            // Mostrar el texto corregido
-            Text(text = "Texto corregido por la IA:", fontSize = 18.sp)
-            BasicTextField(
-                value = correctedText,
-                onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.medium)
-                    .padding(8.dp),
-                enabled = false // Hacer el campo solo de lectura
-            )
 
             // Botón para agendar asesoría
             Button(
-                onClick = { /* Acciones para agendar asesoría */ },
+                onClick = {
+                    makeApiRequest(description) { result ->
+                        apiResult = result }
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
                     contentColor = Color.White),
@@ -287,14 +273,25 @@ fun FormAsesoriaScreen(navController: NavController) {
             ) {
                 Text(text = "Agendar Asesoría", fontSize = 18.sp)
             }
+
+           // Mostrar los resultados si 'apiResult' no es nulo
+            apiResult?.let { correccion ->
+                Column {
+                    Text("Título: ${correccion.titulo}")
+                    Text("Tipo de Delito: ${correccion.tipoDelito}")
+                    Text("Descripción Corregida: ${correccion.descripcionModificada}")
+                }
+            } ?: Text("No se ha recibido ninguna corrección aún.")
+            //Text(text = correctedText)
         }
     }
 }
 
 @OptIn(DelicateCoroutinesApi::class)
-fun makeApiRequest(ask: String, onResult: (String) -> Unit) {
+fun makeApiRequest(ask: String, onResult: (correcion?) -> Unit) {
+    // Se realiza en una corrutina para no bloquear el hilo principal
     kotlinx.coroutines.GlobalScope.launch(Dispatchers.IO) {
-        val apiKey = "AIzaSyD2BLAqAzEH5-76h16dSpf5sLJkxlcqw7k"
+        val apiKey = "AIzaSyAQ8F9U3P08yps2LHGwNv2MhDXLy1gjuuc"
         val url = URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey")
         val jsonInputString = """
             {
@@ -302,7 +299,7 @@ fun makeApiRequest(ask: String, onResult: (String) -> Unit) {
                     {
                         "role": "user",
                         "parts": [
-                            {"text": "Te proporcionare informacion a continuacion, esta informacion es la descripcion de un caso penal escrita por una persona que ocupa asesoria legal. De esta informacion ocupo que me proves un titulo, que tipo de delito es y una descripcion modificada si tiene falta de ortografia o si la descripcion proveida no es coherente. La descripcion no debe de pasar de 200 palabras y de una escala del 1 al 10 me debes de decir que tanto modificaste la descripcion. Todo me lo debes de dar en este orden y debe de tener un salto de linea en cada parte."}
+                            {"text": "Proporcionaré una descripción de un caso penal. Necesito que me des los siguientes elementos en formato JSON: un título, el tipo de delito, y una descripción corregida en caso de que la original tenga errores de no mas de 200 palabras. Ojo, no tienes que poner la palabra json al inicio, solo dame el puro formato json, sin nada extra. El JSON debe tener exactamente los siguientes campos: 'titulo', 'tipoDelito' y 'descripcionModificada'."}
                         ]
                     },
                     {
@@ -315,11 +312,13 @@ fun makeApiRequest(ask: String, onResult: (String) -> Unit) {
             }
         """.trimIndent()
 
+        // Configuración de la conexión HTTP
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
         connection.setRequestProperty("Content-Type", "application/json")
         connection.doOutput = true
 
+        // Escritura del cuerpo de la solicitud
         withContext(Dispatchers.IO) {
             OutputStreamWriter(connection.outputStream).use { writer ->
                 writer.write(jsonInputString)
@@ -327,40 +326,74 @@ fun makeApiRequest(ask: String, onResult: (String) -> Unit) {
             }
         }
 
+        // Lectura de la respuesta
         val responseCode = connection.responseCode
         if (responseCode == HttpURLConnection.HTTP_OK) {
             val responseText = connection.inputStream.bufferedReader().use { it.readText() }
             val jsonResponse = parseResponse(responseText)
+            val prueba = decodeJson(jsonResponse)
             withContext(Dispatchers.Main) {
-                onResult(jsonResponse)
+                onResult(prueba)
             }
         } else {
             withContext(Dispatchers.Main) {
-                onResult("Error: $responseCode")
+                onResult(null)
             }
         }
         connection.disconnect()
     }
 }
 
+// Modificación en esta función para que devuelva un JSON y almacene datos en variables
 fun parseResponse(response: String): String {
     try {
+        // Convertimos la cadena de respuesta en un objeto JSON
         val jsonObject = JSONObject(response)
+
+        // Accedemos al array "candidates"
         val candidates = jsonObject.getJSONArray("candidates")
+
+        // Tomamos el primer objeto en el array "candidates"
         if (candidates.length() > 0) {
             val firstCandidate = candidates.getJSONObject(0)
+
+            // Accedemos al contenido del primer candidato
             val content = firstCandidate.getJSONObject("content")
+
+            // Accedemos al array "parts"
             val parts = content.getJSONArray("parts")
+
+            // Tomamos el primer objeto en el array "parts" y extraemos el campo "text"
             if (parts.length() > 0) {
                 val firstPart = parts.getJSONObject(0)
-                return firstPart.getString("text")
+                val content = firstPart.getString("text")
+                return content
             }
         }
     } catch (e: Exception) {
         e.printStackTrace()
         return "Error al parsear la respuesta."
     }
+
     return "No se encontró contenido relevante."
+}
+
+fun decodeJson(response: String): correcion? {
+    return try {
+        // Convertimos el string JSON a un objeto JSON
+        val jsonObject = JSONObject(response)
+
+        // Extraemos los valores por sus llaves
+        val titulo = jsonObject.getString("titulo")
+        val tipoDelito = jsonObject.getString("tipoDelito")
+        val descripcionModificada = jsonObject.getString("descripcionModificada")
+
+        // Creamos y retornamos una instancia de 'correcion'
+        correcion(titulo, tipoDelito, descripcionModificada)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+        }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
