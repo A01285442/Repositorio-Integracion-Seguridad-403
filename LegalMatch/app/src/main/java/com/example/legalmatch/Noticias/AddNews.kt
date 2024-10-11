@@ -19,9 +19,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.ui.theme.AzulTec
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -40,10 +42,6 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
                 imagenUri = uri
-
-                noticiasViewModel.viewModelScope.launch {
-                    noticiasViewModel.uploadImageToSupabase(context, uri)
-                }
             }
         }
     }
@@ -67,6 +65,7 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                 label = { Text("Título") },
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(16.dp))
 
             // descripción
             TextField(
@@ -75,6 +74,7 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                 label = { Text("Descripción") },
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(16.dp))
 
             // imagen
             Button(
@@ -83,7 +83,8 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                     val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     launcher.launch(intent)
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = AzulTec)
             ) {
                 Text("Agregar Imagen")
             }
@@ -99,24 +100,26 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                         .height(200.dp)
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
 
             // guardar la noticia
             Button(
                 onClick = {
-                    // Verifica que los campos no estén vacíos antes de guardar
-                    if (titulo.isNotEmpty() && descripcion.isNotEmpty() && imagenUri != null) {
-                        noticiasViewModel.agregarNoticia( // Se manda al DB
+                    if (titulo.isNotEmpty() && descripcion.isNotEmpty()) {
+                        noticiasViewModel.agregarNoticia(
                             titulo = titulo,
                             descripcion = descripcion,
-                            imagenUri = imagenUri, // Aquí pasa el Uri directamente
-                            context = context // Pasa el contexto para la función de subir imagen
+                            imagenUri = imagenUri,
+                            context = context
                         )
-                        navController.popBackStack() // Navega hacia atrás después de guardar
+                        navController.navigate("Noticias")
+//                        navController.popBackStack()
                     } else {
                         Toast.makeText(context, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = AzulTec)
             ) {
                 Text("Guardar Noticia")
             }
