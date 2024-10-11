@@ -17,5 +17,6 @@ data class Asesoria(
     val id: Int,
     val id_cliente: Int,
     val nuc: String,
-    val titulo: String
+    val titulo: String,
+    val descripcion_modificada: String
 )

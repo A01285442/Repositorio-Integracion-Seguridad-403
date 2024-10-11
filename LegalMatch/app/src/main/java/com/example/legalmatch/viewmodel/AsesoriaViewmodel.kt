@@ -101,10 +101,23 @@ class AsesoriaViewModel : ViewModel() {
 
     }
 
+    fun enviarAsesoria(newAsesoria: Asesoria){
+        viewModelScope.launch {
+            try {
+                supabase.postgrest["asesorias"].insert(newAsesoria)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d(TAG, e.message.toString())
+            }
+        }
+    }
+
     fun errorMessage(error: Exception){
         Log.d(TAG, "Error: ${error.message}")
         _state = state.copy(isLoading = false)
 
     }
+
+
 }
 
