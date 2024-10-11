@@ -63,6 +63,16 @@ import java.net.URL
 import java.io.OutputStreamWriter
 import org.json.JSONObject
 import android.util.Log
+import com.example.legalmatch.data.api.models.Asesoria
+import java.time.LocalDateTime as JavaLocalDateTime
+import java.time.ZoneOffset
+import kotlinx.datetime.toKotlinLocalDateTime
+import java.time.Instant
+import kotlinx.datetime.Instant as KtInstant
+import kotlinx.datetime.LocalDateTime as KtLocalDateTime
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @Serializable
 data class correcion(
@@ -75,7 +85,7 @@ data class correcion(
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormAsesoriaScreen(navController: NavController) {
+fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel) {
     // Estado para manejar los datos del formulario
     var selectedRole by remember { mutableStateOf("Selecciona un rol") }
     var selectedDate by remember { mutableStateOf("Selecciona una fecha") }
@@ -260,6 +270,43 @@ fun FormAsesoriaScreen(navController: NavController) {
                 onClick = {
                     makeApiRequest(description) { result ->
                         apiResult = result }
+
+                    // Obtenemos la fecha actual con java.time.LocalDateTime
+                    val nowJavaTime = java.time.LocalDateTime.now()
+
+                    // Convertimos java.time.LocalDateTime a java.time.Instant (zona UTC)
+                    val instant = nowJavaTime.toInstant(ZoneOffset.UTC)
+
+                    // Convertimos java.time.Instant a kotlinx.datetime.LocalDateTime
+                    val nowKotlinxTime = KtInstant.fromEpochSeconds(instant.epochSecond, instant.nano)
+                        .toLocalDateTime(TimeZone.UTC) // Usamos TimeZone.UTC en lugar de ZoneOffset.UTC
+
+                    val esDemandante = selectedRole == "Demandante"
+
+                    // Crear una instancia de Asesoria con los datos del formulario
+                    val newAsesoria = apiResult?.let {
+                        Asesoria(
+                            c_investigacion = "", // Modificar si tienes este dato
+                            c_judicial = "",      // Modificar si tienes este dato
+                            estado = "En Proceso", // Ejemplo de estado
+                            cliente_confirmado = true,
+                            cliente_denuncio = esDemandante,
+                            created_at = nowKotlinxTime, // Fecha actual
+                            delito = it.tipoDelito, // Usar el rol seleccionado como delito (modificar si es necesario)
+                            descripcion = description,
+                            fecha_asesoria = KtLocalDateTime.parse(selectedDate), // Convertir la fecha seleccionada
+                            id = 0, // Este valor puede cambiar según la base de datos
+                            id_cliente = 123, // Este es un ejemplo, debes obtener el id del cliente actual
+                            nuc = "N/A", // Modificar si tienes este dato
+                            titulo = it.titulo, // Este es un título de ejemplo
+                            descripcion_modificada = it.descripcionModificada // Aquí va el texto corregido por la API
+                        )
+                    }
+
+                    // Llamar a la función enviarAsesoria del ViewModel
+                    if (newAsesoria != null) {
+                        viewModel.enviarAsesoria(newAsesoria)
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
@@ -274,7 +321,7 @@ fun FormAsesoriaScreen(navController: NavController) {
                 Text(text = "Agendar Asesoría", fontSize = 18.sp)
             }
 
-           // Mostrar los resultados si 'apiResult' no es nulo
+            // Mostrar los resultados si 'apiResult' no es nulo
             apiResult?.let { correccion ->
                 Column {
                     Text("Título: ${correccion.titulo}")
@@ -393,12 +440,14 @@ fun decodeJson(response: String): correcion? {
     } catch (e: Exception) {
         e.printStackTrace()
         null
-        }
+    }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+
+
+/*@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @Preview(showBackground = true)
 fun FormAsesoriaScreenPreview() {
     FormAsesoriaScreen(navController = rememberNavController())
-}
+}*/
