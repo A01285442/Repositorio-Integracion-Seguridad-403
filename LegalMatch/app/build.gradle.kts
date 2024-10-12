@@ -107,8 +107,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation (libs.json)
-<<<<<<< Updated upstream
-=======
 
     //News
     implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")

@@ -63,6 +63,31 @@ import java.net.URL
 import java.io.OutputStreamWriter
 import org.json.JSONObject
 import android.util.Log
+
+@Serializable
+data class correcion(
+    val titulo :String,
+    val tipoDelito :String,
+    val descripcionModificada: String
+
+)
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import java.net.HttpURLConnection
+import java.net.URL
+import java.io.OutputStreamWriter
+import org.json.JSONObject
+import android.util.Log
 <<<<<<< Updated upstream
 import com.example.legalmatch.data.api.models.Asesoria
 import java.time.LocalDateTime as JavaLocalDateTime
@@ -327,11 +352,7 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                 Text(text = "Agendar Asesoría", fontSize = 18.sp)
             }
 
-<<<<<<< Updated upstream
-            // Mostrar los resultados si 'apiResult' no es nulo
-=======
            // Mostrar los resultados si 'apiResult' no es nulo
->>>>>>> Stashed changes
             apiResult?.let { correccion ->
                 Column {
                     Text("Título: ${correccion.titulo}")
@@ -450,14 +471,6 @@ fun decodeJson(response: String): correcion? {
     } catch (e: Exception) {
         e.printStackTrace()
         null
-<<<<<<< Updated upstream
-    }
-}
-
-
-
-/*@RequiresApi(Build.VERSION_CODES.O)
-=======
         }
 }
 
