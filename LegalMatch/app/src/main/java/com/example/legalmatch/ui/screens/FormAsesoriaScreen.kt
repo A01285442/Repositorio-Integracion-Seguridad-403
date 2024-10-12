@@ -63,16 +63,6 @@ import java.net.URL
 import java.io.OutputStreamWriter
 import org.json.JSONObject
 import android.util.Log
-
-@Serializable
-data class correcion(
-    val titulo :String,
-    val tipoDelito :String,
-    val descripcionModificada: String
-
-)
-import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -82,13 +72,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
-import java.net.HttpURLConnection
-import java.net.URL
-import java.io.OutputStreamWriter
-import org.json.JSONObject
-import android.util.Log
-<<<<<<< Updated upstream
 import com.example.legalmatch.data.api.models.Asesoria
 import java.time.LocalDateTime as JavaLocalDateTime
 import java.time.ZoneOffset
@@ -99,8 +82,6 @@ import kotlinx.datetime.LocalDateTime as KtLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-=======
->>>>>>> Stashed changes
 
 @Serializable
 data class correcion(
@@ -298,7 +279,6 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                 onClick = {
                     makeApiRequest(description) { result ->
                         apiResult = result }
-<<<<<<< Updated upstream
 
                     // Obtenemos la fecha actual con java.time.LocalDateTime
                     val nowJavaTime = java.time.LocalDateTime.now()
@@ -320,10 +300,10 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                             estado = "En Proceso", // Ejemplo de estado
                             cliente_confirmado = true,
                             cliente_denuncio = esDemandante,
-                            created_at = nowKotlinxTime, // Fecha actual
+                            created_at = null, // Fecha actual nowKotlinxTime
                             delito = it.tipoDelito, // Usar el rol seleccionado como delito (modificar si es necesario)
                             descripcion = description,
-                            fecha_asesoria = KtLocalDateTime.parse(selectedDate), // Convertir la fecha seleccionada
+                            fecha_asesoria = null, // Convertir la fecha seleccionada
                             id = 0, // Este valor puede cambiar según la base de datos
                             id_cliente = 123, // Este es un ejemplo, debes obtener el id del cliente actual
                             nuc = "N/A", // Modificar si tienes este dato
@@ -336,8 +316,6 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                     if (newAsesoria != null) {
                         viewModel.enviarAsesoria(newAsesoria)
                     }
-=======
->>>>>>> Stashed changes
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
@@ -474,8 +452,7 @@ fun decodeJson(response: String): correcion? {
         }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
->>>>>>> Stashed changes
+/*@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @Preview(showBackground = true)
 fun FormAsesoriaScreenPreview() {

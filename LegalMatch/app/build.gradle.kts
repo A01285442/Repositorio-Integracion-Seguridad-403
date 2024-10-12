@@ -116,5 +116,4 @@ dependencies {
 //    implementation("io.github.jan-tennert.supabase:storage-kt:3.0.0")
     implementation("io.github.jan-tennert.supabase:storage-kt:2.6.1")
 
->>>>>>> Stashed changes
 }

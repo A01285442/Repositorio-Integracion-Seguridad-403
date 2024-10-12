@@ -92,6 +92,9 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
 
 
                 items(asesoriaList) { asesoria ->
+                    if (asesoria.fecha_asesoria == null){
+                        return@items
+                    }
                     if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear - 1) {
                         if (!subtituloAyerMostrado) {
                             Subtitulo("Ayer")
