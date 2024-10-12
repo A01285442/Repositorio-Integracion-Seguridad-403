@@ -24,11 +24,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.app.navigation.Routes
 import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
@@ -83,7 +85,6 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
 
 
                 val mesesEspanol = listOf("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
-
                 var subtituloAyerMostrado = false
                 var subtituloHoyMostrado = false
                 var subtituloMananaMostrado = false
@@ -92,10 +93,10 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
 
 
                 items(asesoriaList) { asesoria ->
-                    if (asesoria.fecha_asesoria == null){
+                    if(asesoria.fecha_asesoria == kotlinx.datetime.LocalDateTime(1, 1, 1, 1, 1, 1)){
                         return@items
                     }
-                    if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear - 1) {
+                    else if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear - 1) {
                         if (!subtituloAyerMostrado) {
                             Subtitulo("Ayer")
                             subtituloAyerMostrado = true
@@ -103,7 +104,7 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
                         ItemCard(
                             title = "${asesoria.fecha_asesoria.hour}:00 • ${asesoria.titulo}",
                             description = asesoria.descripcion,
-                            onClick = { selectedAsesoria = asesoria } // Al hacer click, seleccionamos la asesoría
+                            onClick = { navController.navigate(Routes.AsesoriaDetalle.createRoute(asesoria.id)) } // Al hacer click, seleccionamos la asesoría
                         )
                     }
                     else if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear) {
@@ -114,7 +115,7 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
                         ItemCard(
                             title = "${asesoria.fecha_asesoria.hour}:00 • ${asesoria.titulo}",
                             description = asesoria.descripcion,
-                            onClick = { selectedAsesoria = asesoria }
+                            onClick = { navController.navigate(Routes.AsesoriaDetalle.createRoute(asesoria.id)) }
                         )
                     }
                     else if (asesoria.fecha_asesoria.dayOfYear == now.dayOfYear + 1) {
@@ -125,7 +126,7 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
                         ItemCard(
                             title = "${asesoria.fecha_asesoria.hour}:00 • ${asesoria.titulo}",
                             description = asesoria.descripcion,
-                            onClick = { selectedAsesoria = asesoria }
+                            onClick = { navController.navigate(Routes.AsesoriaDetalle.createRoute(asesoria.id)) }
                         )
                     }
                     else {
@@ -136,28 +137,14 @@ fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaView
                         ItemCard(
                             title = "${asesoria.fecha_asesoria.hour}:00 • ${asesoria.titulo}",
                             description = asesoria.descripcion,
-                            onClick = { selectedAsesoria = asesoria }
+                            onClick = { navController.navigate(Routes.AsesoriaDetalle.createRoute(asesoria.id)) }
                         )
                     }
                 }
             }
         }
 
-        // Mostrar el diálogo fuera del LazyColumn
-        selectedAsesoria?.let { asesoria ->
-            ConfirmacionDialog(
-                showDialog = selectedAsesoria != null,
-                onDismiss = { selectedAsesoria = null }, // Cerrar el diálogo sin cambios
-                onCancel = {
-                    asesoriaViewModel.cancelarCaso(asesoria)
-                    selectedAsesoria = null // Cerrar el diálogo
-                },
-                onConfirm = {
-                    asesoriaViewModel.aceptarcaso(asesoria, loginViewModel)
-                    selectedAsesoria = null // Cerrar el diálogo
-                }
-            )
-        }
+
     }
 }
 
@@ -170,33 +157,4 @@ fun Subtitulo(text: String){
         fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(12.dp)
     )
-}
-
-@Composable
-fun ConfirmacionDialog(
-    showDialog: Boolean,
-    onDismiss: () -> Unit,
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            title = { Text(text = "¿Quieres darle seguimiento a esta asesoría?") },
-            text = { Text("Si aceptas el caso, la información pasará a la siguiente pestaña\nSi cancelas la asesoría, el usuario podrá reprogramarla.") },
-            dismissButton = {
-                Button(
-                    onClick = onCancel,
-                    colors = ButtonColors(Color.Red,Color.White,Color.Gray,Color.Gray)
-                ) {
-                    Text("Cancelar Asesoría")
-                }
-            },
-            confirmButton = {
-                Button(onClick = onConfirm,  colors = ButtonColors(AzulTec,Color.White,Color.Gray,Color.Gray)) {
-                    Text("Aceptar Caso")
-                }
-            }
-        )
-    }
 }

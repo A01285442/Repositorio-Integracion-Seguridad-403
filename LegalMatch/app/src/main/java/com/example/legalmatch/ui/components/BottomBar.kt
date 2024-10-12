@@ -42,7 +42,7 @@ fun CustomBottomBar(navController: NavController) {
                 icon = { Image(
                         painter = painterResource(id = R.drawable.calendar),
                         contentDescription = "Asesorías",
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(32.dp)
 
                     ) },
                 //label = { Text("Agenda") },
@@ -53,7 +53,7 @@ fun CustomBottomBar(navController: NavController) {
                 icon = { Image(
                     painter = painterResource(id = R.drawable.portfolio),
                     contentDescription = "Casos",
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(32.dp)
                 ) },
                 ///label = { Text("Casos") },
                 selected = false,
@@ -63,15 +63,18 @@ fun CustomBottomBar(navController: NavController) {
                 icon = { Image(
                     painter = painterResource(id = R.drawable.news),
                     contentDescription = "news",
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(34.dp)
                 ) },
                 ///label = { Text("Casos") },
                 selected = false,
-                onClick = { navController.navigate("casos") }
+                onClick = { navController.navigate("Noticias") }
             )
 
             NavigationBarItem(
-                icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
+                icon = { Icon(
+                    Icons.Default.Person, contentDescription = "Perfil",
+                    modifier = Modifier.size(32.dp)
+                )},
                 //label = { Text("Perfil") },
                 selected = false,
                 onClick = { navController.navigate("perfil") }
@@ -80,7 +83,7 @@ fun CustomBottomBar(navController: NavController) {
                 icon = { Image(
                     painter = painterResource(id = R.drawable.stats),
                     contentDescription = "Stats",
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(28.dp)
                 )},
                 //label = { Text("Estadísticas") },
                 selected = false,

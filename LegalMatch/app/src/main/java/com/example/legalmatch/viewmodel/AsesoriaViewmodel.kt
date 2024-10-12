@@ -9,11 +9,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.legalmatch.data.api.models.Asesoria
+import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.data.api.models.SendCaso
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Order
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 
 
 private const val TAG = "MainActivity"
@@ -29,6 +32,10 @@ class AsesoriaViewModel : ViewModel() {
     val state: AsesoriaState get() = _state
 
     init { fetchAsesorias() }
+
+    fun getAsesoriaInfo(id: Int) : Asesoria? {
+        return state.copy().asesorias.firstOrNull{it.id == id}
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun fetchAsesorias() {
@@ -50,7 +57,7 @@ class AsesoriaViewModel : ViewModel() {
         }
     }
 
-    fun aceptarcaso(asesoria: Asesoria, loginViewModel: LoginViewModel){
+    fun aceptarcaso(asesoria: Asesoria){
         viewModelScope.launch {
             val caso = SendCaso(
                     c_investigacion = asesoria.c_investigacion,
@@ -82,23 +89,32 @@ class AsesoriaViewModel : ViewModel() {
             } catch (e: Exception){ errorMessage(e) }
 
 
+
         }
     }
 
     fun cancelarCaso(asesoria: Asesoria){
         viewModelScope.launch {
             try{
-                supabase.from("asesorias").update({
-                    set("estado","cancelado")
-                }) {
-                    filter {
-                        eq("id", asesoria.id)
-                    }
+                supabase.from("asesorias")
+                    .update({ set("estado","cancelado") }) {
+                        filter { eq("id", asesoria.id) }
                 }
                 fetchAsesorias()
             } catch (e:Exception){ errorMessage(e) }
         }
+    }
 
+    fun reagendarAsesoria(asesoria: Asesoria){
+        viewModelScope.launch {
+            try {
+                supabase.from("asesorias")
+                    .update({ set("fecha_asesoria", LocalDateTime(1,1,1,1,1,1)) }) {
+                        filter { eq("id", asesoria.id) }
+                    }
+                fetchAsesorias()
+            }catch (e:Exception){errorMessage(e)}
+        }
     }
 
     fun enviarAsesoria(newAsesoria: Asesoria){

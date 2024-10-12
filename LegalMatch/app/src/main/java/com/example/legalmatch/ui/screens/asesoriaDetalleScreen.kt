@@ -1,12 +1,13 @@
 package com.example.legalmatch.ui.screens
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,11 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
@@ -37,43 +36,44 @@ import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CasoDetalleScreen(
+fun AsesoriaDetalleScreen(
     navController: NavController,
-    casosVM: CasosViewModel,
+    asesoriaViewModel: AsesoriaViewModel,
     casoId: Int,
-    usuariosVM: UsuariosViewModel
+    usuariosVM: UsuariosViewModel,
+    casoViewModel: CasosViewModel
 ) {
-    val context = LocalContext.current
     val scrollState = rememberScrollState() // Estado del scroll
+
+    val asesoria = asesoriaViewModel.getAsesoriaInfo(casoId)
+    if (asesoria == null){
+        Text("Asesoría no encontrado. Favor de reiniciar la aplicación.")
+        return
+    }
+    usuariosVM.getClientInfo(asesoria.id_cliente)
+    val cliente = usuariosVM.state.infoCliente
 
     var showDialog by remember { mutableStateOf(false) }
 
-    val caso = casosVM.getCasoInfo(casoId)
-    if (caso == null){
-        Text("Caso no encontrado. Favor de reiniciar la aplicación.")
-        return
-    }
-    usuariosVM.getClientInfo(caso.id_cliente)
-    val cliente = usuariosVM.state.infoCliente
-
     Scaffold(
         topBar = {
-            CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController = navController)
+            CustomTopBar(title = "Asesoría #${asesoria.id}", navIcon = true, actIcon = false, navController = navController)
         },
         bottomBar = { CustomBottomBar(navController=navController) }
     ) { InnerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding((InnerPadding))
+                .padding(InnerPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .verticalScroll(scrollState),
         ) {
             // Información básica
             Text(
-                text = caso.titulo,
+                text = asesoria.titulo,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Left,
@@ -81,16 +81,7 @@ fun CasoDetalleScreen(
             )
             Text(
                 text =
-                    "Delito: ${caso.delito}" +
-                    "\nNUC: ${caso.nuc}" +
-                    "\nCarpeta Judicial: ${caso.c_judicial}" +
-                    "\nCarpeta de Investigación: ${caso.c_investigacion}" +
-                    "\nAcceso a Fiscalía Virtual: ${caso.fiscalia_virtual}" +
-                    "\nContraseña Fiscalía Virtual: ${caso.password_fv}" +
-                    "\nFiscal Titular: ${caso.id_abogado}" +
-                    "\nUnidad de investigación: ${caso.unidad_investigacion}" +
-                    "\nDirección de la Unidad Inv: ${caso.direccion_ui}",
-
+                "Delito: ${asesoria.delito}",
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Left
             )
@@ -104,10 +95,11 @@ fun CasoDetalleScreen(
                 modifier = Modifier.padding(vertical = 8.dp)
             )
             Text(
-                text = caso.descripcion,
+                text = asesoria.descripcion,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Justify
             )
+
 
 
             // Informacioón del cliente
@@ -120,95 +112,68 @@ fun CasoDetalleScreen(
             )
             Text(
                 text = "Nombre completo: ${cliente.nombre}" +
+                        if(asesoria.cliente_denuncio)  {"\nRol: Denunciante"} else {"\nRol: Denunciado"} +
                         "\nSexo: ${cliente.sexo}" +
                         "\nNacimiento: ${cliente.fecha_nacimiento.date}" +
                         "\nCorreo: ${cliente.correo}",
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Left
             )
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Añadir archivo
+
+            // Aceptar Caso
             Button(
                 onClick = {
-                    val url = caso.drive_link//Agregar funcionalidad de cambiar el link para los abogados.
-                    val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    startActivity(context, i, null)
-                },
-                modifier = Modifier.fillMaxWidth(),
+                    asesoriaViewModel.aceptarcaso(asesoria)
+                    navController.navigate(Routes.Casos.route)
+                    casoViewModel.fetchCasos()
+                          },
+                modifier = Modifier.fillMaxWidth().padding(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Blue,
+                    containerColor = AzulTec,
                     contentColor = Color.White
                 )
-            ) {
-                Text(text = "Añadir archivos")
-            }
+            ) { Text(text = "Aceptar Caso") }
 
-
-            // Ver en google maps
+            // Rechazar Caso
             Button(
                 onClick = {
-                    val url = caso.direccion_ui//Agregar funcionalidad de cambiar el link para los abogados.
-                    val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    startActivity(context, i, null)
-                },
-                modifier = Modifier.fillMaxWidth(),
+                    asesoriaViewModel.reagendarAsesoria(asesoria)
+                    navController.popBackStack()
+                          },
+                modifier = Modifier.fillMaxWidth().padding(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Blue,
+                    containerColor = AzulTec,
                     contentColor = Color.White
                 )
-            ) {
-                Text(text = "Ver en Google Maps")
-            }
-
-            // Editar información
-            Button(
-                onClick = {
-                    navController.navigate(Routes.FormCaso.route)
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray,
-                    contentColor = Color.White
-                )
-            ) {
-                Text(text = "Editar Información")
-            }
-            Button(
-                onClick = { Log.d("MainActivity","xd")
-                    navController.navigate(Routes.EstudiantesInvolucrados.createRoute(casoId)) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray,
-                    contentColor = Color.White
-                )
-            ) { Text(text = "Estudiantes Involucrados") }
+            ) { Text(text = "Reagendar Caso") }
 
             // Cerrar caso
             Button(
                 onClick = {
                     showDialog = true
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Red,
                     contentColor = Color.White
                 )
-            ) {
-                Text(text = "Concluir Caso")
-            }
+            ) { Text(text = "Rechazar Caso") }
 
             // Dialogo de confirmación
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false }, // Cerrar el diálogo si el usuario cancela
                     title = { Text("Confirmación") },
-                    text = { Text("¿Estás seguro de que deseas concluir el caso? Si lo haces, no podrás volver a abrirlo.") },
+                    text = { Text("¿Estás seguro de que deseas rechazar el caso?") },
                     confirmButton = {
                         Button(
                             colors = ButtonColors(containerColor = Color.Red, contentColor = Color.White, disabledContentColor = Color.Gray, disabledContainerColor = Color.Gray),
                             onClick = {
-                                casosVM.cerrarCaso(casoId)
-                                navController.navigateUp()
+                                // Acción para cerrar el caso
+                                asesoriaViewModel.cancelarCaso(asesoria)
+                                navController.navigateUp() // Navegar hacia atrás
                                 showDialog = false // Cerrar el diálogo
                             }
                         ) {
@@ -227,8 +192,7 @@ fun CasoDetalleScreen(
             }
 
 
-
-
         }
     }
 }
+

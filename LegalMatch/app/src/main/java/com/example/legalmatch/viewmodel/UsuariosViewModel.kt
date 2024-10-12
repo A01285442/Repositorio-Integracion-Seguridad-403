@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.supabase
@@ -29,6 +30,10 @@ class UsuariosViewModel : ViewModel(){
 
     init {
         fetchEstudiantes()
+    }
+
+    fun getEstudianteInfo(id: Int) : Usuario? {
+        return state.copy().estudiantes.firstOrNull{it.id == id}
     }
 
     fun fetchEstudiantes(){

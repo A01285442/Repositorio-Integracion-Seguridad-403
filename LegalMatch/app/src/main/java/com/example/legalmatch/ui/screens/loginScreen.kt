@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -24,9 +26,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +64,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
 
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,8 +85,8 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
         )
 
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = "LogoAxel",
+            painter = painterResource(id = R.drawable.balance),
+            contentDescription = "LogoBalanza",
             modifier = Modifier.height(300.dp)
 
         )
@@ -90,7 +97,16 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
             onValueChange = { username = it
                 loginError = false},
             label = { Text("E-mail") },
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            )
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -101,7 +117,16 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
             },
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            )
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -117,12 +142,9 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
                     viewModel.login(
                         username.lowercase(),
                         password,
-                        onLoginSuccessAbogado = {
-                            navController.navigate(Routes.Asesorias.route)
-                        },
-                        onLoginSuccessCliente = {
-                            navController.navigate(Routes.CasosCliente.route)
-                        }
+                        onLoginSuccessAbogado = { navController.navigate(Routes.Asesorias.route) },
+                        onLoginSuccessCliente = { navController.navigate(Routes.CasosCliente.route) },
+                        onLoginError = { loginError = true }
                     )
                 } else {
                     loginError = true
