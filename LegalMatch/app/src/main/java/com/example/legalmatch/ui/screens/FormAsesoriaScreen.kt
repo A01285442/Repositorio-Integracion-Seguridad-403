@@ -63,6 +63,7 @@ import java.net.URL
 import java.io.OutputStreamWriter
 import org.json.JSONObject
 import android.util.Log
+<<<<<<< Updated upstream
 import com.example.legalmatch.data.api.models.Asesoria
 import java.time.LocalDateTime as JavaLocalDateTime
 import java.time.ZoneOffset
@@ -73,6 +74,8 @@ import kotlinx.datetime.LocalDateTime as KtLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+=======
+>>>>>>> Stashed changes
 
 @Serializable
 data class correcion(
@@ -270,6 +273,7 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                 onClick = {
                     makeApiRequest(description) { result ->
                         apiResult = result }
+<<<<<<< Updated upstream
 
                     // Obtenemos la fecha actual con java.time.LocalDateTime
                     val nowJavaTime = java.time.LocalDateTime.now()
@@ -307,6 +311,8 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                     if (newAsesoria != null) {
                         viewModel.enviarAsesoria(newAsesoria)
                     }
+=======
+>>>>>>> Stashed changes
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
@@ -321,7 +327,11 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                 Text(text = "Agendar Asesoría", fontSize = 18.sp)
             }
 
+<<<<<<< Updated upstream
             // Mostrar los resultados si 'apiResult' no es nulo
+=======
+           // Mostrar los resultados si 'apiResult' no es nulo
+>>>>>>> Stashed changes
             apiResult?.let { correccion ->
                 Column {
                     Text("Título: ${correccion.titulo}")
@@ -440,12 +450,19 @@ fun decodeJson(response: String): correcion? {
     } catch (e: Exception) {
         e.printStackTrace()
         null
+<<<<<<< Updated upstream
     }
 }
 
 
 
 /*@RequiresApi(Build.VERSION_CODES.O)
+=======
+        }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+>>>>>>> Stashed changes
 @Composable
 @Preview(showBackground = true)
 fun FormAsesoriaScreenPreview() {
