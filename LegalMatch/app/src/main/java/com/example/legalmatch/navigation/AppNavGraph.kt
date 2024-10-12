@@ -47,10 +47,6 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
     val casosViewModel : CasosViewModel = viewModel()
     val usuariosViewModel: UsuariosViewModel = viewModel()
     val asesoriasViewModel: AsesoriaViewModel = viewModel()
-
-    val loginViewModel: LoginViewModel = viewModel() // Almacena la información del usuario
-    val casosViewModel : CasosViewModel = viewModel() // Almacena información de casos
-    val usuariosViewModel: UsuariosViewModel = viewModel() // Almacena información de otros usuarios
     val searchBoxViewModel : SearchViewModel = viewModel()
 
     NavHost(

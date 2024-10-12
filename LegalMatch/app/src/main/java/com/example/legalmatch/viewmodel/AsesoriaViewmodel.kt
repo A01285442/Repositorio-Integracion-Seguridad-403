@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.Caso
+import com.example.legalmatch.data.api.models.SendAsesoria
 import com.example.legalmatch.data.api.models.SendCaso
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
@@ -117,7 +118,7 @@ class AsesoriaViewModel : ViewModel() {
         }
     }
 
-    fun enviarAsesoria(newAsesoria: Asesoria){
+    fun enviarAsesoria(newAsesoria: SendAsesoria){
         viewModelScope.launch {
             try {
                 supabase.postgrest["asesorias"].insert(newAsesoria)

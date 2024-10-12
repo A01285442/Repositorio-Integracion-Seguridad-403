@@ -73,6 +73,7 @@ import androidx.compose.runtime.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.legalmatch.data.api.models.Asesoria
+import com.example.legalmatch.data.api.models.SendAsesoria
 import java.time.LocalDateTime as JavaLocalDateTime
 import java.time.ZoneOffset
 import kotlinx.datetime.toKotlinLocalDateTime
@@ -294,18 +295,16 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
 
                     // Crear una instancia de Asesoria con los datos del formulario
                     val newAsesoria = apiResult?.let {
-                        Asesoria(
+                        SendAsesoria(
                             c_investigacion = "", // Modificar si tienes este dato
                             c_judicial = "",      // Modificar si tienes este dato
-                            estado = "En Proceso", // Ejemplo de estado
+                            estado = "pendiente", // Ejemplo de estado
                             cliente_confirmado = true,
                             cliente_denuncio = esDemandante,
-                            created_at = null, // Fecha actual nowKotlinxTime
                             delito = it.tipoDelito, // Usar el rol seleccionado como delito (modificar si es necesario)
                             descripcion = description,
-                            fecha_asesoria = null, // Convertir la fecha seleccionada
-                            id = 0, // Este valor puede cambiar según la base de datos
-                            id_cliente = 123, // Este es un ejemplo, debes obtener el id del cliente actual
+                            fecha_asesoria = KtLocalDateTime(1,1,1,1,1,1), // Convertir la fecha seleccionada
+                            id_cliente = 1, // Este es un ejemplo, debes obtener el id del cliente actual
                             nuc = "N/A", // Modificar si tienes este dato
                             titulo = it.titulo, // Este es un título de ejemplo
                             descripcion_modificada = it.descripcionModificada // Aquí va el texto corregido por la API
