@@ -10,10 +10,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.Caso
+import com.example.legalmatch.data.api.models.SendAsesoria
 import com.example.legalmatch.data.api.models.SendCaso
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Order
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 
@@ -88,6 +90,7 @@ class AsesoriaViewModel : ViewModel() {
             } catch (e: Exception){ errorMessage(e) }
 
 
+
         }
     }
 
@@ -115,10 +118,23 @@ class AsesoriaViewModel : ViewModel() {
         }
     }
 
+    fun enviarAsesoria(newAsesoria: SendAsesoria){
+        viewModelScope.launch {
+            try {
+                supabase.postgrest["asesorias"].insert(newAsesoria)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d(TAG, e.message.toString())
+            }
+        }
+    }
+
     fun errorMessage(error: Exception){
         Log.d(TAG, "Error: ${error.message}")
         _state = state.copy(isLoading = false)
 
     }
+
+
 }
 

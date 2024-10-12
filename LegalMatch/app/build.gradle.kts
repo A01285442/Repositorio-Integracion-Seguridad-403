@@ -79,6 +79,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // HTTP
+    implementation(libs.okhttp)
+    implementation(libs.kotlinx.coroutines.android)
+
     // Supabase
     implementation(platform("io.github.jan-tennert.supabase:bom:2.6.1"))
     implementation("io.github.jan-tennert.supabase:postgrest-kt")

@@ -26,6 +26,9 @@ sealed class Routes(val route: String) {
     object EstudiantesInvolucrados : Routes("EstudiantesInvolucrados/{itemId}"){
         fun createRoute(id: Int) = "EstudiantesInvolucrados/$id"
     }
+    object EditCaso : Routes("edit_caso/{itemId}"){
+        fun createRoute(id: Int) = "edit_caso/$id"
+    }
 
 
     // VISTAS DE CLIENTE PRINCIPALES

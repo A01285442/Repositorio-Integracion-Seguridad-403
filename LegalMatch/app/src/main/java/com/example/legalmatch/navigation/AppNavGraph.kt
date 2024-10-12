@@ -43,10 +43,10 @@ val TAG = "MainActivity"
 @Composable
 fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaViewModel) {
 
-
-    val loginViewModel: LoginViewModel = viewModel() // Almacena la información del usuario
-    val casosViewModel : CasosViewModel = viewModel() // Almacena información de casos
-    val usuariosViewModel: UsuariosViewModel = viewModel() // Almacena información de otros usuarios
+    val loginViewModel: LoginViewModel = viewModel()
+    val casosViewModel : CasosViewModel = viewModel()
+    val usuariosViewModel: UsuariosViewModel = viewModel()
+    val asesoriasViewModel: AsesoriaViewModel = viewModel()
     val searchBoxViewModel : SearchViewModel = viewModel()
 
     NavHost(
@@ -95,13 +95,23 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             }
         }
         composable(
+            route = Routes.EditCaso.route,
+            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("itemId")
+            if (itemId != null) {
+                Log.d(TAG, "Navigating to Edit Caso")
+                FormCasoScreen(navController, casosViewModel, itemId)
+            }
+        }
+        composable(
             route = Routes.AsesoriaDetalle.route,
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
         ) { _backStackEntry ->
             val itemId = _backStackEntry.arguments?.getInt("itemId")
             if (itemId != null) {
                 Log.d(TAG, "Navigating to Asesoría Detalle")
-                AsesoriaDetalleScreen(navController, asesoriasViewModel, itemId, usuariosViewModel)
+                AsesoriaDetalleScreen(navController, asesoriasViewModel, itemId, usuariosViewModel, casosViewModel)
             }
         }
         composable(Routes.ListaEstudiantes.route) {
@@ -146,7 +156,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         }
         composable(Routes.FormAsesoria.route){
             Log.d(TAG, "Navigating to Forms Asesorías")
-            FormAsesoriaScreen(navController)
+            FormAsesoriaScreen(navController, asesoriasViewModel)
         }
 
     }

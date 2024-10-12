@@ -1,18 +1,27 @@
 package com.example.legalmatch.ui.screens
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.data.api.models.SendCaso
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.IOException
 
 // Supabase
 val supabase = createSupabaseClient(
@@ -28,11 +37,14 @@ private const val TAG = "MainActivity"
 data class CasoState(
     val casos: List<Caso> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String = ""
+    val errorMessage: String = "",
+    val pageExists: Boolean = false
 
 )
 
 class CasosViewModel() : ViewModel() {
+
+    private var searchJob: Job? = null
 
     private var _state by mutableStateOf(CasoState())
     val state: CasoState get() = _state
@@ -45,6 +57,8 @@ class CasosViewModel() : ViewModel() {
     fun getCasoInfo(id: Int) : Caso? {
         return state.copy().casos.firstOrNull{it.id == id}
     }
+
+
     fun cerrarCaso(id: Int) {
         viewModelScope.launch {
             try {
@@ -70,15 +84,29 @@ class CasosViewModel() : ViewModel() {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     fun createCaso(caso: SendCaso){
-        Log.d(TAG,"Caso aun no creado.")
+        viewModelScope.launch {
+        _state = state.copy(isLoading = true)
+
+            try {
+                supabase.from("casos").insert(caso)
+                Log.d(TAG,"Caso creado.")
+            } catch (e: Exception) {
+                Log.d(TAG, "Error: ${e.message}")
+            } finally {
+                _state = state.copy(isLoading = false)
+            }
+            delay(500)
+        }
+
         fetchCasos()
     }
 
 
 
 
-    private fun fetchCasos(){
+    fun fetchCasos(){
         viewModelScope.launch {
 
             _state = state.copy(isLoading = true) // Inicia el estado de carga
@@ -103,5 +131,9 @@ class CasosViewModel() : ViewModel() {
                 }
             }
         }
+    }
+
+    fun updateCaso(casoAMandar: SendCaso) {
+        Log.d(TAG, "No se esta actualizando aun")
     }
 }
