@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.legalmatch.data.api.models.EstudianteCaso
 import com.example.legalmatch.data.api.models.SendEstudianteCaso
 import io.github.jan.supabase.postgrest.from

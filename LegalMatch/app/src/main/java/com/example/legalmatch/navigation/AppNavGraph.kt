@@ -95,6 +95,16 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             }
         }
         composable(
+            route = Routes.EditCaso.route,
+            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("itemId")
+            if (itemId != null) {
+                Log.d(TAG, "Navigating to Edit Caso")
+                FormCasoScreen(navController, casosViewModel, itemId)
+            }
+        }
+        composable(
             route = Routes.AsesoriaDetalle.route,
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
         ) { _backStackEntry ->

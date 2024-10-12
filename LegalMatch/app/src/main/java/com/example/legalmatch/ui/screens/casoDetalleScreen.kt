@@ -163,7 +163,7 @@ fun CasoDetalleScreen(
             // Editar información
             Button(
                 onClick = {
-                    navController.navigate(Routes.FormCaso.route)
+                    navController.navigate(Routes.EditCaso.createRoute(casoId))
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
