@@ -86,8 +86,9 @@ fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewMode
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(5.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
                     when {
@@ -152,7 +153,10 @@ fun StatsScreen(navController: NavController,graficasViewModel: GraficasViewMode
 //Genero
 @Composable
 fun PieChartView(stats: List<StatsState>, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
             text = "Género",
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -163,7 +167,7 @@ fun PieChartView(stats: List<StatsState>, modifier: Modifier = Modifier) {
         )
 
         AndroidView(
-            modifier = modifier,
+            modifier = Modifier.size(300.dp).align(Alignment.CenterHorizontally),
             factory = { context ->
                 PieChart(context).apply {
                     // Configuración inicial del PieChart
@@ -230,7 +234,10 @@ fun PieChartView(stats: List<StatsState>, modifier: Modifier = Modifier) {
 //Years
 @Composable
 fun PieChartViewYears(stats: List<EdadStatsState>, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
             text = "Rangos de Edad",
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -241,7 +248,7 @@ fun PieChartViewYears(stats: List<EdadStatsState>, modifier: Modifier = Modifier
         )
 
         AndroidView(
-            modifier = modifier,
+            modifier = Modifier.size(300.dp).align(Alignment.CenterHorizontally),
             factory = { context ->
                 PieChart(context).apply {
                     setUsePercentValues(true)
@@ -307,7 +314,10 @@ fun PieChartViewYears(stats: List<EdadStatsState>, modifier: Modifier = Modifier
 
 @Composable
 fun BarChartView(stats: List<CasoUsuario>, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
             text = "Estatus de Casos",
             modifier = Modifier.align(Alignment.CenterHorizontally),

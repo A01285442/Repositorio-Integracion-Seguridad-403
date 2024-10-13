@@ -9,6 +9,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <!-- Header -->
     <TextView
         android:id="@+id/idTVHead"
         android:layout_width="match_parent"
@@ -22,7 +23,7 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <!--Ui component for our pie chart-->
+    <!-- Pie Chart -->
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"
         android:layout_width="300dp"
@@ -31,14 +32,17 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp" />
 
+    <!-- Texts below PieChart -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/pieChart"
         android:layout_marginTop="40dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="3">
 
+        <!-- Android Text -->
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -52,6 +56,7 @@
             android:textAlignment="center"
             android:textColor="@color/black" />
 
+        <!-- Apple Text -->
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -65,6 +70,7 @@
             android:textAlignment="center"
             android:textColor="@color/black" />
 
+        <!-- Microsoft Text -->
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -79,18 +85,14 @@
             android:textColor="@color/black" />
     </LinearLayout>
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <!-- Bar Chart -->
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/barChart"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_gravity="center"/>
-    </LinearLayout>
-
+        android:layout_height="300dp"
+        android:layout_below="@id/idTVHead"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
+
 
