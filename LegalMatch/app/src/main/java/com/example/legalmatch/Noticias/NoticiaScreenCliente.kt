@@ -1,5 +1,6 @@
 package com.example.legalmatch.Noticias
 
+import androidx.compose.runtime.Composable
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,7 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,25 +18,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.navigation.NavController
-import coil3.compose.AsyncImage
-import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoticiasScreen(navController: NavHostController, noticiasViewModel: NoticiasViewModel) {
+fun NoticiasScreenCliente(navController: NavHostController, noticiasViewModel: NoticiasViewModel) {
     val noticiasState = noticiasViewModel.noticiasState.collectAsState().value
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     val isLoading by noticiasViewModel.isLoading.collectAsState()
@@ -50,19 +46,7 @@ fun NoticiasScreen(navController: NavHostController, noticiasViewModel: Noticias
 
     Scaffold(
         topBar = { CustomTopBar(title = "Noticias", navIcon = false, actIcon = false) },
-        bottomBar = { CustomBottomBar(navController = navController) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate("AddNews")
-                },
-                containerColor = AzulTec,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Agregar noticia")
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End
+        bottomBar = { CustomBottomBarClientes(navController = navController) },
     ) { padding ->
         Box(
             modifier = Modifier
@@ -81,7 +65,7 @@ fun NoticiasScreen(navController: NavHostController, noticiasViewModel: Noticias
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ){
                     items(noticiasState){ noticia ->
-                        NoticiaItem(navController = navController, noticia = noticia, noticiasViewModel = noticiasViewModel)
+                        NoticiaItemCliente(navController = navController, noticia = noticia, noticiasViewModel = noticiasViewModel)
                     }
                 }
             }
@@ -91,9 +75,7 @@ fun NoticiasScreen(navController: NavHostController, noticiasViewModel: Noticias
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoticiaItem(navController: NavHostController, noticia: Noticia,noticiasViewModel: NoticiasViewModel) {
-    var expanded by remember { mutableStateOf(false) }
-
+fun NoticiaItemCliente(navController: NavHostController, noticia: Noticia,noticiasViewModel: NoticiasViewModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,16 +85,6 @@ fun NoticiaItem(navController: NavHostController, noticia: Noticia,noticiasViewM
             title = noticia.titulo,
             description = noticia.descripcion,
             imageUrl = noticia.imagenurl
-        )
-        Icon(
-            imageVector = Icons.Default.Delete,
-            contentDescription = "Ícono de acción",
-            tint = Color.Red,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(8.dp)
-                .size(24.dp)
-                .clickable {noticiasViewModel.eliminarNoticia(noticia.id)}
         )
     }
 }

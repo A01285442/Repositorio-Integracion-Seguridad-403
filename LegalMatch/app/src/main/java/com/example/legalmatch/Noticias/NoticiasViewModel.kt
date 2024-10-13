@@ -7,21 +7,17 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.legalmatch.viewmodel.Usuario
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.util.UUID
 import java.time.LocalDateTime
@@ -42,7 +38,7 @@ data class Noticia(
     val id: String,
     val titulo: String,
     val descripcion: String,
-    val fecha: String,
+//    val fecha: String,
     val imagenurl: String? = null
 )
 
@@ -50,13 +46,12 @@ data class Noticia(
 @RequiresApi(Build.VERSION_CODES.O)
 fun getCurrentDate(): String {
     val current = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy") // Ajusta el formato si lo necesitas
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
     return current.format(formatter)
 }
 
 private const val TAG = "NoticiasViewModel"
 
-// ViewModel for Noticias
 @RequiresApi(Build.VERSION_CODES.O)
 class NoticiasViewModel : ViewModel() {
 
@@ -68,7 +63,7 @@ class NoticiasViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            delay(1000)
+            delay(500)
 
             fetchNoticias()
 
@@ -107,7 +102,7 @@ class NoticiasViewModel : ViewModel() {
                     id = UUID.randomUUID().toString(),
                     titulo = titulo,
                     descripcion = descripcion,
-                    fecha = getCurrentDate(),
+//                    fecha = getCurrentDate(),
                     imagenurl = imageUrl
                 )
 
@@ -145,12 +140,16 @@ class NoticiasViewModel : ViewModel() {
         }
     }
 
-    fun eliminarNoticia(id: Int) {
+    fun eliminarNoticia(id: String) {
         viewModelScope.launch {
             try {
                 val response = supabase.from("noticias")
-                    .delete()
-                    .decodeList<Noticia>()
+                    .delete(){
+                        filter{
+                            eq("id", id)
+                        }
+                    }
+                fetchNoticias()
                 Log.d(TAG, "Noticia eliminada: $response")
                 fetchNoticias()
             } catch (e: Exception) {

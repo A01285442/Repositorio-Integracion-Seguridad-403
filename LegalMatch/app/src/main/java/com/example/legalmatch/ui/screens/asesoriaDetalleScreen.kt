@@ -177,7 +177,7 @@ fun AsesoriaDetalleScreen(
                                 showDialog = false // Cerrar el diálogo
                             }
                         ) {
-                            Text("Sí, cerrar")
+                            Text("Sí, rechazar")
                         }
                     },
                     dismissButton = {

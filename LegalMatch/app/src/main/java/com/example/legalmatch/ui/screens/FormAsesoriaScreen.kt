@@ -1,11 +1,11 @@
 package com.example.legalmatch.ui.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,13 +17,9 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,103 +27,58 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.example.legalmatch.data.api.models.SendAsesoria
 import com.example.legalmatch.ui.components.CustomBottomBarClientes
+import com.example.legalmatch.ui.components.CustomDropdownMenu
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.ui.components.DatePicker
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
+import com.example.legalmatch.utils.GEMINI_KEY
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
-import java.net.HttpURLConnection
-import java.net.URL
-import java.io.OutputStreamWriter
-import org.json.JSONObject
-import android.util.Log
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import com.example.legalmatch.data.api.models.Asesoria
-import com.example.legalmatch.data.api.models.SendAsesoria
-import java.time.LocalDateTime as JavaLocalDateTime
-import java.time.ZoneOffset
-import kotlinx.datetime.toKotlinLocalDateTime
-import java.time.Instant
-import kotlinx.datetime.Instant as KtInstant
-import kotlinx.datetime.LocalDateTime as KtLocalDateTime
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
+import org.json.JSONObject
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
+
 
 @Serializable
 data class correcion(
     val titulo :String,
     val tipoDelito :String,
     val descripcionModificada: String
-
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel) {
     // Estado para manejar los datos del formulario
-    var selectedRole by remember { mutableStateOf("Selecciona un rol") }
-    var selectedDate by remember { mutableStateOf("Selecciona una fecha") }
+    var selectedRole by remember { mutableStateOf("Seleccionar") }
     var selectedHour by remember { mutableStateOf("Selecciona el horario de tu cita") }
     var description by remember { mutableStateOf("") }
 
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    var selectedDate by remember { mutableStateOf(now.date) }
+    var selectedTime by remember { mutableStateOf(now.time) }
+    val selectedDateTime = LocalDateTime(selectedDate,selectedTime)
     //Estado para manejar eñ api
 
-    var correctedText by remember { mutableStateOf("") }
     var apiResult by remember { mutableStateOf<correcion?>(null) }
-
-
-    LocalDateTime.now().dayOfMonth
-    LocalDateTime.now().monthValue
-    LocalDateTime.now().year
-
-
-    val roles = listOf("Demandado", "Demandante")
-    val dates = listOf(
-        LocalDateTime.now().dayOfMonth.toString() + " de " + LocalDateTime.now().monthValue.toString(),
-        (LocalDateTime.now().dayOfMonth +1).toString() + " de " + (LocalDateTime.now().monthValue+1).toString(),
-        (LocalDateTime.now().dayOfMonth +2).toString() + " de " + (LocalDateTime.now().monthValue+2).toString(),
-        (LocalDateTime.now().dayOfMonth +3).toString() + " de " + (LocalDateTime.now().monthValue+3).toString(),
-        (LocalDateTime.now().dayOfMonth +4).toString() + " de " + (LocalDateTime.now().monthValue+4).toString(),
-        (LocalDateTime.now().dayOfMonth +5).toString() + " de " + (LocalDateTime.now().monthValue+5).toString(),
-        (LocalDateTime.now().dayOfMonth +6).toString() + " de " + (LocalDateTime.now().monthValue+6).toString(),
-        (LocalDateTime.now().dayOfMonth +7).toString() + " de " + (LocalDateTime.now().monthValue+7).toString(),
-        (LocalDateTime.now().dayOfMonth +8).toString() + " de " + (LocalDateTime.now().monthValue+8).toString(),
-        (LocalDateTime.now().dayOfMonth +9).toString() + " de " + (LocalDateTime.now().monthValue+9).toString(),
-
-        ) // Ejemplo de fechas
-    val horarios = listOf("9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm")
+    val roles = listOf("Acusado", "Demandante")
+    val horarios = listOf("10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm")
 
     Scaffold(
         topBar = {
@@ -150,121 +101,49 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
 
 
             // Menú desplegable para seleccionar el rol
-            Text(text = "Selecciona si eres demandado o demandante", fontSize = 18.sp)
-            var expandedRole by remember { mutableStateOf(false) }
+            Text(text = "Posición", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
 
-            Box(
+            CustomDropdownMenu(
+                selectedValue = selectedRole,
+                options = roles,
+                label = "Posición en el caso",
+                onValueChangedEvent =  {selectedOption ->
+                    selectedRole = selectedOption
+                },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-            ) {
-                TextButton(
-                    onClick = { expandedRole = !expandedRole },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = selectedRole,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
 
-                DropdownMenu(
-                    expanded = expandedRole,
-                    onDismissRequest = { expandedRole = false }
-                ) {
-                    roles.forEach { role ->
-                        DropdownMenuItem(
-                            text = { Text(role) },
-                            onClick = {
-                                selectedRole = role
-                                expandedRole = false
-                            }
-                        )
-                    }
-                }
-            }
+            )
 
-            // Menú desplegable para seleccionar la fecha
-            Text(text = "Fecha:", fontSize = 18.sp)
-            var expandedDate by remember { mutableStateOf(false) }
+            Text(text = "Fecha y hora de la asesoría", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
 
-            Box(
+            DatePicker(
+                selectedDateTime = selectedDateTime,
+                onDateChange = { selectedDate = it.date },
+            )
+
+            CustomDropdownMenu(
+                selectedValue = selectedHour,
+                options = horarios,
+                label = "Horarios",
+                onValueChangedEvent =  {selectedOption ->
+                    selectedHour = selectedOption
+                },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-            ) {
-                TextButton(
-                    onClick = { expandedDate = !expandedDate },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = selectedDate,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            )
 
-                DropdownMenu(
-                    expanded = expandedDate,
-                    onDismissRequest = { expandedDate = false }
-                ) {
-                    dates.forEach { date ->
-                        DropdownMenuItem(
-                            text = { Text(date) },
-                            onClick = {
-                                selectedDate = date
-                                expandedDate = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            // Menú desplegable para seleccionar el horario
-            Text(text = "Horario:", fontSize = 18.sp)
-            var expandedHour by remember { mutableStateOf(false) }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-            ) {
-                TextButton(
-                    onClick = { expandedHour = !expandedHour },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = selectedHour,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                DropdownMenu(
-                    expanded = expandedHour,
-                    onDismissRequest = { expandedHour = false }
-                ) {
-                    horarios.forEach { horario ->
-                        DropdownMenuItem(
-                            text = { Text(horario) },
-                            onClick = {
-                                selectedHour = horario
-                                expandedHour = false
-                            }
-                        )
-                    }
-                }
+            when (selectedHour) {
+                "10:00 am" -> {selectedTime = LocalTime(10,0,0) }
+                "11:00 am" -> {selectedTime = LocalTime(11,0,0) }
+                "12:00 am" -> {selectedTime = LocalTime(12,0,0) }
+                "1:00 pm" -> {selectedTime = LocalTime(13,0,0) }
+                "2:00 pm" -> {selectedTime = LocalTime(14,0,0) }
+                "3:00 pm" -> {selectedTime = LocalTime(15,0,0) }
+                "4:00 pm" -> {selectedTime = LocalTime(16,0,0) }
             }
 
             // Campo para la descripción del delito
-            Text(text = "Descripción Delito:", fontSize = 18.sp)
+            Text(text = "¿Por qué buscas asesoramiento legal?", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text("¿Cómo comenzó la situación? ¿Existen pruebas o testigos? ¿Tiene antecedentes penales?")
             BasicTextField(
                 value = description,
                 onValueChange = { description = it },
@@ -281,16 +160,6 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                     makeApiRequest(description) { result ->
                         apiResult = result }
 
-                    // Obtenemos la fecha actual con java.time.LocalDateTime
-                    val nowJavaTime = java.time.LocalDateTime.now()
-
-                    // Convertimos java.time.LocalDateTime a java.time.Instant (zona UTC)
-                    val instant = nowJavaTime.toInstant(ZoneOffset.UTC)
-
-                    // Convertimos java.time.Instant a kotlinx.datetime.LocalDateTime
-                    val nowKotlinxTime = KtInstant.fromEpochSeconds(instant.epochSecond, instant.nano)
-                        .toLocalDateTime(TimeZone.UTC) // Usamos TimeZone.UTC en lugar de ZoneOffset.UTC
-
                     val esDemandante = selectedRole == "Demandante"
 
                     // Crear una instancia de Asesoria con los datos del formulario
@@ -303,7 +172,7 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                             cliente_denuncio = esDemandante,
                             delito = it.tipoDelito, // Usar el rol seleccionado como delito (modificar si es necesario)
                             descripcion = description,
-                            fecha_asesoria = KtLocalDateTime(1,1,1,1,1,1), // Convertir la fecha seleccionada
+                            fecha_asesoria = selectedDateTime,
                             id_cliente = 1, // Este es un ejemplo, debes obtener el id del cliente actual
                             nuc = "N/A", // Modificar si tienes este dato
                             titulo = it.titulo, // Este es un título de ejemplo
@@ -329,7 +198,7 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                 Text(text = "Agendar Asesoría", fontSize = 18.sp)
             }
 
-           // Mostrar los resultados si 'apiResult' no es nulo
+            // Mostrar los resultados si 'apiResult' no es nulo
             apiResult?.let { correccion ->
                 Column {
                     Text("Título: ${correccion.titulo}")
@@ -346,9 +215,9 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
 fun makeApiRequest(ask: String, onResult: (correcion?) -> Unit) {
     // Se realiza en una corrutina para no bloquear el hilo principal
     kotlinx.coroutines.GlobalScope.launch(Dispatchers.IO) {
-        val apiKey = "AIzaSyAQ8F9U3P08yps2LHGwNv2MhDXLy1gjuuc"
-        val url = URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey")
-        val jsonInputString = """
+        try {
+            val url = URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$GEMINI_KEY")
+            val jsonInputString = """
             {
                 "contents": [
                     {
@@ -365,37 +234,41 @@ fun makeApiRequest(ask: String, onResult: (correcion?) -> Unit) {
                     }
                 ]
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        // Configuración de la conexión HTTP
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "POST"
-        connection.setRequestProperty("Content-Type", "application/json")
-        connection.doOutput = true
+            // Configuración de la conexión HTTP
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "POST"
+            connection.setRequestProperty("Content-Type", "application/json")
+            connection.doOutput = true
 
-        // Escritura del cuerpo de la solicitud
-        withContext(Dispatchers.IO) {
-            OutputStreamWriter(connection.outputStream).use { writer ->
-                writer.write(jsonInputString)
-                writer.flush()
+            // Escritura del cuerpo de la solicitud
+            withContext(Dispatchers.IO) {
+                OutputStreamWriter(connection.outputStream).use { writer ->
+                    writer.write(jsonInputString)
+                    writer.flush()
+                }
             }
+
+            // Lectura de la respuesta
+            val responseCode = connection.responseCode
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val responseText = connection.inputStream.bufferedReader().use { it.readText() }
+                val jsonResponse = parseResponse(responseText)
+                val prueba = decodeJson(jsonResponse)
+                withContext(Dispatchers.Main) {
+                    onResult(prueba)
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    onResult(null)
+                }
+            }
+            connection.disconnect()
+        } catch (e:Exception){
+            Log.d("MainActivity", "Error: ${e.message}")
         }
 
-        // Lectura de la respuesta
-        val responseCode = connection.responseCode
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            val responseText = connection.inputStream.bufferedReader().use { it.readText() }
-            val jsonResponse = parseResponse(responseText)
-            val prueba = decodeJson(jsonResponse)
-            withContext(Dispatchers.Main) {
-                onResult(prueba)
-            }
-        } else {
-            withContext(Dispatchers.Main) {
-                onResult(null)
-            }
-        }
-        connection.disconnect()
     }
 }
 
@@ -429,7 +302,6 @@ fun parseResponse(response: String): String {
         e.printStackTrace()
         return "Error al parsear la respuesta."
     }
-
     return "No se encontró contenido relevante."
 }
 
@@ -446,14 +318,8 @@ fun decodeJson(response: String): correcion? {
         // Creamos y retornamos una instancia de 'correcion'
         correcion(titulo, tipoDelito, descripcionModificada)
     } catch (e: Exception) {
+        e.message?.let { Log.d("MainActivity", it) }
         e.printStackTrace()
         null
-        }
+    }
 }
-
-/*@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-@Preview(showBackground = true)
-fun FormAsesoriaScreenPreview() {
-    FormAsesoriaScreen(navController = rememberNavController())
-}*/

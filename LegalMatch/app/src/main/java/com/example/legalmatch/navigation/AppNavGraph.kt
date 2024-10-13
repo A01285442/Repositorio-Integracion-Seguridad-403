@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.legalmatch.Noticias.AddNewsScreen
 import com.example.legalmatch.Noticias.NoticiasScreen
+import com.example.legalmatch.Noticias.NoticiasScreenCliente
 import com.example.legalmatch.Noticias.NoticiasViewModel
 import com.example.legalmatch.ui.screens.AsesoriaDetalleScreen
 import com.example.legalmatch.ui.screens.AsesoriaScreen
@@ -157,6 +158,10 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         composable(Routes.FormAsesoria.route){
             Log.d(TAG, "Navigating to Forms Asesorías")
             FormAsesoriaScreen(navController, asesoriasViewModel)
+        }
+        composable(Routes.NoticiasCliente.route){
+            Log.d(TAG, "Navigating to Noticias")
+            NoticiasScreenCliente(navController, NoticiasViewModel())
         }
 
     }
