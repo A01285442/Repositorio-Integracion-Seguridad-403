@@ -11,6 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,7 +37,6 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
 
     val context = LocalContext.current
 
-    // Intent launcher para seleccionar imagen
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -53,7 +54,8 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -79,7 +81,6 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
             // imagen
             Button(
                 onClick = {
-                    // Abre el intent para seleccionar imagen
                     val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     launcher.launch(intent)
                 },
