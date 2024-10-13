@@ -1,36 +1,56 @@
 package com.example.proyectobueno.views
 
-import android.app.DatePickerDialog
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.data.api.models.SendUsuario
+import com.example.legalmatch.ui.components.DatePicker
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.theme.AzulTec
-import kotlinx.datetime.toKotlinLocalDateTime
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.*
+import com.example.legalmatch.utils.TAG
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 
-private const val TAG = "MainActivity"
+val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 @RequiresApi(Build.VERSION_CODES.O)
 data class UserRegistrationData @RequiresApi(Build.VERSION_CODES.O) constructor(
     var name: String = "",
     var lastname: String = "",
-    var dateOfBirth: LocalDateTime = LocalDateTime.now(),
+    var dateOfBirth: LocalDateTime = now,
     var sex: String = "",
     var email: String = "",
     var password: String = ""
@@ -40,7 +60,7 @@ data class UserRegistrationData @RequiresApi(Build.VERSION_CODES.O) constructor(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
-    var currentStep by remember { mutableStateOf(1) }
+    var currentStep by remember { mutableIntStateOf(1) }
     var registrationData by remember { mutableStateOf(UserRegistrationData()) }
     var shouldInsert by remember { mutableStateOf(false) }
 
@@ -53,7 +73,7 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
                 matricula = "null",
                 correo = registrationData.email,
                 nombre = registrationData.name + " " + registrationData.lastname,
-                fecha_nacimiento = registrationData.dateOfBirth.toKotlinLocalDateTime(),
+                fecha_nacimiento = registrationData.dateOfBirth,
                 rol = "cliente",
                 contraseña = registrationData.password,
                 sexo = registrationData.sex
@@ -228,26 +248,7 @@ fun DateOfBirthScreen(
     onDateChange: (LocalDateTime) -> Unit, // Devolvemos un LocalDateTime
     onContinue: () -> Unit
 ) {
-    val calendar = Calendar.getInstance()
 
-    // Mantenemos la fecha seleccionada como LocalDateTime
-    val datePickerDialog = DatePickerDialog(
-        LocalContext.current,
-        { _, year, month, dayOfMonth ->
-            // Configuramos el calendar con la fecha seleccionada
-            calendar.set(year, month, dayOfMonth)
-
-            // Convertimos el Calendar a LocalDateTime
-            val zone = ZoneId.of("America/Edmonton")
-            val selectedDate = LocalDateTime.ofInstant(calendar.time.toInstant(), zone)
-
-            // Actualizamos el valor de LocalDateTime
-            onDateChange(selectedDate)
-        },
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_MONTH)
-    )
 
     Scaffold { paddingValues ->
         Column(
@@ -268,19 +269,8 @@ fun DateOfBirthScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón para seleccionar la fecha de nacimiento
-            OutlinedButton(
-                onClick = { datePickerDialog.show() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                if(selectedDateTime==null){
-                    Text("Seleccionar fecha", color = Color.Black)
-                } else {
-                    Text(selectedDateTime.dayOfMonth.toString() + " " + selectedDateTime.month.toString() + " " + selectedDateTime.year.toString())
-                }
-            }
+
+            DatePicker(selectedDateTime = selectedDateTime, onDateChange = onDateChange)
 
             Spacer(modifier = Modifier.height(16.dp))
 

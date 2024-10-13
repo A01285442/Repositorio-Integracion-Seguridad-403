@@ -17,7 +17,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -26,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -35,14 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
-import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
-import okio.utf8Size
 import java.time.LocalDate
-
-private const val TAG = "MainActivity"
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -55,6 +49,7 @@ fun PerfilClienteScreen(navController: NavController, loginViewModel: LoginViewM
     var nuevaContraseña by remember { mutableStateOf("") }
     var nuevaContraseña2 by remember { mutableStateOf("") }
     var botonCambiar by remember { mutableStateOf(false)}
+    val usuario = loginState.userClient ?: return
 
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
@@ -99,6 +94,20 @@ fun PerfilClienteScreen(navController: NavController, loginViewModel: LoginViewM
             }
 
             HorizontalDivider()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
+            ){
+                Text("Sexo:")
+                Text(usuario.sexo)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
+            ){
+                Text("Tipo de cuenta:")
+                Text(usuario.rol)
+            }
 
             // Botón para cambiar contraseña
             Button(

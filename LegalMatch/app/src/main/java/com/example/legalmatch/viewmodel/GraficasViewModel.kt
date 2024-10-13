@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.legalmatch.ui.screens.supabaseCli
+import com.example.legalmatch.utils.SUPABASE_KEY
+import com.example.legalmatch.utils.SUPABASE_URL
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
@@ -22,8 +24,8 @@ import java.time.format.DateTimeFormatter
 
 // Supabase
 val supabase = createSupabaseClient(
-    supabaseUrl = "https://wbhyplodhfxcyeochnpf.supabase.co",
-    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiaHlwbG9kaGZ4Y3llb2NobnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU0MjExNTUsImV4cCI6MjA0MDk5NzE1NX0.sqMEMPdCx9u-kC0TI0OLWKm1KXZjSkeDS1N3bQiG-jI",
+    supabaseUrl = SUPABASE_URL,
+    supabaseKey = SUPABASE_KEY
 ) {
     install(Auth)
     install(Postgrest)
