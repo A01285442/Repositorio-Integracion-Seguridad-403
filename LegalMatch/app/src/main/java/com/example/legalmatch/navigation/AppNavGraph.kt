@@ -26,7 +26,6 @@ import com.example.legalmatch.ui.screens.FormAsesoriaScreen
 import com.example.legalmatch.ui.screens.FormCasoScreen
 import com.example.legalmatch.ui.screens.ListaEstudiantesScreen
 import com.example.legalmatch.ui.screens.LoginViewModel
-import com.example.legalmatch.ui.screens.PerfilClienteScreen
 import com.example.legalmatch.ui.screens.PerfilScreen
 import com.example.legalmatch.ui.screens.StatsScreen
 import com.example.legalmatch.viewmodel.EstudiantesInvolucradosViewModel
@@ -150,10 +149,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             //val casosclientevm : casosClienteViewModel = viewModel()
             CasosClienteScreen(navController, loginViewModel)
         }
-        composable(Routes.PerfilCliente.route){
-            Log.d(TAG, "Navigating to Perfil Clientes")
-            PerfilClienteScreen(navController, loginViewModel)
-        }
+
         composable(Routes.FormAsesoria.route){
             Log.d(TAG, "Navigating to Forms Asesorías")
             FormAsesoriaScreen(navController, asesoriasViewModel)

@@ -7,8 +7,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import okio.utf8Size
@@ -61,7 +64,13 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
-        bottomBar = { CustomBottomBar(navController=navController) }
+        bottomBar = {
+            if (usuario.rol == "cliente") {
+                CustomBottomBarClientes(navController = navController)
+            } else {
+                CustomBottomBar(navController = navController)
+            }
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -116,21 +125,20 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                 ProfileStat(big = "62", medium = "",  description = "Casos cerrados")
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
             HorizontalDivider()
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Absolute.SpaceBetween
-            ){
-                Text("Sexo:")
-                Text(usuario.sexo)
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Absolute.SpaceBetween
-            ){
-                Text("Tipo de cuenta:")
-                Text(usuario.rol)
-            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            val fecha = usuario.fecha_nacimiento.date
+            if(usuario.matricula.isNotBlank()){ SpacedInformation("Matricula:", usuario.matricula) }
+            SpacedInformation("Sexo:", usuario.sexo)
+            SpacedInformation("Tipo de cuenta:", usuario.rol)
+            SpacedInformation("Fecha de nacimiento:", "${fecha.dayOfMonth} ${toSpanish(fecha.monthNumber)} ${fecha.year}")
+            SpacedInformation("Contraseña:", usuario.contraseña.replace(".?".toRegex(),"*"))
+
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Botón para cambiar contraseña
             Button(
@@ -248,6 +256,35 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             }
 
         }
+    }
+}
+
+fun toSpanish(month: Int): String {
+    return if (month == 1){ "ene" }
+    else if (month == 2){ "feb" }
+    else if (month == 3){ "mar" }
+    else if (month == 4){ "abr" }
+    else if (month == 5){ "may" }
+    else if (month == 6){ "jun" }
+    else if (month == 7){ "jul" }
+    else if (month == 8){ "ago" }
+    else if (month == 9){ "sep" }
+    else if (month == 10){ "oct" }
+    else if (month == 11){ "nov" }
+    else { "dic" }
+}
+
+@Composable
+fun SpacedInformation(
+    label: String,
+    value: String,
+){
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Absolute.SpaceBetween
+    ){
+        Text(label, style = MaterialTheme.typography.bodyMedium)
+        Text(value, style = MaterialTheme.typography.bodyMedium)
     }
 }
 

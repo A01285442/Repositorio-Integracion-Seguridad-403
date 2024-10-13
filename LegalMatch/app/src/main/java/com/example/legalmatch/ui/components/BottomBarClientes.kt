@@ -43,7 +43,7 @@ fun CustomBottomBarClientes(navController: NavController) {
                 icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
                 label = { Text("Perfil") },
                 selected = false,
-                onClick = { navController.navigate(Routes.PerfilCliente.route) }
+                onClick = { navController.navigate(Routes.Perfil.route) }
             )
         }
     }

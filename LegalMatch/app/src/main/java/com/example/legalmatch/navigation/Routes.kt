@@ -33,7 +33,6 @@ sealed class Routes(val route: String) {
 
     // VISTAS DE CLIENTE PRINCIPALES
     object CasosCliente : Routes("casosClientes")
-    object PerfilCliente : Routes("perfilCliente")
 
     // VISTAS DE CLIENTE SECUNDARIAS
     object FormAsesoria : Routes("formAsesoria")
