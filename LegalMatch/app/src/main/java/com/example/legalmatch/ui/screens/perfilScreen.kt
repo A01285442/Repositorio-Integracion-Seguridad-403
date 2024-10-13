@@ -55,10 +55,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
     var nuevaContraseña by remember { mutableStateOf("") }
     var nuevaContraseña2 by remember { mutableStateOf("") }
     var botonCambiar by remember { mutableStateOf(false)}
-
-    if (loginState.userClient == null){
-        return
-    }
+    val usuario = loginState.userClient ?: return
 
     val esFiscal = loginState.userClient!!.rol == "abogado"
 
@@ -120,6 +117,20 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             }
 
             HorizontalDivider()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
+            ){
+                Text("Sexo:")
+                Text(usuario.sexo)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
+            ){
+                Text("Tipo de cuenta:")
+                Text(usuario.rol)
+            }
 
             // Botón para cambiar contraseña
             Button(
