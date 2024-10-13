@@ -37,13 +37,14 @@ import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
 @Composable
 fun CasoDetalleScreen(
     navController: NavController,
     casosVM: CasosViewModel,
     casoId: Int,
-    usuariosVM: UsuariosViewModel
+    usuariosVM: UsuariosViewModel,
+    loginVM: LoginViewModel
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState() // Estado del scroll
@@ -160,41 +161,45 @@ fun CasoDetalleScreen(
                 Text(text = "Ver en Google Maps")
             }
 
-            // Editar información
-            Button(
-                onClick = {
-                    navController.navigate(Routes.EditCaso.createRoute(casoId))
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray,
-                    contentColor = Color.White
-                )
-            ) {
-                Text(text = "Editar Información")
-            }
-            Button(
-                onClick = { Log.d("MainActivity","xd")
-                    navController.navigate(Routes.EstudiantesInvolucrados.createRoute(casoId)) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray,
-                    contentColor = Color.White
-                )
-            ) { Text(text = "Estudiantes Involucrados") }
 
-            // Cerrar caso
-            Button(
-                onClick = {
-                    showDialog = true
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )
-            ) {
-                Text(text = "Concluir Caso")
+            if(loginVM.loginState.value.userClient?.rol == "abogado"){
+                // Editar información
+                Button(
+                    onClick = {
+                        navController.navigate(Routes.EditCaso.createRoute(casoId))
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Gray,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(text = "Editar Información")
+                }
+                Button(
+                    onClick = { Log.d("MainActivity","xd")
+                        navController.navigate(Routes.EstudiantesInvolucrados.createRoute(casoId)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Gray,
+                        contentColor = Color.White
+                    )
+                ) { Text(text = "Estudiantes Involucrados") }
+
+                // Cerrar caso
+                Button(
+                    onClick = {
+                        showDialog = true
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(text = "Concluir Caso")
+                }
+
             }
 
             // Dialogo de confirmación
@@ -225,9 +230,6 @@ fun CasoDetalleScreen(
                     }
                 )
             }
-
-
-
 
         }
     }

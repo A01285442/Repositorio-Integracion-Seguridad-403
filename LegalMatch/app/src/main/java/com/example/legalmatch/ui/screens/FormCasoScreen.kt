@@ -143,14 +143,15 @@ fun FormCasoScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text("Información del Caso", style = MaterialTheme.typography.titleLarge)
+            Text("* Significa que el campo es obligatorio", style = MaterialTheme.typography.bodySmall)
 
             InputField(
-                label = "Título:",
+                label = "*Título:",
                 value = formState.value.titulo,
                 onValueChange = { formState.value = formState.value.copy(titulo = it) }
             )
             InputField(
-                label = "Descripción del caso:",
+                label = "*Descripción del caso:",
                 value = formState.value.descripcion,
                 onValueChange = { formState.value = formState.value.copy(descripcion = it) },
                 singleLine = false,
@@ -158,14 +159,17 @@ fun FormCasoScreen(
             )
             if (errorMessage2.isNotBlank()){ Text(errorMessage2)}
 
+            /*
             CustomDropdownMenu(
                 selectedValue = "xd",
                 options = listOf("Acusado", "demandante"),
-                label = "nfhjdks",
+                label = "Rol",
                 onValueChangedEvent = { selectedOption ->
                     println("")
                 }
             )
+
+             */
 
             InputField(
                 label = "Carpeta de investigación:",

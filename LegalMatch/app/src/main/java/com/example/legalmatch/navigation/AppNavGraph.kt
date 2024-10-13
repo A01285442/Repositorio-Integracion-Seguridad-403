@@ -91,7 +91,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             val itemId = backStackEntry.arguments?.getInt("itemId")
             if (itemId != null) {
                 Log.d(TAG, "Navigating to Caso Detalle")
-                CasoDetalleScreen(navController, casosViewModel, itemId, usuariosViewModel)
+                CasoDetalleScreen(navController, casosViewModel, itemId, usuariosViewModel, loginViewModel)
             }
         }
         composable(
@@ -111,7 +111,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
             val itemId = _backStackEntry.arguments?.getInt("itemId")
             if (itemId != null) {
                 Log.d(TAG, "Navigating to Asesoría Detalle")
-                AsesoriaDetalleScreen(navController, asesoriasViewModel, itemId, usuariosViewModel, casosViewModel)
+                AsesoriaDetalleScreen(navController, asesoriasViewModel, itemId, usuariosViewModel, casosViewModel, loginViewModel)
             }
         }
         composable(Routes.ListaEstudiantes.route) {

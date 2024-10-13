@@ -37,14 +37,15 @@ import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
 @Composable
 fun AsesoriaDetalleScreen(
     navController: NavController,
     asesoriaViewModel: AsesoriaViewModel,
     casoId: Int,
     usuariosVM: UsuariosViewModel,
-    casoViewModel: CasosViewModel
+    casoViewModel: CasosViewModel,
+    loginVM: LoginViewModel
 ) {
     val scrollState = rememberScrollState() // Estado del scroll
 
@@ -53,6 +54,7 @@ fun AsesoriaDetalleScreen(
         Text("Asesoría no encontrado. Favor de reiniciar la aplicación.")
         return
     }
+    val rolUsuario = loginVM.loginState.value.userClient?.rol
     usuariosVM.getClientInfo(asesoria.id_cliente)
     val cliente = usuariosVM.state.infoCliente
 
@@ -123,43 +125,46 @@ fun AsesoriaDetalleScreen(
 
 
             // Aceptar Caso
-            Button(
-                onClick = {
-                    asesoriaViewModel.aceptarcaso(asesoria)
-                    navController.navigate(Routes.Casos.route)
-                    casoViewModel.fetchCasos()
-                          },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AzulTec,
-                    contentColor = Color.White
-                )
-            ) { Text(text = "Aceptar Caso") }
+            if(rolUsuario == "abogado"){
+                Button(
+                    onClick = {
+                        asesoriaViewModel.aceptarcaso(asesoria)
+                        navController.navigate(Routes.Casos.route)
+                        casoViewModel.fetchCasos()
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AzulTec,
+                        contentColor = Color.White
+                    )
+                ) { Text(text = "Aceptar Caso") }
 
-            // Rechazar Caso
-            Button(
-                onClick = {
-                    asesoriaViewModel.reagendarAsesoria(asesoria)
-                    navController.popBackStack()
-                          },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AzulTec,
-                    contentColor = Color.White
-                )
-            ) { Text(text = "Reagendar Caso") }
+                // Rechazar Caso
+                Button(
+                    onClick = {
+                        asesoriaViewModel.reagendarAsesoria(asesoria)
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AzulTec,
+                        contentColor = Color.White
+                    )
+                ) { Text(text = "Reagendar Caso") }
 
-            // Cerrar caso
-            Button(
-                onClick = {
-                    showDialog = true
-                },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )
-            ) { Text(text = "Rechazar Caso") }
+                // Cerrar caso
+                Button(
+                    onClick = {
+                        showDialog = true
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red,
+                        contentColor = Color.White
+                    )
+                ) { Text(text = "Rechazar Caso") }
+            }
+
 
             // Dialogo de confirmación
             if (showDialog) {
