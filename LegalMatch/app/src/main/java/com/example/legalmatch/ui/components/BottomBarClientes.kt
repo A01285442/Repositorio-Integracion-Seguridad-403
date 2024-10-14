@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -37,7 +36,6 @@ fun CustomBottomBarClientes(navController: NavController) {
         ) {
             NavigationBarItem(
                 icon = { Icon(Icons.Default.Menu, contentDescription = "Mis Casos") },
-                label = { Text("Actividad") },
                 selected = false,
                 onClick = { navController.navigate(Routes.CasosCliente.route) }
             )
@@ -47,13 +45,17 @@ fun CustomBottomBarClientes(navController: NavController) {
                     contentDescription = "news",
                     modifier = Modifier.size(34.dp)
                 ) },
-                ///label = { Text("Casos") },
                 selected = false,
                 onClick = { navController.navigate("NoticiasCliente") }
             )
             NavigationBarItem(
-                icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
-                label = { Text("Perfil") },
+                icon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = "Profile",
+                        modifier = Modifier.size(34.dp)
+                    )
+                },
                 selected = false,
                 onClick = { navController.navigate(Routes.Perfil.route) }
             )

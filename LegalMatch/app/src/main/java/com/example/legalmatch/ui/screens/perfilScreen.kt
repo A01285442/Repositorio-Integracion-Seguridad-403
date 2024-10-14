@@ -27,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -43,12 +42,16 @@ import com.example.legalmatch.ui.components.ProfileStat
 import com.example.legalmatch.ui.components.SpacedInformation
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.utils.md5
+import com.example.legalmatch.utils.toSpanish
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
+fun PerfilScreen(
+    navController: NavController,
+    loginViewModel: LoginViewModel,
+    casosViewModel: CasosViewModel) {
 
     val loginState by loginViewModel.loginState.collectAsState()
     var showDialogCambiarContraseña by remember { mutableStateOf(false) }
@@ -59,6 +62,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
     val usuario = loginState.userClient ?: return
 
     val esFiscal = loginState.userClient!!.rol == "abogado"
+    val casosCerrados = casosViewModel.state.casos.filter { caso -> caso.caso_cerrado }
 
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
@@ -120,7 +124,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             ) {
                 ProfileStat(big = num, medium = text, description = "En Legal Match")
                 ProfileStat(big = "4.7", medium = "★", description = "12 Reseñas")
-                ProfileStat(big = "62", medium = "",  description = "Casos cerrados")
+                ProfileStat(big = casosCerrados.size.toString(), medium = "",  description = "Casos cerrados")
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -257,18 +261,5 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
     }
 }
 
-fun toSpanish(month: Int): String {
-    return if (month == 1){ "ene" }
-    else if (month == 2){ "feb" }
-    else if (month == 3){ "mar" }
-    else if (month == 4){ "abr" }
-    else if (month == 5){ "may" }
-    else if (month == 6){ "jun" }
-    else if (month == 7){ "jul" }
-    else if (month == 8){ "ago" }
-    else if (month == 9){ "sep" }
-    else if (month == 10){ "oct" }
-    else if (month == 11){ "nov" }
-    else { "dic" }
-}
+
 

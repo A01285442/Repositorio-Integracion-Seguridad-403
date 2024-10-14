@@ -71,7 +71,7 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
         LaunchedEffect(Unit) {
             Log.d(TAG, "Sexo: ${registrationData.sex}")
             val user = SendUsuario(
-                matricula = "null",
+                matricula = "",
                 correo = registrationData.email,
                 nombre = registrationData.name + " " + registrationData.lastname,
                 fecha_nacimiento = registrationData.dateOfBirth,

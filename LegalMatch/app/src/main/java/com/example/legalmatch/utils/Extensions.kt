@@ -33,3 +33,18 @@ fun md5(input: String): String {
     // Convertir el hash en un string hexadecimal
     return digest.joinToString("") { "%02x".format(it) }
 }
+
+fun toSpanish(month: Int): String {
+    return if (month == 1){ "ene" }
+    else if (month == 2){ "feb" }
+    else if (month == 3){ "mar" }
+    else if (month == 4){ "abr" }
+    else if (month == 5){ "may" }
+    else if (month == 6){ "jun" }
+    else if (month == 7){ "jul" }
+    else if (month == 8){ "ago" }
+    else if (month == 9){ "sep" }
+    else if (month == 10){ "oct" }
+    else if (month == 11){ "nov" }
+    else { "dic" }
+}

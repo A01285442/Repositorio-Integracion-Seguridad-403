@@ -80,7 +80,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         }
         composable(Routes.Perfil.route){
             Log.d(TAG, "Navigating to Perfil")
-            PerfilScreen(navController, loginViewModel)
+            PerfilScreen(navController, loginViewModel, casosViewModel)
         }
 
         // VISTAS DE ABOGADO SECUNDARIAS
@@ -110,7 +110,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         ) { _backStackEntry ->
             val itemId = _backStackEntry.arguments?.getInt("itemId")
             if (itemId != null) {
-                Log.d(TAG, "Navigating to Asesoría Detalle")
+                Log.d(TAG, "Navigating to Asesoría Detalle con el Id: ${itemId}")
                 AsesoriaDetalleScreen(navController, asesoriasViewModel, itemId, usuariosViewModel, casosViewModel, loginViewModel)
             }
         }
@@ -153,7 +153,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
 
         composable(Routes.FormAsesoria.route){
             Log.d(TAG, "Navigating to Forms Asesorías")
-            FormAsesoriaScreen(navController, asesoriasViewModel)
+            FormAsesoriaScreen(navController, asesoriasViewModel, loginViewModel)
         }
         composable(Routes.NoticiasCliente.route){
             Log.d(TAG, "Navigating to Noticias")

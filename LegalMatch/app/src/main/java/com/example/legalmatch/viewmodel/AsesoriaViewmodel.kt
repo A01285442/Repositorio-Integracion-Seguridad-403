@@ -31,6 +31,7 @@ class AsesoriaViewModel : ViewModel() {
     init { fetchAsesorias() }
 
     fun getAsesoriaInfo(id: Int) : Asesoria? {
+        fetchAsesorias()
         return state.copy().asesorias.firstOrNull{it.id == id}
     }
 
