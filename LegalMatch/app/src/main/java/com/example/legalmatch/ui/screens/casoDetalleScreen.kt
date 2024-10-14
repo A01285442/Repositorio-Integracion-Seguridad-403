@@ -62,8 +62,10 @@ fun CasoDetalleScreen(
     }
     usuariosVM.getClientInfo(caso.id_cliente)
     val cliente = usuariosVM.state.infoCliente
+    usuariosVM.getAbogadoInfo(caso.id_abogado)
+    val fiscalTitular = usuariosVM.state.infoAbogado
 
-    Scaffold(
+        Scaffold(
         topBar = {
             CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController = navController)
         },
@@ -88,9 +90,8 @@ fun CasoDetalleScreen(
             SpacedInformation("NUC:", caso.nuc, style = MaterialTheme.typography.bodySmall)
             SpacedInformation("Carpeta Judicial:", caso.c_judicial, style = MaterialTheme.typography.bodySmall)
             SpacedInformation("Carpeta de Investigación:", caso.c_investigacion, style = MaterialTheme.typography.bodySmall)
-            SpacedInformation("Acceso a Fiscalía Virtual:", caso.fiscalia_virtual, style = MaterialTheme.typography.bodySmall)
             SpacedInformation("Contraseña Fiscalía Virtual:", caso.password_fv, style = MaterialTheme.typography.bodySmall)
-            SpacedInformation("Fiscal Titular:", caso.id_abogado.toString(), style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Fiscal Titular:", fiscalTitular.nombre, style = MaterialTheme.typography.bodySmall)
             SpacedInformation("Unidad de Investigación:", caso.unidad_investigacion, style = MaterialTheme.typography.bodySmall)
             SpacedInformation("Dirección de la Unidad de Investigación:", caso.direccion_ui, style = MaterialTheme.typography.bodySmall)
 
@@ -140,7 +141,21 @@ fun CasoDetalleScreen(
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "Añadir archivos")
+                    Text(text = "Abrir Carpeta Drive")
+                }
+                Button(
+                    onClick = {
+                        val url = caso.fiscalia_virtual //Agregar funcionalidad de cambiar el link para los abogados.
+                        val i = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        startActivity(context, i, null)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Blue,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(text = "Abrir Fiscalía Virtual")
                 }
             }
 

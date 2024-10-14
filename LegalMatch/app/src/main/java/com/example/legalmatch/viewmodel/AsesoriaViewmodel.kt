@@ -59,7 +59,7 @@ class AsesoriaViewModel : ViewModel() {
         }
     }
 
-    fun aceptarcaso(asesoria: Asesoria){
+    fun aceptarcaso(asesoria: Asesoria, abogadoId: Int){
         viewModelScope.launch {
             val caso = SendCaso(
                     c_investigacion = asesoria.c_investigacion,
@@ -70,7 +70,7 @@ class AsesoriaViewModel : ViewModel() {
                     direccion_ui = "",
                     drive_link = "https://google.com",
                     fiscalia_virtual = "https://google.com",
-                    id_abogado = 1,
+                    id_abogado = abogadoId,
                     id_cliente = asesoria.id_cliente,
                     nuc = "",
                     password_fv = "",

@@ -29,7 +29,7 @@ fun CustomDropdownMenu(
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
     ) {
         OutlinedTextField(
             readOnly = true,
