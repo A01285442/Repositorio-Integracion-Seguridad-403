@@ -75,7 +75,7 @@ fun CustomBottomBar(navController: NavController) {
                     Image(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile",
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(34.dp)
                     )
                 },
 
