@@ -12,7 +12,6 @@ sealed class Routes(val route: String) {
     object Perfil : Routes("perfil")
     object Stats : Routes("Stats")
 
-
     // VISTAS DE ABOGADO SECUNDARIAS
     object Noticias : Routes("Noticias")
     object AddNews : Routes("AddNews")
@@ -34,7 +33,6 @@ sealed class Routes(val route: String) {
 
     // VISTAS DE CLIENTE PRINCIPALES
     object CasosCliente : Routes("casosClientes")
-    object PerfilCliente : Routes("perfilCliente")
     object NoticiasCliente : Routes("NoticiasCliente")
 
     // VISTAS DE CLIENTE SECUNDARIAS

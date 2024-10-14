@@ -14,13 +14,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
-import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.data.api.models.SendCaso
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomDropdownMenu
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
@@ -58,7 +52,7 @@ data class CasoFormState(
     // client info
     var nombre: TextFieldValue = TextFieldValue(""),
     var correo: TextFieldValue = TextFieldValue(""),
-    var sexo: TextFieldValue = TextFieldValue("hombre")
+    var sexo: String = "sexo"
 )
 
 @Composable
@@ -90,7 +84,7 @@ fun FormCasoScreen(
                     unidadInv = TextFieldValue(it.unidad_investigacion),
                     nombre = TextFieldValue(),
                     correo = TextFieldValue(),
-                    sexo = TextFieldValue(),
+                    sexo = "",
                 )
             } ?: CasoFormState() // Si es nuevo, usar estado vacío
         )
@@ -99,7 +93,7 @@ fun FormCasoScreen(
     // Client Info
     var nombre by remember { mutableStateOf(TextFieldValue("")) }
     var correo by remember { mutableStateOf(TextFieldValue("")) }
-    var sexo by remember { mutableStateOf(TextFieldValue("")) }
+    var sexo by remember { mutableStateOf("") }
 
     // Errores
     var errorMessage1 by remember { mutableStateOf("") }
@@ -149,20 +143,33 @@ fun FormCasoScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text("Información del Caso", style = MaterialTheme.typography.titleLarge)
+            Text("* Significa que el campo es obligatorio", style = MaterialTheme.typography.bodySmall)
 
             InputField(
-                label = "Título:",
+                label = "*Título:",
                 value = formState.value.titulo,
                 onValueChange = { formState.value = formState.value.copy(titulo = it) }
             )
             InputField(
-                label = "Descripción del caso:",
+                label = "*Descripción del caso:",
                 value = formState.value.descripcion,
                 onValueChange = { formState.value = formState.value.copy(descripcion = it) },
                 singleLine = false,
                 height = 200
             )
             if (errorMessage2.isNotBlank()){ Text(errorMessage2)}
+
+            /*
+            CustomDropdownMenu(
+                selectedValue = "xd",
+                options = listOf("Acusado", "demandante"),
+                label = "Rol",
+                onValueChangedEvent = { selectedOption ->
+                    println("")
+                }
+            )
+
+             */
 
             InputField(
                 label = "Carpeta de investigación:",
@@ -225,6 +232,14 @@ fun FormCasoScreen(
                 label = "Correo del cliente:",
                 value = correo,
                 onValueChange = { correo = it }
+            )
+            CustomDropdownMenu(
+                selectedValue = sexo,
+                options = listOf("Hombre", "Mujer"),
+                label = "Sexo:",
+                onValueChangedEvent = { selectedOption ->
+                    sexo = selectedOption
+                }
             )
 
             // Botón para agendar asesoría

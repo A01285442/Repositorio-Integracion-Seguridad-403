@@ -30,7 +30,7 @@ data class SendAsesoria(
     val cliente_denuncio: Boolean,
     val delito: String,
     val descripcion: String,
-    val fecha_asesoria: LocalDateTime? = LocalDateTime(1,1,1,1,1,1),
+    val fecha_asesoria: LocalDateTime = LocalDateTime(1,1,1,1,1,1),
     val id_cliente: Int,
     val nuc: String,
     val titulo: String,

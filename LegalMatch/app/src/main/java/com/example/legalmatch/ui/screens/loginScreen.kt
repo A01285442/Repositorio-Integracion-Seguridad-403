@@ -18,16 +18,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,16 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.R
-import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.theme.AzulTec
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.gotrue.Auth
-import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.query.Columns
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.legalmatch.utils.md5
 
 
 private const val TAG = "MainActivity"
@@ -63,8 +54,14 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
-
     val focusManager = LocalFocusManager.current
+
+    val context = LocalContext.current
+    val hayInternet = com.example.legalmatch.utils.isInternetAvailable(context)
+    if (!hayInternet){
+        Text("No hay conexión a internet")
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -141,7 +138,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
                     Log.d(TAG, "Probando Login")
                     viewModel.login(
                         username.lowercase(),
-                        password,
+                        md5(password),
                         onLoginSuccessAbogado = { navController.navigate(Routes.Asesorias.route) },
                         onLoginSuccessCliente = { navController.navigate(Routes.CasosCliente.route) },
                         onLoginError = { loginError = true }

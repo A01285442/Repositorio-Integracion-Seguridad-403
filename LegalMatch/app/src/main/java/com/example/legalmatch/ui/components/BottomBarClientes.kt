@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -57,7 +55,7 @@ fun CustomBottomBarClientes(navController: NavController) {
                 icon = { Icon(Icons.Default.Person, contentDescription = "Perfil") },
                 label = { Text("Perfil") },
                 selected = false,
-                onClick = { navController.navigate(Routes.PerfilCliente.route) }
+                onClick = { navController.navigate(Routes.Perfil.route) }
             )
         }
     }

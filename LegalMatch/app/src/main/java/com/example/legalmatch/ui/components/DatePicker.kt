@@ -6,6 +6,7 @@ import android.widget.DatePicker
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -15,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
@@ -58,6 +60,7 @@ fun DatePicker(
     // Botón para seleccionar la fecha
     OutlinedButton(
         onClick = { datePickerDialog.show() },
+        shape = RoundedCornerShape(4.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
