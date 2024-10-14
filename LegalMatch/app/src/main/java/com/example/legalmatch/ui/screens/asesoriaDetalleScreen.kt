@@ -35,6 +35,7 @@ import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.SpacedInformation
 import com.example.legalmatch.ui.theme.AzulTec
+import com.example.legalmatch.utils.toSpanish
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 
@@ -83,9 +84,9 @@ fun AsesoriaDetalleScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-
+            val fecha = asesoria.fecha_asesoria ?: return@Column
             SpacedInformation("Delito:", asesoria.delito,  style = MaterialTheme.typography.bodySmall)
-            SpacedInformation("Fecha de la asesoría:", asesoria.fecha_asesoria.toString(),  style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Fecha de la asesoría:", fecha.date.dayOfMonth.toString() + " " + toSpanish(fecha.monthNumber) + " " +fecha.date.year.toString() + "a las " + fecha.hour + ":00",  style = MaterialTheme.typography.bodySmall)
             if(asesoria.cliente_confirmado) SpacedInformation("¿Asistencia Confirmada?", "Si.",  style = MaterialTheme.typography.bodySmall)
             else SpacedInformation("¿Asistencia Confirmada?", "No.",  style = MaterialTheme.typography.bodySmall)
             if(asesoria.cliente_denuncio) SpacedInformation("Rol del cliente:", "Denunciante",  style = MaterialTheme.typography.bodySmall)
