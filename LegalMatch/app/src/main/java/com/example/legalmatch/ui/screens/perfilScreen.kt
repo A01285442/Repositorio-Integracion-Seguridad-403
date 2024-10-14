@@ -132,7 +132,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             SpacedInformation("Sexo:", usuario.sexo)
             SpacedInformation("Tipo de cuenta:", usuario.rol)
             SpacedInformation("Fecha de nacimiento:", "${fecha.dayOfMonth} ${toSpanish(fecha.monthNumber)} ${fecha.year}")
-            SpacedInformation("Contraseña:", usuario.contraseña.replace(".?".toRegex(),"*"))
+            SpacedInformation("Contraseña:","********")
 
             Spacer(modifier = Modifier.height(12.dp))
             HorizontalDivider()
