@@ -39,7 +39,10 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.ui.components.ProfileStat
+import com.example.legalmatch.ui.components.SpacedInformation
 import com.example.legalmatch.ui.theme.AzulTec
+import com.example.legalmatch.utils.md5
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -214,7 +217,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                                 modifier = Modifier.fillMaxWidth(),
                                 visualTransformation = PasswordVisualTransformation() // Para ocultar la contraseña
                             )
-                            if (contraseñaActual != loginState.userClient?.contraseña){
+                            if (md5(contraseñaActual) != loginState.userClient?.contraseña){
                                 Text("La contraseña actual es incorrecta.")
                             }
                             else if (nuevaContraseña.toByteArray().size < 8){
@@ -231,7 +234,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                             enabled = botonCambiar,
                             colors = ButtonColors(AzulTec, Color.White, Color(0xFF87B2E4), Color.White),
                             onClick = {
-                                loginViewModel.cambioContraseña(nuevaContraseña)
+                                loginViewModel.cambioContraseña(md5(nuevaContraseña))
 
                                 showDialogCambiarContraseña = false // Cierra el diálogo después de cambiar la contraseña
                             }
@@ -269,29 +272,3 @@ fun toSpanish(month: Int): String {
     else { "dic" }
 }
 
-@Composable
-fun SpacedInformation(
-    label: String,
-    value: String,
-){
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Absolute.SpaceBetween
-    ){
-        Text(label, style = MaterialTheme.typography.bodyMedium)
-        Text(value, style = MaterialTheme.typography.bodyMedium)
-    }
-}
-
-
-@Composable
-fun ProfileStat(big: String, medium: String, description: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row {
-            Text(text = big, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-            Text(text = medium, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        }
-
-        Text(text = description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-    }
-}

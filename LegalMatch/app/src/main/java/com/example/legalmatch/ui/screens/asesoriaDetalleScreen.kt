@@ -15,6 +15,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,6 +33,7 @@ import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.ui.components.SpacedInformation
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
@@ -81,12 +83,14 @@ fun AsesoriaDetalleScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-            Text(
-                text =
-                "Delito: ${asesoria.delito}",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Left
-            )
+
+            SpacedInformation("Delito:", asesoria.delito,  style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Fecha de la asesoría:", asesoria.fecha_asesoria.toString(),  style = MaterialTheme.typography.bodySmall)
+            if(asesoria.cliente_confirmado) SpacedInformation("¿Asistencia Confirmada?", "Si.",  style = MaterialTheme.typography.bodySmall)
+            else SpacedInformation("¿Asistencia Confirmada?", "No.",  style = MaterialTheme.typography.bodySmall)
+            if(asesoria.cliente_denuncio) SpacedInformation("Rol del cliente:", "Denunciante",  style = MaterialTheme.typography.bodySmall)
+            else SpacedInformation("Rol del cliente:", "acusado",  style = MaterialTheme.typography.bodySmall)
+
 
             // Descripción del caso
             Text(
@@ -112,17 +116,14 @@ fun AsesoriaDetalleScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-            Text(
-                text = "Nombre completo: ${cliente.nombre}" +
-                        if(asesoria.cliente_denuncio)  {"\nRol: Denunciante"} else {"\nRol: Denunciado"} +
-                        "\nSexo: ${cliente.sexo}" +
-                        "\nNacimiento: ${cliente.fecha_nacimiento.date}" +
-                        "\nCorreo: ${cliente.correo}",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Left
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            SpacedInformation("Nombre:", cliente.nombre, style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Sexo:", cliente.sexo, style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Nacimiento:", cliente.fecha_nacimiento.date.toString(), style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Correo:", cliente.correo, style = MaterialTheme.typography.bodySmall)
 
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Aceptar Caso
             if(rolUsuario == "abogado"){

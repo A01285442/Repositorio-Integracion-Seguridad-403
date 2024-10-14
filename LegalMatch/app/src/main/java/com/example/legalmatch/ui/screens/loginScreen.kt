@@ -38,6 +38,7 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.R
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.theme.AzulTec
+import com.example.legalmatch.utils.md5
 
 
 private const val TAG = "MainActivity"
@@ -137,7 +138,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
                     Log.d(TAG, "Probando Login")
                     viewModel.login(
                         username.lowercase(),
-                        password,
+                        md5(password),
                         onLoginSuccessAbogado = { navController.navigate(Routes.Asesorias.route) },
                         onLoginSuccessCliente = { navController.navigate(Routes.CasosCliente.route) },
                         onLoginError = { loginError = true }

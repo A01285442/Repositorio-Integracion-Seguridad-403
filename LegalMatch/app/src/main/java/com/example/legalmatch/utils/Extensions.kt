@@ -3,6 +3,10 @@ package com.example.legalmatch.utils
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+
+
 
 fun isInternetAvailable(context: Context): Boolean {
     var result = false
@@ -16,4 +20,16 @@ fun isInternetAvailable(context: Context): Boolean {
         else -> false
     }
     return result
+}
+
+
+fun md5(input: String): String {
+    // Crear instancia de MessageDigest con el algoritmo MD5
+    val md = MessageDigest.getInstance("MD5")
+
+    // Procesar el string de entrada y obtener el hash
+    val digest = md.digest(input.toByteArray())
+
+    // Convertir el hash en un string hexadecimal
+    return digest.joinToString("") { "%02x".format(it) }
 }

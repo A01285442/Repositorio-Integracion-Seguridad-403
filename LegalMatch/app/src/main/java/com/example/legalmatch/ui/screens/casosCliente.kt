@@ -56,7 +56,7 @@ fun CasosClienteScreen(navController: NavController, loginVM: LoginViewModel) {
                 ItemCard(
                     title = casos.delito,
                     description = casos.descripcion,
-                    onClick = { }
+                    onClick = { navController.navigate(Routes.CasoDetalle.createRoute(casos.id)) }
                 )
             }
 
@@ -65,7 +65,7 @@ fun CasosClienteScreen(navController: NavController, loginVM: LoginViewModel) {
                 ItemCard(
                     title = asesoria.delito,
                     description = asesoria.descripcion,
-                    onClick = { }
+                    onClick = { navController.navigate(Routes.AsesoriaDetalle.createRoute(asesoria.id))}
                 )
             }
         }
