@@ -109,5 +109,22 @@ class UsuariosViewModel : ViewModel(){
             }
         }
     }
+    fun getAbogadoInfo(id: Int){
+        viewModelScope.launch {
+            try {
+                _state = state.copy(isLoading = true)
+
+                // Código para obtener cliehnte
+                val cliente = supabase.from("usuarios")
+                    .select(){ filter { eq("id", id) } }
+                    .decodeSingleOrNull<Usuario>()
+
+                _state = cliente?.let { state.copy(infoAbogado = it, isLoading = false) }!!
+            } catch (e: Exception) {
+                Log.d(TAG,"Error: ${e.message}")
+                _state = state.copy(isLoading = false) // Aquí también se usa correctamente
+            }
+        }
+    }
 
 }

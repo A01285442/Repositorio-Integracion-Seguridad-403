@@ -130,7 +130,7 @@ fun AsesoriaDetalleScreen(
             if(rolUsuario == "abogado"){
                 Button(
                     onClick = {
-                        asesoriaViewModel.aceptarcaso(asesoria)
+                        asesoriaViewModel.aceptarcaso(asesoria, loginVM.loginState.value.userClient!!.id)
                         navController.navigate(Routes.Casos.route)
                         casoViewModel.fetchCasos()
                     },

@@ -15,8 +15,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -143,33 +145,29 @@ fun FormCasoScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text("Información del Caso", style = MaterialTheme.typography.titleLarge)
-            Text("* Significa que el campo es obligatorio", style = MaterialTheme.typography.bodySmall)
+            Text("Responde el siguiente formulario para tener la información sobre el caso de manera sencilla de obtener. Recuerda que * significa que el campo es obligatorio.", style = MaterialTheme.typography.bodySmall)
 
+            Text("Campos obligatorios", style = MaterialTheme.typography.titleSmall)
             InputField(
                 label = "*Título:",
                 value = formState.value.titulo,
                 onValueChange = { formState.value = formState.value.copy(titulo = it) }
             )
             InputField(
+                label = "*Delito:",
+                value = formState.value.delito,
+                onValueChange = { formState.value = formState.value.copy(delito = it) }
+            )
+            InputField(
                 label = "*Descripción del caso:",
                 value = formState.value.descripcion,
                 onValueChange = { formState.value = formState.value.copy(descripcion = it) },
                 singleLine = false,
-                height = 200
+                modifier = Modifier.height(200.dp)
             )
+
             if (errorMessage2.isNotBlank()){ Text(errorMessage2)}
-
-            /*
-            CustomDropdownMenu(
-                selectedValue = "xd",
-                options = listOf("Acusado", "demandante"),
-                label = "Rol",
-                onValueChangedEvent = { selectedOption ->
-                    println("")
-                }
-            )
-
-             */
+            Text("Campos opcionales", style = MaterialTheme.typography.titleSmall)
 
             InputField(
                 label = "Carpeta de investigación:",
@@ -181,30 +179,15 @@ fun FormCasoScreen(
                 value = formState.value.cJudicial,
                 onValueChange = { formState.value = formState.value.copy(cJudicial = it) }
             )
+
             InputField(
-                label = "Delito:",
-                value = formState.value.delito,
-                onValueChange = { formState.value = formState.value.copy(delito = it) }
+                label = "Unidad de Investigación:",
+                value = formState.value.unidadInv,
+                onValueChange = { formState.value = formState.value.copy(unidadInv = it) }
             )
-            InputField(
-                label = "Dirección de la Unidad de Investigación:",
-                value = formState.value.direccion,
-                onValueChange = { formState.value = formState.value.copy(direccion = it) }
-            )
+
             if(errorMessage3.isNotBlank()){Text(errorMessage3)}
 
-            InputField(
-                label = "Carpeta Google Drive:",
-                value = formState.value.drive,
-                onValueChange = { formState.value = formState.value.copy(drive = it) }
-            )
-            if(errorMessage4.isNotBlank()){Text(errorMessage4)}
-
-            InputField(
-                label = "Fiscalía Virtual:",
-                value = formState.value.fiscalia,
-                onValueChange = { formState.value = formState.value.copy(fiscalia = it) }
-            )
             InputField(
                 label = "Número Único de Causa:",
                 value = formState.value.nuc,
@@ -215,24 +198,50 @@ fun FormCasoScreen(
                 value = formState.value.password,
                 onValueChange = { formState.value = formState.value.copy(password = it) }
             )
+
+
+            Text("Links de acceso rápido", style = MaterialTheme.typography.titleSmall)
+
             InputField(
-                label = "Unidad de Investigación:",
-                value = formState.value.unidadInv,
-                onValueChange = { formState.value = formState.value.copy(unidadInv = it) }
+                label = "Carpeta Google Drive:",
+                value = formState.value.drive,
+                onValueChange = { formState.value = formState.value.copy(drive = it) }
             )
+            if(formState.value.drive.text.isNotBlank() && !formState.value.drive.text.startsWith("https://")){
+                Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
+            }
+            InputField(
+                label = "Fiscalía Virtual:",
+                value = formState.value.fiscalia,
+                onValueChange = { formState.value = formState.value.copy(fiscalia = it) }
+            )
+            if(formState.value.fiscalia.text.isNotBlank() && !formState.value.fiscalia.text.startsWith("https://")){
+                Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
+            }
+            InputField(
+                label = "Dirección de la Unidad de Investigación:",
+                value = formState.value.direccion,
+                onValueChange = { formState.value = formState.value.copy(direccion = it) }
+            )
+            if(formState.value.direccion.text.isNotBlank() && !formState.value.direccion.text.startsWith("https://")){
+                Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
+            }
+
+            if(errorMessage4.isNotBlank()){Text(errorMessage4)}
 
             Text("Información del Cliente", style = MaterialTheme.typography.titleLarge)
 
             InputField(
-                label = "Nombre del cliente:",
+                label = "*Nombre del cliente:",
                 value = nombre,
                 onValueChange = { nombre = it }
             )
             InputField(
-                label = "Correo del cliente:",
+                label = "*Correo del cliente:",
                 value = correo,
                 onValueChange = { correo = it }
             )
+            Text("La contraseña del cliente será 'LEGALMATCH', se recomienda que el cliente la actualice lo antes posible.")
             CustomDropdownMenu(
                 selectedValue = sexo,
                 options = listOf("Hombre", "Mujer"),
@@ -241,6 +250,17 @@ fun FormCasoScreen(
                     sexo = selectedOption
                 }
             )
+            /*
+CustomDropdownMenu(
+    selectedValue = "xd",
+    options = listOf("Acusado", "demandante"),
+    label = "Rol",
+    onValueChangedEvent = { selectedOption ->
+        println("")
+    }
+)
+
+ */
 
             // Botón para agendar asesoría
             Button(
@@ -295,22 +315,17 @@ fun InputField(
     onValueChange: (TextFieldValue) -> Unit,
     singleLine: Boolean = true,
     modifier: Modifier = Modifier,
-    height: Int = 20
 ) {
-    Column {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium)
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = singleLine,
-            textStyle = TextStyle(fontSize = 12.sp),
-            modifier = modifier
-                .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                .padding(8.dp)
-                .height(height.dp)
-        )
-    }
+    OutlinedTextField(
+        value = value,
+        label = { Text(text = label) },
+        onValueChange = onValueChange,
+        singleLine = singleLine,
+        textStyle = TextStyle(fontSize = 12.sp),
+        modifier = modifier
+            .fillMaxWidth()
+    )
+
 }
 
 fun isUrlValid(url: String) : Boolean{
