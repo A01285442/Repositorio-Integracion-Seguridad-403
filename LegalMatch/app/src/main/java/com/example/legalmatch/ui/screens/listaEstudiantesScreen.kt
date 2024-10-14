@@ -28,15 +28,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
-import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.EstudianteItem
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
 import com.example.legalmatch.viewmodel.UsuariosViewModel
-
-private const val TAG = "MainActivity"
 
 @Composable
 fun ListaEstudiantesScreen(navController: NavController, viewmodel: UsuariosViewModel) {

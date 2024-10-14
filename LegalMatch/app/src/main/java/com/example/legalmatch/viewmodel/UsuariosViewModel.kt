@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.supabase
@@ -15,8 +14,7 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
-
-private const val TAG = "MainActivity"
+import com.example.legalmatch.utils.TAG
 
 data class EstudiantesState(
     val estudiantes: List<Usuario> = emptyList(),

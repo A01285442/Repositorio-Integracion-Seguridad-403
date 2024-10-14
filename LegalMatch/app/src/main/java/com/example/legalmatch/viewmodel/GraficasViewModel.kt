@@ -3,10 +3,8 @@ package com.example.legalmatch.viewmodel
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.legalmatch.ui.screens.supabaseCli
 import com.example.legalmatch.utils.SUPABASE_KEY
 import com.example.legalmatch.utils.SUPABASE_URL
 import io.github.jan.supabase.createSupabaseClient
@@ -21,6 +19,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import com.example.legalmatch.utils.TAG
 
 // Supabase
 val supabase = createSupabaseClient(
@@ -30,8 +29,6 @@ val supabase = createSupabaseClient(
     install(Auth)
     install(Postgrest)
 }
-
-private const val TAG = "MainActivity"
 
 //Edad
 @Serializable

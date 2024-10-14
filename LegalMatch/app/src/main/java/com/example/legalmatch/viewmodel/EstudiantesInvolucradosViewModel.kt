@@ -10,8 +10,7 @@ import com.example.legalmatch.data.api.models.EstudianteCaso
 import com.example.legalmatch.data.api.models.SendEstudianteCaso
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
-
-private const val TAG = "MainActivity"
+import com.example.legalmatch.utils.TAG
 
 data class EstudiantesInvolucradosState(
     val estudiantes: List<EstudianteCaso> = emptyList(),
