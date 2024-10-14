@@ -10,6 +10,7 @@ import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.supabase
+import com.example.legalmatch.utils.md5
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.launch
@@ -75,7 +76,7 @@ class UsuariosViewModel : ViewModel(){
     fun creaEstudiante(nombre: String, matricula: String){
         val _matricula = matricula.lowercase()
         val NewEstudiante = SendUsuario(
-            contraseña = _matricula,
+            contraseña = md5(_matricula),
             correo = _matricula+"@tec.mx",
             fecha_nacimiento = LocalDateTime(1,1,1,1,1,1),
             matricula = matricula,
