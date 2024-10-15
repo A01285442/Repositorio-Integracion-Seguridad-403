@@ -41,13 +41,14 @@ val TAG = "MainActivity"
 @SuppressLint("StateFlowValueCalledInComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaViewModel) {
+fun AppNavGraph(navController: NavHostController) {
 
     val loginViewModel: LoginViewModel = viewModel()
     val casosViewModel : CasosViewModel = viewModel()
     val usuariosViewModel: UsuariosViewModel = viewModel()
     val asesoriasViewModel: AsesoriaViewModel = viewModel()
     val searchBoxViewModel : SearchViewModel = viewModel()
+
 
     NavHost(
         navController = navController,

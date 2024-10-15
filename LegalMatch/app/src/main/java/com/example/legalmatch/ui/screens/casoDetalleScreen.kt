@@ -37,11 +37,12 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.SpacedInformation
-import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition",
+    "SuspiciousIndentation"
+)
 @Composable
 fun CasoDetalleScreen(
     navController: NavController,
@@ -65,7 +66,7 @@ fun CasoDetalleScreen(
     usuariosVM.getAbogadoInfo(caso.id_abogado)
     val fiscalTitular = usuariosVM.state.infoAbogado
 
-        Scaffold(
+    Scaffold(
         topBar = {
             CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController = navController)
         },
@@ -137,8 +138,8 @@ fun CasoDetalleScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Blue,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
                     Text(text = "Abrir Carpeta Drive")
@@ -151,8 +152,8 @@ fun CasoDetalleScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Blue,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
                     Text(text = "Abrir Fiscalía Virtual")
@@ -168,8 +169,8 @@ fun CasoDetalleScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Blue,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
                 Text(text = "Ver en Google Maps")
@@ -207,7 +208,7 @@ fun CasoDetalleScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
+                        containerColor = MaterialTheme.colorScheme.error,
                         contentColor = Color.White
                     )
                 ) {
@@ -236,7 +237,12 @@ fun CasoDetalleScreen(
                     },
                     dismissButton = {
                         Button(
-                            colors = ButtonColors(containerColor = AzulTec, contentColor = Color.White, disabledContentColor = Color.Gray, disabledContainerColor = Color.Gray),
+                            colors = ButtonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White,
+                                disabledContentColor = Color.Gray,
+                                disabledContainerColor = Color.Gray
+                            ),
                             onClick = { showDialog = false } // Cerrar el diálogo sin realizar ninguna acción
                         ) {
                             Text("Cancelar")

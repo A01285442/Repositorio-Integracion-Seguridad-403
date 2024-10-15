@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,8 +32,6 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.EstudianteItem
-import com.example.legalmatch.ui.theme.AzulTec
-import com.example.legalmatch.ui.theme.GhostWhite
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 @Composable
@@ -88,7 +87,7 @@ fun ListaEstudiantesScreen(navController: NavController, viewmodel: UsuariosView
                     )
                     Button(
                         onClick = { viewmodel.creaEstudiante(nombre, matricula) },
-                        colors = ButtonColors(AzulTec, Color.White, Color.Gray, Color.Gray),
+                        colors = ButtonColors(MaterialTheme.colorScheme.primary, Color.White, Color.Gray, Color.Gray),
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(vertical = 2.dp),
@@ -107,7 +106,6 @@ fun ListaEstudiantesScreen(navController: NavController, viewmodel: UsuariosView
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = GhostWhite)
             ) {
 
 

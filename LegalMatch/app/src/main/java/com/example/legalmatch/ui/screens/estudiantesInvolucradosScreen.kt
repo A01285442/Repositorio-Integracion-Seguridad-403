@@ -37,12 +37,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
-import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.EstudianteItem
-import com.example.legalmatch.ui.theme.AzulTec
-import com.example.legalmatch.ui.theme.GhostWhite
 import com.example.legalmatch.viewmodel.EstudiantesInvolucradosViewModel
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
@@ -125,7 +122,7 @@ fun EstudiantesInvolucradosScreen(navController: NavController, viewmodel: Usuar
                             estudiantesInvolucradosViewModel.addEstudianteInvolucrado(casoId,selectedUserId)
                             estudiantesInvolucradosViewModel.getEstudiantesInvolucrados(casoId)
                                   },
-                        colors = ButtonColors(AzulTec, Color.White, Color.Gray, Color.Gray),
+                        colors = ButtonColors(MaterialTheme.colorScheme.primary, Color.White, Color.Gray, Color.Gray),
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(vertical = 2.dp),
@@ -144,7 +141,6 @@ fun EstudiantesInvolucradosScreen(navController: NavController, viewmodel: Usuar
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = GhostWhite)
             ) {
 
 

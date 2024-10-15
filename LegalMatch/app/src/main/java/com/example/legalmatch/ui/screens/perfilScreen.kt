@@ -40,7 +40,6 @@ import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.ProfileStat
 import com.example.legalmatch.ui.components.SpacedInformation
-import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.utils.md5
 import com.example.legalmatch.utils.toSpanish
 import java.time.LocalDate
@@ -78,7 +77,6 @@ fun PerfilScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color.White)
                 .padding(horizontal = 16.dp)
         ) {
 
@@ -146,8 +144,8 @@ fun PerfilScreen(
             Button(
                 onClick = { showDialogCambiarContraseña = true},
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AzulTec,
-                    contentColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                     disabledContentColor = Color.White,
                     disabledContainerColor = Color(0xFF87B2E4)),
                 modifier = Modifier
@@ -162,7 +160,10 @@ fun PerfilScreen(
             if(esFiscal){
                 Button(
                     onClick = {navController.navigate(Routes.ListaEstudiantes.route)},
-                    colors = ButtonDefaults.buttonColors(containerColor = AzulTec),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
@@ -179,7 +180,7 @@ fun PerfilScreen(
                 onClick = { loginViewModel.closeSession(then = {
                     navController.navigate(Routes.Login.route)
                 }) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -236,7 +237,7 @@ fun PerfilScreen(
                     confirmButton = {
                         Button(
                             enabled = botonCambiar,
-                            colors = ButtonColors(AzulTec, Color.White, Color(0xFF87B2E4), Color.White),
+                            colors = ButtonColors(MaterialTheme.colorScheme.primary, Color.White, Color(0xFF87B2E4), Color.White),
                             onClick = {
                                 loginViewModel.cambioContraseña(md5(nuevaContraseña))
 

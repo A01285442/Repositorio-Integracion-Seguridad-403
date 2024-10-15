@@ -14,9 +14,6 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.ItemCard
-import com.example.legalmatch.ui.theme.GhostWhite
-
-private const val TAG = "MainActivity"
 
 @Composable
 fun CasosClienteScreen(navController: NavController, loginVM: LoginViewModel) {
@@ -42,7 +39,6 @@ fun CasosClienteScreen(navController: NavController, loginVM: LoginViewModel) {
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(color = GhostWhite)
         )
         {
             item { Subtitulo("Casos") }
