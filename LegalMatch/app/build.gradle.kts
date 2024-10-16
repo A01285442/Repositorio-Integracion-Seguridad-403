@@ -121,4 +121,11 @@ dependencies {
 //    implementation("io.github.jan-tennert.supabase:storage-kt:3.0.0")
     implementation("io.github.jan-tennert.supabase:storage-kt:2.6.1")
 
+    //Google
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+    implementation(libs.androidx.espresso.core)
+    implementation("androidx.credentials:credentials-play-services-auth:20.2.0")
+    implementation(libs.androidx.fragment)
+
 }

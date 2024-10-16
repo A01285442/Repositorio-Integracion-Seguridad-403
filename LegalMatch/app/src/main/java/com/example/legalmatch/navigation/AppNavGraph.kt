@@ -35,6 +35,7 @@ import com.example.legalmatch.viewmodel.SearchViewModel
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 import com.example.proyectobueno.views.LoginScreen
 import com.example.proyectobueno.views.RegisterScreen
+import com.example.proyectobueno.views.RegisterScreenGoogle
 
 val TAG = "MainActivity"
 
@@ -158,6 +159,21 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         composable(Routes.NoticiasCliente.route){
             Log.d(TAG, "Navigating to Noticias")
             NoticiasScreenCliente(navController, NoticiasViewModel())
+        }
+
+        //Google
+        composable(
+            route = "registration_screen/{googleId}/{email}",
+            arguments = listOf(
+                navArgument("googleId") { type = NavType.StringType },
+                navArgument("email") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            RegisterScreenGoogle(
+                navController = navController,
+                googleId = backStackEntry.arguments?.getString("googleId") ?: "",
+                email = backStackEntry.arguments?.getString("email") ?: ""
+            )
         }
 
     }

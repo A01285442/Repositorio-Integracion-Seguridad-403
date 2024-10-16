@@ -24,7 +24,8 @@ data class SendUsuario(
     val matricula: String,
     val nombre: String,
     val rol: String,
-    val sexo: String
+    val sexo: String,
+    val googleId: String? = ""
 )
 
 
