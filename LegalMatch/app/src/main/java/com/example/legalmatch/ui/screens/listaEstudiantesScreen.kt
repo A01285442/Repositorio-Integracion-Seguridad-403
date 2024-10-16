@@ -17,8 +17,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +38,17 @@ import com.example.legalmatch.ui.components.EstudianteItem
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 @Composable
-fun ListaEstudiantesScreen(navController: NavController, viewmodel: UsuariosViewModel) {
+fun ListaEstudiantesScreen(
+    navController: NavController,
+    viewmodel: UsuariosViewModel
+) {
 
     val state = viewmodel.state
     var matricula by remember { mutableStateOf("") }
     var nombre by remember { mutableStateOf("") }
+
+    // Estado para manejar la visualización de la Snackbar
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Mostrar el contenido según el estado actual
     if (state.isLoading) {
@@ -48,7 +57,8 @@ fun ListaEstudiantesScreen(navController: NavController, viewmodel: UsuariosView
 
     Scaffold(
         topBar = { CustomTopBar(title = "Estudiantes registrados", navIcon = true, actIcon = false, navController, Routes.Perfil.route) },
-        bottomBar = { CustomBottomBar(navController = navController)} // Usa el navController pasado
+        bottomBar = { CustomBottomBar(navController = navController)}, // Usa el navController pasado
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
 
         Column(
@@ -86,13 +96,22 @@ fun ListaEstudiantesScreen(navController: NavController, viewmodel: UsuariosView
                             .clickable { /*onClick()*/ }  // Al hacer clic, mostramos el DatePicker
                     )
                     Button(
-                        onClick = { viewmodel.creaEstudiante(nombre, matricula) },
+                        onClick = {
+                            viewmodel
+                            viewmodel.creaEstudiante(nombre, matricula)
+                                  },
                         colors = ButtonColors(MaterialTheme.colorScheme.primary, Color.White, Color.Gray, Color.Gray),
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(vertical = 2.dp),
                     ) {
-                        Text("Añadir Estudiante")
+                        Text("Crear Estudiante")
+                    }
+                    // Lanzar la corrutina de Snackbar usando LaunchedEffect
+                    LaunchedEffect(viewmodel.state.errorAnadiendoEstudiante) {
+                        if (viewmodel.state.errorAnadiendoEstudiante) {
+                            snackbarHostState.showSnackbar("Ya existe un usuario con ese correo.")
+                        }
                     }
                 }
 

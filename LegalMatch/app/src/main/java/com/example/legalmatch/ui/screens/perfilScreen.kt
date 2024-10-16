@@ -120,9 +120,13 @@ fun PerfilScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProfileStat(big = num, medium = text, description = "En Legal Match")
-                ProfileStat(big = "4.7", medium = "★", description = "12 Reseñas")
-                ProfileStat(big = casosCerrados.size.toString(), medium = "",  description = "Casos cerrados")
+
+                if(usuario.rol != "cliente"){
+                    ProfileStat(big = num, medium = text, description = "En Legal Match")
+                    ProfileStat(big = "4.7", medium = "★", description = "12 Reseñas")
+                    ProfileStat(big = casosCerrados.size.toString(), medium = "",  description = "Casos cerrados")
+                }
+
             }
 
             Spacer(modifier = Modifier.height(12.dp))

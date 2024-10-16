@@ -14,7 +14,7 @@ import com.example.legalmatch.utils.TAG
 
 data class EstudiantesInvolucradosState(
     val estudiantes: List<EstudianteCaso> = emptyList(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = false
 )
 
 class EstudiantesInvolucradosViewModel : ViewModel() {
@@ -23,6 +23,7 @@ class EstudiantesInvolucradosViewModel : ViewModel() {
     val state: EstudiantesInvolucradosState get() = _state
 
     fun getEstudiantesInvolucrados(casoId: Int){
+        _state = state.copy(isLoading = true)
         viewModelScope.launch {
             try {
                 val listaEstudiantesInvolucrados = supabase.from("estudiantecaso")
@@ -32,17 +33,20 @@ class EstudiantesInvolucradosViewModel : ViewModel() {
                 _state = state.copy(estudiantes = listaEstudiantesInvolucrados)
             } catch (e: Exception){
                 e.message?.let { Log.d(TAG, it) }
+            } finally {
+                _state = state.copy(isLoading = false)
             }
         }
     }
 
     fun deleteEstudianteInvolucrado(casoId: Int, usuarioId:Int){
+        _state = state.copy(isLoading = true)
         viewModelScope.launch {
             try {
                 supabase.from("estudiantecaso")
                     .delete(){ filter {
-                        eq("caso", casoId)
-                        eq("estudiante", usuarioId)
+                        eq("caso_id", casoId)
+                        eq("estudiante_id", usuarioId)
                     }}
             } catch (e: Exception){
                 e.message?.let { Log.d(TAG, it) }
@@ -53,8 +57,10 @@ class EstudiantesInvolucradosViewModel : ViewModel() {
     }
 
     fun addEstudianteInvolucrado(casoId: Int, usuarioId: Int){
+        Log.d(TAG, "Añadiendo estudiante inv")
         viewModelScope.launch {
-            var UsuarioAInsertar = SendEstudianteCaso(
+            _state = state.copy(isLoading = true)
+            val UsuarioAInsertar = SendEstudianteCaso(
                 estudiante_id = usuarioId,
                 caso_id = casoId
             )
@@ -62,6 +68,8 @@ class EstudiantesInvolucradosViewModel : ViewModel() {
                 supabase.from("estudiantecaso").insert(UsuarioAInsertar)
             } catch (e: Exception){
                 e.message?.let { Log.d(TAG, it) }
+            } finally {
+                getEstudiantesInvolucrados(casoId)
             }
         }
     }

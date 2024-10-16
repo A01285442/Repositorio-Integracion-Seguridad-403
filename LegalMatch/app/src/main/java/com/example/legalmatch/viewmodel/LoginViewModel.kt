@@ -103,11 +103,26 @@ class LoginViewModel : ViewModel() {
     fun registerClient(newUsuario: SendUsuario) {
         viewModelScope.launch {
             try {
-                supabase.postgrest["usuarios"].insert(newUsuario)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d(TAG, e.message.toString())
+                val UsuarioExistente = supabase.from("usuarios")
+                    .select { filter { eq("correo", newUsuario.correo) } }
+                    .decodeSingleOrNull<Usuario>()
+                if(UsuarioExistente == null){
+                    try {
+                        supabase.postgrest["usuarios"].insert(newUsuario)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.d(TAG, e.message.toString())
+                    }
+                } else {
+                    _loginState.value = _loginState.value.copy(
+                        errorMessage = "Ya hay un usuario con ese correo"
+                    )
+                    Log.d(TAG,"fds")
+                }
+            } catch (e: Exception){
+                Log.d(TAG, "Error: ${e.message}")
             }
+
         }
     }
 
