@@ -42,9 +42,6 @@ import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomDropdownMenu
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.DatePicker
-import com.example.legalmatch.ui.components.SnackbarDemo
-import com.example.legalmatch.ui.theme.AzulTec
-import com.example.legalmatch.ui.theme.GhostWhite
 import com.example.legalmatch.utils.GEMINI_KEY
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -116,7 +113,6 @@ fun FormAsesoriaScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(color = GhostWhite)
                 .verticalScroll(rememberScrollState()) // Habilitar scroll vertical
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -228,7 +224,7 @@ fun FormAsesoriaScreen(
 
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AzulTec,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White),
 
                 modifier = Modifier

@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -37,7 +38,6 @@ import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.R
 import com.example.legalmatch.ui.screens.LoginViewModel
-import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.utils.md5
 
 
@@ -74,7 +74,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
             text = "LEGAL MATCH",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = AzulTec,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .padding(1.dp)
                 .padding(10.dp)
@@ -148,7 +148,7 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
                 }
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = AzulTec,
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White
             ),
             modifier = Modifier.fillMaxWidth()
@@ -158,10 +158,10 @@ fun LoginScreen(navController: NavController,viewModel: LoginViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "¿No tienes una cuenta?", color = Color.Black)
+        Text(text = "¿No tienes una cuenta?")
         Text(
             text = "Regístrate",
-            color = AzulTec,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .clickable {
                     navController.navigate(Routes.Register.route)

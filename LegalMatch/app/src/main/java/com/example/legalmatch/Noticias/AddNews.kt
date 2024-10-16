@@ -25,7 +25,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.example.legalmatch.ui.components.CustomTopBar
-import com.example.legalmatch.ui.theme.AzulTec
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -85,7 +84,7 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                     launcher.launch(intent)
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = AzulTec)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("Agregar Imagen")
             }
@@ -120,7 +119,7 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = AzulTec)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("Guardar Noticia")
             }

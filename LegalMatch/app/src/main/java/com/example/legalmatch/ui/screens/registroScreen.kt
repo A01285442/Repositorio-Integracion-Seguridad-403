@@ -37,7 +37,6 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.ui.components.DatePicker
 import com.example.legalmatch.ui.screens.LoginViewModel
-import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.utils.TAG
 import com.example.legalmatch.utils.md5
 import kotlinx.datetime.Clock
@@ -145,7 +144,7 @@ fun NameScreen(
                 text = "Nombre Completo",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = AzulTec
+                color = MaterialTheme.colorScheme.primary
             )
 
             OutlinedTextField(
@@ -176,7 +175,7 @@ fun NameScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isValid) AzulTec else Color.Gray,
+                    containerColor = if (isValid) MaterialTheme.colorScheme.primary else Color.Gray,
                     contentColor = Color.White
                 )
             ) {
@@ -209,7 +208,7 @@ fun InputScreen(
                 text = label,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = AzulTec
+                color = MaterialTheme.colorScheme.primary
             )
 
             OutlinedTextField(
@@ -231,7 +230,7 @@ fun InputScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isValid) AzulTec else Color.Gray,
+                    containerColor = if (isValid) MaterialTheme.colorScheme.primary else Color.Gray,
                     contentColor = Color.White
                 )
             ) {
@@ -265,7 +264,7 @@ fun DateOfBirthScreen(
                 text = "Fecha de nacimiento",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = AzulTec
+                color = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -287,7 +286,7 @@ fun DateOfBirthScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedDateTime != null) AzulTec else Color.Gray,
+                    containerColor = if (selectedDateTime != null) MaterialTheme.colorScheme.primary else Color.Gray,
                     contentColor = Color.White
                 )
             ) {
@@ -340,7 +339,7 @@ fun SexScreen(value: String, onValueChange: (String) -> Unit, onContinue: () -> 
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (value.isNotEmpty()) AzulTec else Color.Gray,
+                    containerColor = if (value.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray,
                     contentColor = Color.White
                 )
             ) {
@@ -419,7 +418,7 @@ fun PasswordScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isNameValid) AzulTec else Color.Gray, // Cambiar color según estado
+                    containerColor = if (isNameValid) MaterialTheme.colorScheme.primary else Color.Gray, // Cambiar color según estado
                     contentColor = Color.White
                 )
             ) {

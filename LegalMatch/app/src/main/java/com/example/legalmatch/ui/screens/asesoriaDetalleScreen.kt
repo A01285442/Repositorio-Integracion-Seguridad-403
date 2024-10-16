@@ -34,7 +34,6 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.SpacedInformation
-import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.utils.toSpanish
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
@@ -86,7 +85,8 @@ fun AsesoriaDetalleScreen(
             )
             val fecha = asesoria.fecha_asesoria ?: return@Column
             SpacedInformation("Delito:", asesoria.delito,  style = MaterialTheme.typography.bodySmall)
-            SpacedInformation("Fecha de la asesoría:", fecha.date.dayOfMonth.toString() + " " + toSpanish(fecha.monthNumber) + " " +fecha.date.year.toString() + "a las " + fecha.hour + ":00",  style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Fecha de la asesoría:", fecha.date.dayOfMonth.toString() + " " + toSpanish(fecha.monthNumber) + " " +fecha.date.year.toString(),  style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Hora de la asesoría", fecha.hour.toString() + ":00", style = MaterialTheme.typography.bodySmall)
             if(asesoria.cliente_confirmado) SpacedInformation("¿Asistencia Confirmada?", "Si.",  style = MaterialTheme.typography.bodySmall)
             else SpacedInformation("¿Asistencia Confirmada?", "No.",  style = MaterialTheme.typography.bodySmall)
             if(asesoria.cliente_denuncio) SpacedInformation("Rol del cliente:", "Denunciante",  style = MaterialTheme.typography.bodySmall)
@@ -117,9 +117,10 @@ fun AsesoriaDetalleScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+            val fechaNac = cliente.fecha_nacimiento.date
             SpacedInformation("Nombre:", cliente.nombre, style = MaterialTheme.typography.bodySmall)
             SpacedInformation("Sexo:", cliente.sexo, style = MaterialTheme.typography.bodySmall)
-            SpacedInformation("Nacimiento:", cliente.fecha_nacimiento.date.toString(), style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Nacimiento:", "${fechaNac.dayOfMonth} ${toSpanish(fechaNac.monthNumber)} ${fechaNac.year}" , style = MaterialTheme.typography.bodySmall)
             SpacedInformation("Correo:", cliente.correo, style = MaterialTheme.typography.bodySmall)
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -136,8 +137,8 @@ fun AsesoriaDetalleScreen(
                     },
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = AzulTec,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) { Text(text = "Aceptar Caso") }
 
@@ -149,8 +150,8 @@ fun AsesoriaDetalleScreen(
                     },
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = AzulTec,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) { Text(text = "Reagendar Caso") }
 
@@ -161,7 +162,7 @@ fun AsesoriaDetalleScreen(
                     },
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
+                        containerColor = MaterialTheme.colorScheme.error,
                         contentColor = Color.White
                     )
                 ) { Text(text = "Rechazar Caso") }
@@ -176,7 +177,12 @@ fun AsesoriaDetalleScreen(
                     text = { Text("¿Estás seguro de que deseas rechazar el caso?") },
                     confirmButton = {
                         Button(
-                            colors = ButtonColors(containerColor = Color.Red, contentColor = Color.White, disabledContentColor = Color.Gray, disabledContainerColor = Color.Gray),
+                            colors = ButtonColors(
+                                containerColor = MaterialTheme.colorScheme.error,
+                                contentColor = Color.White,
+                                disabledContentColor = Color.Gray,
+                                disabledContainerColor = Color.Gray
+                            ),
                             onClick = {
                                 // Acción para cerrar el caso
                                 asesoriaViewModel.cancelarCaso(asesoria)
@@ -189,7 +195,7 @@ fun AsesoriaDetalleScreen(
                     },
                     dismissButton = {
                         Button(
-                            colors = ButtonColors(containerColor = AzulTec, contentColor = Color.White, disabledContentColor = Color.Gray, disabledContainerColor = Color.Gray),
+                            colors = ButtonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.White, disabledContentColor = Color.Gray, disabledContainerColor = Color.Gray),
                             onClick = { showDialog = false } // Cerrar el diálogo sin realizar ninguna acción
                         ) {
                             Text("Cancelar")

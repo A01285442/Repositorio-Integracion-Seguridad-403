@@ -39,8 +39,8 @@ fun ItemCard(
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(10.dp),
         colors = CardColors(
-            containerColor = Color.White,
-            contentColor = Color.Black,
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
             disabledContainerColor = Color.LightGray,
             disabledContentColor = Color.DarkGray
 

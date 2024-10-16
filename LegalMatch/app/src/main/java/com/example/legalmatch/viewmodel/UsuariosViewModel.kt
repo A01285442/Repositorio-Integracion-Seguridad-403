@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.supabase
@@ -15,19 +14,19 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
+import com.example.legalmatch.utils.TAG
 
-private const val TAG = "MainActivity"
-
-data class EstudiantesState(
+data class UsuariosState(
     val estudiantes: List<Usuario> = emptyList(),
+    val errorAnadiendoEstudiante: Boolean = false,
     val infoCliente: Usuario = Usuario("","",LocalDateTime(1,1,1,1,1,1), LocalDateTime(1,1,1,1,1,1), 0, "","","estudiante", "hombre"),
     val infoAbogado: Usuario = Usuario("","",LocalDateTime(1,1,1,1,1,1), LocalDateTime(1,1,1,1,1,1), 0, "","","estudiante", "hombre"),
     val isLoading: Boolean = false
 )
 
 class UsuariosViewModel : ViewModel(){
-    private var _state by mutableStateOf(EstudiantesState())
-    val state: EstudiantesState get() = _state
+    private var _state by mutableStateOf(UsuariosState())
+    val state: UsuariosState get() = _state
 
     init {
         fetchEstudiantes()
@@ -86,11 +85,25 @@ class UsuariosViewModel : ViewModel(){
         )
         viewModelScope.launch {
             try {
-                supabase.from("usuarios").insert(NewEstudiante)
-            } catch (e: Exception){
-                Log.d(TAG, "Error: e.message")
+                val usuarioRecibido = supabase.from("usuarios")
+                    .select { filter { eq("correo",_matricula+"@tec.mx") } }
+                    .decodeSingleOrNull<Usuario>()
+                if (usuarioRecibido == null){
+                    try {
+                        supabase.from("usuarios").insert(NewEstudiante)
+                    } catch (e: Exception){
+                        Log.d(TAG, "Error: e.message")
+                    } finally {
+                        fetchEstudiantes()
+                    }
+                } else {
+                    _state = state.copy(errorAnadiendoEstudiante = true)
+                    Log.d(TAG, "xfndsjikfnsdi")
+                }
+            } catch (e: Exception) {
+                Log.d(TAG,"Error: ${e.message}")
             }
-            fetchEstudiantes()
+
         }
     }
 

@@ -36,8 +36,6 @@ import com.example.legalmatch.data.api.models.SendCaso
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomDropdownMenu
 import com.example.legalmatch.ui.components.CustomTopBar
-import com.example.legalmatch.ui.theme.AzulTec
-import com.example.legalmatch.ui.theme.GhostWhite
 
 data class CasoFormState(
     var titulo: TextFieldValue = TextFieldValue(""),
@@ -139,7 +137,6 @@ fun FormCasoScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(color = GhostWhite)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -288,7 +285,7 @@ CustomDropdownMenu(
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AzulTec,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White
                 ),
                 modifier = Modifier
@@ -304,6 +301,7 @@ CustomDropdownMenu(
                 }
 
             }
+            Text("La contraseña del cliente será 'LEGALMATCH', se recomienda que el cliente la actualice lo antes posible.", style = MaterialTheme.typography.bodySmall)
         }
     }
 }

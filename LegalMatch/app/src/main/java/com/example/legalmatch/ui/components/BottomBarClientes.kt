@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -32,7 +33,7 @@ fun CustomBottomBarClientes(navController: NavController) {
             )
     ) {
         NavigationBar(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ) {
             NavigationBarItem(
                 icon = { Icon(Icons.Default.Menu, contentDescription = "Mis Casos") },
