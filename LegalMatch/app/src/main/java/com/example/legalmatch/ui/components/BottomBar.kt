@@ -45,7 +45,7 @@ fun CustomBottomBar(navController: NavController) {
                         modifier = Modifier.size(32.dp)
 
                     ) },
-                //label = { Text("Agenda") },
+
                 selected = false,
                 onClick = { navController.navigate("asesorias") }
             )
@@ -55,7 +55,7 @@ fun CustomBottomBar(navController: NavController) {
                     contentDescription = "Casos",
                     modifier = Modifier.size(32.dp)
                 ) },
-                ///label = { Text("Casos") },
+
                 selected = false,
                 onClick = { navController.navigate("casos") }
             )
@@ -65,17 +65,20 @@ fun CustomBottomBar(navController: NavController) {
                     contentDescription = "news",
                     modifier = Modifier.size(34.dp)
                 ) },
-                ///label = { Text("Casos") },
+
                 selected = false,
                 onClick = { navController.navigate("Noticias") }
             )
 
             NavigationBarItem(
-                icon = { Icon(
-                    Icons.Default.Person, contentDescription = "Perfil",
-                    modifier = Modifier.size(32.dp)
-                )},
-                //label = { Text("Perfil") },
+                icon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = "Profile",
+                        modifier = Modifier.size(28.dp)
+                    )
+                },
+
                 selected = false,
                 onClick = { navController.navigate("perfil") }
             )
@@ -85,7 +88,7 @@ fun CustomBottomBar(navController: NavController) {
                     contentDescription = "Stats",
                     modifier = Modifier.size(28.dp)
                 )},
-                //label = { Text("Estadísticas") },
+
                 selected = false,
                 onClick = { navController.navigate("Stats") }
             )

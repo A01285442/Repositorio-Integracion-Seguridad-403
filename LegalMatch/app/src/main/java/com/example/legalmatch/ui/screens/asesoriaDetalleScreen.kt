@@ -15,6 +15,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,19 +33,22 @@ import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.ui.components.SpacedInformation
 import com.example.legalmatch.ui.theme.AzulTec
+import com.example.legalmatch.utils.toSpanish
 import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
 @Composable
 fun AsesoriaDetalleScreen(
     navController: NavController,
     asesoriaViewModel: AsesoriaViewModel,
     casoId: Int,
     usuariosVM: UsuariosViewModel,
-    casoViewModel: CasosViewModel
+    casoViewModel: CasosViewModel,
+    loginVM: LoginViewModel
 ) {
     val scrollState = rememberScrollState() // Estado del scroll
 
@@ -53,6 +57,7 @@ fun AsesoriaDetalleScreen(
         Text("Asesoría no encontrado. Favor de reiniciar la aplicación.")
         return
     }
+    val rolUsuario = loginVM.loginState.value.userClient?.rol
     usuariosVM.getClientInfo(asesoria.id_cliente)
     val cliente = usuariosVM.state.infoCliente
 
@@ -79,12 +84,14 @@ fun AsesoriaDetalleScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-            Text(
-                text =
-                "Delito: ${asesoria.delito}",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Left
-            )
+            val fecha = asesoria.fecha_asesoria ?: return@Column
+            SpacedInformation("Delito:", asesoria.delito,  style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Fecha de la asesoría:", fecha.date.dayOfMonth.toString() + " " + toSpanish(fecha.monthNumber) + " " +fecha.date.year.toString() + "a las " + fecha.hour + ":00",  style = MaterialTheme.typography.bodySmall)
+            if(asesoria.cliente_confirmado) SpacedInformation("¿Asistencia Confirmada?", "Si.",  style = MaterialTheme.typography.bodySmall)
+            else SpacedInformation("¿Asistencia Confirmada?", "No.",  style = MaterialTheme.typography.bodySmall)
+            if(asesoria.cliente_denuncio) SpacedInformation("Rol del cliente:", "Denunciante",  style = MaterialTheme.typography.bodySmall)
+            else SpacedInformation("Rol del cliente:", "acusado",  style = MaterialTheme.typography.bodySmall)
+
 
             // Descripción del caso
             Text(
@@ -110,56 +117,56 @@ fun AsesoriaDetalleScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-            Text(
-                text = "Nombre completo: ${cliente.nombre}" +
-                        if(asesoria.cliente_denuncio)  {"\nRol: Denunciante"} else {"\nRol: Denunciado"} +
-                        "\nSexo: ${cliente.sexo}" +
-                        "\nNacimiento: ${cliente.fecha_nacimiento.date}" +
-                        "\nCorreo: ${cliente.correo}",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Left
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            SpacedInformation("Nombre:", cliente.nombre, style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Sexo:", cliente.sexo, style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Nacimiento:", cliente.fecha_nacimiento.date.toString(), style = MaterialTheme.typography.bodySmall)
+            SpacedInformation("Correo:", cliente.correo, style = MaterialTheme.typography.bodySmall)
 
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Aceptar Caso
-            Button(
-                onClick = {
-                    asesoriaViewModel.aceptarcaso(asesoria)
-                    navController.navigate(Routes.Casos.route)
-                    casoViewModel.fetchCasos()
-                          },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AzulTec,
-                    contentColor = Color.White
-                )
-            ) { Text(text = "Aceptar Caso") }
+            if(rolUsuario == "abogado"){
+                Button(
+                    onClick = {
+                        asesoriaViewModel.aceptarcaso(asesoria, loginVM.loginState.value.userClient!!.id)
+                        navController.navigate(Routes.Casos.route)
+                        casoViewModel.fetchCasos()
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AzulTec,
+                        contentColor = Color.White
+                    )
+                ) { Text(text = "Aceptar Caso") }
 
-            // Rechazar Caso
-            Button(
-                onClick = {
-                    asesoriaViewModel.reagendarAsesoria(asesoria)
-                    navController.popBackStack()
-                          },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AzulTec,
-                    contentColor = Color.White
-                )
-            ) { Text(text = "Reagendar Caso") }
+                // Rechazar Caso
+                Button(
+                    onClick = {
+                        asesoriaViewModel.reagendarAsesoria(asesoria)
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AzulTec,
+                        contentColor = Color.White
+                    )
+                ) { Text(text = "Reagendar Caso") }
 
-            // Cerrar caso
-            Button(
-                onClick = {
-                    showDialog = true
-                },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White
-                )
-            ) { Text(text = "Rechazar Caso") }
+                // Cerrar caso
+                Button(
+                    onClick = {
+                        showDialog = true
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red,
+                        contentColor = Color.White
+                    )
+                ) { Text(text = "Rechazar Caso") }
+            }
+
 
             // Dialogo de confirmación
             if (showDialog) {

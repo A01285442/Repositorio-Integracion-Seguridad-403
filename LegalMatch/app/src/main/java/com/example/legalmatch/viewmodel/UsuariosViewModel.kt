@@ -10,6 +10,7 @@ import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
 import com.example.legalmatch.ui.screens.supabase
+import com.example.legalmatch.utils.md5
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.launch
@@ -75,7 +76,7 @@ class UsuariosViewModel : ViewModel(){
     fun creaEstudiante(nombre: String, matricula: String){
         val _matricula = matricula.lowercase()
         val NewEstudiante = SendUsuario(
-            contraseña = _matricula,
+            contraseña = md5(_matricula),
             correo = _matricula+"@tec.mx",
             fecha_nacimiento = LocalDateTime(1,1,1,1,1,1),
             matricula = matricula,
@@ -104,6 +105,23 @@ class UsuariosViewModel : ViewModel(){
                     .decodeSingleOrNull<Usuario>()
 
                 _state = cliente?.let { state.copy(infoCliente = it, isLoading = false) }!!
+            } catch (e: Exception) {
+                Log.d(TAG,"Error: ${e.message}")
+                _state = state.copy(isLoading = false) // Aquí también se usa correctamente
+            }
+        }
+    }
+    fun getAbogadoInfo(id: Int){
+        viewModelScope.launch {
+            try {
+                _state = state.copy(isLoading = true)
+
+                // Código para obtener cliehnte
+                val cliente = supabase.from("usuarios")
+                    .select(){ filter { eq("id", id) } }
+                    .decodeSingleOrNull<Usuario>()
+
+                _state = cliente?.let { state.copy(infoAbogado = it, isLoading = false) }!!
             } catch (e: Exception) {
                 Log.d(TAG,"Error: ${e.message}")
                 _state = state.copy(isLoading = false) // Aquí también se usa correctamente

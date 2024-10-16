@@ -1,8 +1,10 @@
 package com.example.legalmatch.ui.screens
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.annotation.RestrictTo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,11 +21,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,11 +36,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.app.navigation.Routes
 import com.example.legalmatch.data.api.models.SendAsesoria
 import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomDropdownMenu
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.DatePicker
+import com.example.legalmatch.ui.components.SnackbarDemo
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
 import com.example.legalmatch.utils.GEMINI_KEY
@@ -53,6 +60,7 @@ import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import com.example.legalmatch.utils.TAG
 
 
 @Serializable
@@ -62,18 +70,32 @@ data class correcion(
     val descripcionModificada: String
 )
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel) {
+fun FormAsesoriaScreen(
+    navController: NavController,
+    viewModel:AsesoriaViewModel,
+    loginViewModel: LoginViewModel) {
     // Estado para manejar los datos del formulario
     var selectedRole by remember { mutableStateOf("Seleccionar") }
     var selectedHour by remember { mutableStateOf("Selecciona el horario de tu cita") }
     var description by remember { mutableStateOf("") }
 
+
     val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     var selectedDate by remember { mutableStateOf(now.date) }
     var selectedTime by remember { mutableStateOf(now.time) }
     val selectedDateTime = LocalDateTime(selectedDate,selectedTime)
+
+    val usuarioCliente = loginViewModel.loginState.value.userClient ?: return
+
+    // Estado para manejar la visualización de la Snackbar
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Definir el scope para las corrutinas
+    val coroutineScope = rememberCoroutineScope()
+
     //Estado para manejar eñ api
 
     var apiResult by remember { mutableStateOf<correcion?>(null) }
@@ -86,7 +108,8 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
         },
         bottomBar = {
             CustomBottomBarClientes(navController = navController) // Barra inferior
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         // Habilitar desplazamiento
         Column(
@@ -154,36 +177,55 @@ fun FormAsesoriaScreen(navController: NavController, viewModel:AsesoriaViewModel
                     .padding(8.dp)
             )
 
+            val buttonEnabled = selectedRole != "Seleccionar" && selectedHour != "Selecciona el horario de tu cita" && description.length>10
+
             // Botón para agendar asesoría
             Button(
+                enabled = buttonEnabled,
                 onClick = {
+                    Log.d(TAG, "Boton picado")
                     makeApiRequest(description) { result ->
-                        apiResult = result }
+                        Log.d(TAG, "Respuest obtenida")
+                        val esDemandante = selectedRole == "Demandante"
 
-                    val esDemandante = selectedRole == "Demandante"
+                        // Crear una instancia de Asesoria con los datos del formulario
 
-                    // Crear una instancia de Asesoria con los datos del formulario
-                    val newAsesoria = apiResult?.let {
-                        SendAsesoria(
-                            c_investigacion = "", // Modificar si tienes este dato
-                            c_judicial = "",      // Modificar si tienes este dato
-                            estado = "pendiente", // Ejemplo de estado
-                            cliente_confirmado = true,
-                            cliente_denuncio = esDemandante,
-                            delito = it.tipoDelito, // Usar el rol seleccionado como delito (modificar si es necesario)
-                            descripcion = description,
-                            fecha_asesoria = selectedDateTime,
-                            id_cliente = 1, // Este es un ejemplo, debes obtener el id del cliente actual
-                            nuc = "N/A", // Modificar si tienes este dato
-                            titulo = it.titulo, // Este es un título de ejemplo
-                            descripcion_modificada = it.descripcionModificada // Aquí va el texto corregido por la API
-                        )
+                        val newAsesoria = result?.let {
+                            SendAsesoria(
+                                c_investigacion = "", // Modificar si tienes este dato
+                                c_judicial = "",      // Modificar si tienes este dato
+                                estado = "pendiente", // Ejemplo de estado
+                                cliente_confirmado = true,
+                                cliente_denuncio = esDemandante,
+                                delito = it.tipoDelito, // Usar el rol seleccionado como delito (modificar si es necesario)
+                                descripcion = description,
+                                fecha_asesoria = selectedDateTime,
+                                id_cliente = usuarioCliente.id, // Este es un ejemplo, debes obtener el id del cliente actual
+                                nuc = "", // Modificar si tienes este dato
+                                titulo = it.titulo, // Este es un título de ejemplo
+                                descripcion_modificada = it.descripcionModificada // Aquí va el texto corregido por la API
+                            )
+                        }
+
+                        // Llamar a la función enviarAsesoria del ViewModel
+                        if (newAsesoria != null) {
+                            Log.d(TAG, "Asesoría agendada exitosamente")
+                            viewModel.enviarAsesoria(newAsesoria)
+
+                            coroutineScope.launch {
+                                // Mostrar la Snackbar después de enviar la asesoría
+                                snackbarHostState.showSnackbar("Asesoría agendada correctamente")
+                            }
+                            navController.navigate(Routes.CasosCliente.route)
+                        } else {
+                            Log.d(TAG,"Error al agendar asesoria")
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Error al agendar la asesoría")
+                            }
+                        }
+
                     }
 
-                    // Llamar a la función enviarAsesoria del ViewModel
-                    if (newAsesoria != null) {
-                        viewModel.enviarAsesoria(newAsesoria)
-                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AzulTec,
@@ -300,6 +342,7 @@ fun parseResponse(response: String): String {
         }
     } catch (e: Exception) {
         e.printStackTrace()
+        Log.d(TAG, "No devolvió un JSON")
         return "Error al parsear la respuesta."
     }
     return "No se encontró contenido relevante."
@@ -323,3 +366,4 @@ fun decodeJson(response: String): correcion? {
         null
     }
 }
+

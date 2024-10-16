@@ -7,8 +7,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -17,7 +19,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -26,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -36,18 +36,22 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.ui.components.ProfileStat
+import com.example.legalmatch.ui.components.SpacedInformation
 import com.example.legalmatch.ui.theme.AzulTec
-import okio.utf8Size
+import com.example.legalmatch.utils.md5
+import com.example.legalmatch.utils.toSpanish
 import java.time.LocalDate
-import kotlin.math.log
-
-private const val TAG = "MainActivity"
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
+fun PerfilScreen(
+    navController: NavController,
+    loginViewModel: LoginViewModel,
+    casosViewModel: CasosViewModel) {
 
     val loginState by loginViewModel.loginState.collectAsState()
     var showDialogCambiarContraseña by remember { mutableStateOf(false) }
@@ -55,16 +59,20 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
     var nuevaContraseña by remember { mutableStateOf("") }
     var nuevaContraseña2 by remember { mutableStateOf("") }
     var botonCambiar by remember { mutableStateOf(false)}
-
-    if (loginState.userClient == null){
-        return
-    }
+    val usuario = loginState.userClient ?: return
 
     val esFiscal = loginState.userClient!!.rol == "abogado"
+    val casosCerrados = casosViewModel.state.casos.filter { caso -> caso.caso_cerrado }
 
     Scaffold(
         topBar = { CustomTopBar(title = "Perfil", navIcon = false, actIcon = false) },
-        bottomBar = { CustomBottomBar(navController=navController) }
+        bottomBar = {
+            if (usuario.rol == "cliente") {
+                CustomBottomBarClientes(navController = navController)
+            } else {
+                CustomBottomBar(navController = navController)
+            }
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -116,10 +124,23 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
             ) {
                 ProfileStat(big = num, medium = text, description = "En Legal Match")
                 ProfileStat(big = "4.7", medium = "★", description = "12 Reseñas")
-                ProfileStat(big = "62", medium = "",  description = "Casos cerrados")
+                ProfileStat(big = casosCerrados.size.toString(), medium = "",  description = "Casos cerrados")
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
             HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            val fecha = usuario.fecha_nacimiento.date
+            if(usuario.matricula.isNotBlank()){ SpacedInformation("Matricula:", usuario.matricula) }
+            SpacedInformation("Sexo:", usuario.sexo)
+            SpacedInformation("Tipo de cuenta:", usuario.rol)
+            SpacedInformation("Fecha de nacimiento:", "${fecha.dayOfMonth} ${toSpanish(fecha.monthNumber)} ${fecha.year}")
+            SpacedInformation("Contraseña:","********")
+
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Botón para cambiar contraseña
             Button(
@@ -200,7 +221,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                                 modifier = Modifier.fillMaxWidth(),
                                 visualTransformation = PasswordVisualTransformation() // Para ocultar la contraseña
                             )
-                            if (contraseñaActual != loginState.userClient?.contraseña){
+                            if (md5(contraseñaActual) != loginState.userClient?.contraseña){
                                 Text("La contraseña actual es incorrecta.")
                             }
                             else if (nuevaContraseña.toByteArray().size < 8){
@@ -217,7 +238,7 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
                             enabled = botonCambiar,
                             colors = ButtonColors(AzulTec, Color.White, Color(0xFF87B2E4), Color.White),
                             onClick = {
-                                loginViewModel.cambioContraseña(nuevaContraseña)
+                                loginViewModel.cambioContraseña(md5(nuevaContraseña))
 
                                 showDialogCambiarContraseña = false // Cierra el diálogo después de cambiar la contraseña
                             }
@@ -241,14 +262,4 @@ fun PerfilScreen(navController: NavController, loginViewModel: LoginViewModel) {
 }
 
 
-@Composable
-fun ProfileStat(big: String, medium: String, description: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row {
-            Text(text = big, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-            Text(text = medium, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        }
 
-        Text(text = description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-    }
-}

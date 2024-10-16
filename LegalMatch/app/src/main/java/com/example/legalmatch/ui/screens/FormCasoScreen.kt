@@ -14,15 +14,11 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
-import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.data.api.models.SendCaso
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomDropdownMenu
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
@@ -58,7 +54,7 @@ data class CasoFormState(
     // client info
     var nombre: TextFieldValue = TextFieldValue(""),
     var correo: TextFieldValue = TextFieldValue(""),
-    var sexo: TextFieldValue = TextFieldValue("hombre")
+    var sexo: String = "sexo"
 )
 
 @Composable
@@ -90,7 +86,7 @@ fun FormCasoScreen(
                     unidadInv = TextFieldValue(it.unidad_investigacion),
                     nombre = TextFieldValue(),
                     correo = TextFieldValue(),
-                    sexo = TextFieldValue(),
+                    sexo = "",
                 )
             } ?: CasoFormState() // Si es nuevo, usar estado vacío
         )
@@ -99,7 +95,7 @@ fun FormCasoScreen(
     // Client Info
     var nombre by remember { mutableStateOf(TextFieldValue("")) }
     var correo by remember { mutableStateOf(TextFieldValue("")) }
-    var sexo by remember { mutableStateOf(TextFieldValue("")) }
+    var sexo by remember { mutableStateOf("") }
 
     // Errores
     var errorMessage1 by remember { mutableStateOf("") }
@@ -149,20 +145,29 @@ fun FormCasoScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text("Información del Caso", style = MaterialTheme.typography.titleLarge)
+            Text("Responde el siguiente formulario para tener la información sobre el caso de manera sencilla de obtener. Recuerda que * significa que el campo es obligatorio.", style = MaterialTheme.typography.bodySmall)
 
+            Text("Campos obligatorios", style = MaterialTheme.typography.titleSmall)
             InputField(
-                label = "Título:",
+                label = "*Título:",
                 value = formState.value.titulo,
                 onValueChange = { formState.value = formState.value.copy(titulo = it) }
             )
             InputField(
-                label = "Descripción del caso:",
+                label = "*Delito:",
+                value = formState.value.delito,
+                onValueChange = { formState.value = formState.value.copy(delito = it) }
+            )
+            InputField(
+                label = "*Descripción del caso:",
                 value = formState.value.descripcion,
                 onValueChange = { formState.value = formState.value.copy(descripcion = it) },
                 singleLine = false,
-                height = 200
+                modifier = Modifier.height(200.dp)
             )
+
             if (errorMessage2.isNotBlank()){ Text(errorMessage2)}
+            Text("Campos opcionales", style = MaterialTheme.typography.titleSmall)
 
             InputField(
                 label = "Carpeta de investigación:",
@@ -174,30 +179,15 @@ fun FormCasoScreen(
                 value = formState.value.cJudicial,
                 onValueChange = { formState.value = formState.value.copy(cJudicial = it) }
             )
+
             InputField(
-                label = "Delito:",
-                value = formState.value.delito,
-                onValueChange = { formState.value = formState.value.copy(delito = it) }
+                label = "Unidad de Investigación:",
+                value = formState.value.unidadInv,
+                onValueChange = { formState.value = formState.value.copy(unidadInv = it) }
             )
-            InputField(
-                label = "Dirección de la Unidad de Investigación:",
-                value = formState.value.direccion,
-                onValueChange = { formState.value = formState.value.copy(direccion = it) }
-            )
+
             if(errorMessage3.isNotBlank()){Text(errorMessage3)}
 
-            InputField(
-                label = "Carpeta Google Drive:",
-                value = formState.value.drive,
-                onValueChange = { formState.value = formState.value.copy(drive = it) }
-            )
-            if(errorMessage4.isNotBlank()){Text(errorMessage4)}
-
-            InputField(
-                label = "Fiscalía Virtual:",
-                value = formState.value.fiscalia,
-                onValueChange = { formState.value = formState.value.copy(fiscalia = it) }
-            )
             InputField(
                 label = "Número Único de Causa:",
                 value = formState.value.nuc,
@@ -208,24 +198,69 @@ fun FormCasoScreen(
                 value = formState.value.password,
                 onValueChange = { formState.value = formState.value.copy(password = it) }
             )
+
+
+            Text("Links de acceso rápido", style = MaterialTheme.typography.titleSmall)
+
             InputField(
-                label = "Unidad de Investigación:",
-                value = formState.value.unidadInv,
-                onValueChange = { formState.value = formState.value.copy(unidadInv = it) }
+                label = "Carpeta Google Drive:",
+                value = formState.value.drive,
+                onValueChange = { formState.value = formState.value.copy(drive = it) }
             )
+            if(formState.value.drive.text.isNotBlank() && !formState.value.drive.text.startsWith("https://")){
+                Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
+            }
+            InputField(
+                label = "Fiscalía Virtual:",
+                value = formState.value.fiscalia,
+                onValueChange = { formState.value = formState.value.copy(fiscalia = it) }
+            )
+            if(formState.value.fiscalia.text.isNotBlank() && !formState.value.fiscalia.text.startsWith("https://")){
+                Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
+            }
+            InputField(
+                label = "Dirección de la Unidad de Investigación:",
+                value = formState.value.direccion,
+                onValueChange = { formState.value = formState.value.copy(direccion = it) }
+            )
+            if(formState.value.direccion.text.isNotBlank() && !formState.value.direccion.text.startsWith("https://")){
+                Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
+            }
+
+            if(errorMessage4.isNotBlank()){Text(errorMessage4)}
 
             Text("Información del Cliente", style = MaterialTheme.typography.titleLarge)
 
             InputField(
-                label = "Nombre del cliente:",
+                label = "*Nombre del cliente:",
                 value = nombre,
                 onValueChange = { nombre = it }
             )
             InputField(
-                label = "Correo del cliente:",
+                label = "*Correo del cliente:",
                 value = correo,
                 onValueChange = { correo = it }
             )
+            Text("La contraseña del cliente será 'LEGALMATCH', se recomienda que el cliente la actualice lo antes posible.")
+            CustomDropdownMenu(
+                selectedValue = sexo,
+                options = listOf("Hombre", "Mujer"),
+                label = "Sexo:",
+                onValueChangedEvent = { selectedOption ->
+                    sexo = selectedOption
+                }
+            )
+            /*
+CustomDropdownMenu(
+    selectedValue = "xd",
+    options = listOf("Acusado", "demandante"),
+    label = "Rol",
+    onValueChangedEvent = { selectedOption ->
+        println("")
+    }
+)
+
+ */
 
             // Botón para agendar asesoría
             Button(
@@ -280,22 +315,17 @@ fun InputField(
     onValueChange: (TextFieldValue) -> Unit,
     singleLine: Boolean = true,
     modifier: Modifier = Modifier,
-    height: Int = 20
 ) {
-    Column {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium)
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = singleLine,
-            textStyle = TextStyle(fontSize = 12.sp),
-            modifier = modifier
-                .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                .padding(8.dp)
-                .height(height.dp)
-        )
-    }
+    OutlinedTextField(
+        value = value,
+        label = { Text(text = label) },
+        onValueChange = onValueChange,
+        singleLine = singleLine,
+        textStyle = TextStyle(fontSize = 12.sp),
+        modifier = modifier
+            .fillMaxWidth()
+    )
+
 }
 
 fun isUrlValid(url: String) : Boolean{

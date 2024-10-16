@@ -5,21 +5,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.ItemCard
-import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.ui.theme.GhostWhite
 
 private const val TAG = "MainActivity"
@@ -56,7 +50,7 @@ fun CasosClienteScreen(navController: NavController, loginVM: LoginViewModel) {
                 ItemCard(
                     title = casos.delito,
                     description = casos.descripcion,
-                    onClick = { }
+                    onClick = { navController.navigate(Routes.CasoDetalle.createRoute(casos.id)) }
                 )
             }
 
@@ -65,7 +59,7 @@ fun CasosClienteScreen(navController: NavController, loginVM: LoginViewModel) {
                 ItemCard(
                     title = asesoria.delito,
                     description = asesoria.descripcion,
-                    onClick = { }
+                    onClick = { navController.navigate(Routes.AsesoriaDetalle.createRoute(asesoria.id))}
                 )
             }
         }

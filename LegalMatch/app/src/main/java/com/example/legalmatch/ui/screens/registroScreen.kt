@@ -39,6 +39,7 @@ import com.example.legalmatch.ui.components.DatePicker
 import com.example.legalmatch.ui.screens.LoginViewModel
 import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.utils.TAG
+import com.example.legalmatch.utils.md5
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -70,12 +71,12 @@ fun RegisterScreen(navController: NavController, viewModel: LoginViewModel) {
         LaunchedEffect(Unit) {
             Log.d(TAG, "Sexo: ${registrationData.sex}")
             val user = SendUsuario(
-                matricula = "null",
+                matricula = "",
                 correo = registrationData.email,
                 nombre = registrationData.name + " " + registrationData.lastname,
                 fecha_nacimiento = registrationData.dateOfBirth,
                 rol = "cliente",
-                contraseña = registrationData.password,
+                contraseña = md5(registrationData.password),
                 sexo = registrationData.sex
             )
             viewModel.registerClient(user)
