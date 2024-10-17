@@ -19,7 +19,6 @@ import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.ItemCard
-import com.example.legalmatch.ui.theme.GhostWhite
 import com.example.legalmatch.viewmodel.SearchViewModel
 
 private const val TAG = "MainActivity"
@@ -75,14 +74,12 @@ fun CasosScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(color = GhostWhite)
         ) {
 
             // Lista de casos filtrados
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = GhostWhite)
             ) {
                 items(filteredCasos) { caso -> // Mostrar solo los casos filtrados
                     ItemCard(

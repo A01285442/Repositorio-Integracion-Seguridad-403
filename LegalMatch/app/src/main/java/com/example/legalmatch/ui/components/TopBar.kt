@@ -17,6 +17,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
@@ -33,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.legalmatch.ui.theme.AzulTec
 import com.example.legalmatch.viewmodel.SearchViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -54,11 +54,11 @@ fun CustomTopBar(
     CenterAlignedTopAppBar(
         modifier = Modifier.shadow(8.dp).height(90.dp),
         colors = TopAppBarColors(
-            containerColor = Color.White,
-            scrolledContainerColor = Color.Black,
-            navigationIconContentColor = Color.Black,
-            titleContentColor = AzulTec,
-            actionIconContentColor = Color.Black
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = Color.Cyan,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+            actionIconContentColor = MaterialTheme.colorScheme.onSurface
         ),
         title = {
             if(searchStarted){

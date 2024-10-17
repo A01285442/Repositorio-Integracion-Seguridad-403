@@ -41,13 +41,14 @@ val TAG = "MainActivity"
 @SuppressLint("StateFlowValueCalledInComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaViewModel) {
+fun AppNavGraph(navController: NavHostController) {
 
     val loginViewModel: LoginViewModel = viewModel()
     val casosViewModel : CasosViewModel = viewModel()
     val usuariosViewModel: UsuariosViewModel = viewModel()
-    val asesoriasViewModel: AsesoriaViewModel = viewModel()
     val searchBoxViewModel : SearchViewModel = viewModel()
+    val asesoriasViewModel: AsesoriaViewModel = viewModel()
+
 
     NavHost(
         navController = navController,
@@ -68,6 +69,7 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
 
         composable(Routes.Asesorias.route) {
             Log.d(TAG, "Navigating to Asesorias")
+            val asesoriasViewModel: AsesoriaViewModel = viewModel()
             AsesoriaScreen(navController, asesoriasViewModel,loginViewModel)
         }
         composable(Routes.Casos.route){
@@ -124,7 +126,8 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         }
         composable(Routes.Noticias.route){
             Log.d(TAG, "Navigating to Noticias")
-            NoticiasScreen(navController, NoticiasViewModel())
+            val notiicasVM: NoticiasViewModel = viewModel()
+            NoticiasScreen(navController, notiicasVM)
         }
         composable(Routes.AddNews.route){
             Log.d(TAG, "Navigating to Add News")
@@ -157,7 +160,8 @@ fun AppNavGraph(navController: NavHostController, asesoriasViewModel: AsesoriaVi
         }
         composable(Routes.NoticiasCliente.route){
             Log.d(TAG, "Navigating to Noticias")
-            NoticiasScreenCliente(navController, NoticiasViewModel())
+            val noticiasVM: NoticiasViewModel = viewModel()
+            NoticiasScreenCliente(navController, noticiasVM)
         }
 
     }

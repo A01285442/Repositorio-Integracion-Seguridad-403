@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
@@ -24,10 +25,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             LegalMatchTheme {
-                Surface {
+                Surface(
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     val navController = rememberNavController()
-                    val asesoriasViewModel: AsesoriaViewModel = viewModel()
-                    AppNavGraph(navController = navController, asesoriasViewModel)
+                    AppNavGraph(navController = navController)
                 }
             }
         }

@@ -42,14 +42,6 @@ data class Noticia(
     val imagenurl: String? = null
 )
 
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun getCurrentDate(): String {
-    val current = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-    return current.format(formatter)
-}
-
 private const val TAG = "NoticiasViewModel"
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -63,28 +55,26 @@ class NoticiasViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            delay(500)
+            delay(1000)
 
             fetchNoticias()
-
         }
     }
 
-    fun fetchNoticias() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val noticias = supabase.from("noticias")
-                    .select()
-                    .decodeList<Noticia>()
 
-                Log.d(TAG, "Noticias fetched: $noticias")
-                _noticiasState.value = noticias
-            } catch (e: Exception) {
-                Log.e(TAG, "Error fetching noticias: ${e.message}", e)
-            } finally {
-                _isLoading.value = false
-            }
+    private suspend fun fetchNoticias() {
+        _isLoading.value = true
+        try {
+            val noticias = supabase.from("noticias")
+                .select()
+                .decodeList<Noticia>()
+
+            Log.d(TAG, "Noticias fetched: $noticias")
+            _noticiasState.value = noticias
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching noticias: ${e.message}", e)
+        } finally {
+            _isLoading.value = false
         }
     }
 
@@ -149,7 +139,6 @@ class NoticiasViewModel : ViewModel() {
                             eq("id", id)
                         }
                     }
-                fetchNoticias()
                 Log.d(TAG, "Noticia eliminada: $response")
                 fetchNoticias()
             } catch (e: Exception) {

@@ -3,31 +3,16 @@ package com.example.legalmatch.ui.screens
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.app.navigation.AppNavGraph
 import com.example.legalmatch.data.api.models.Asesoria
 import com.example.legalmatch.data.api.models.Caso
 import com.example.legalmatch.data.api.models.SendUsuario
 import com.example.legalmatch.data.api.models.Usuario
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.gotrue.Auth
-import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
-
-private const val TAG = "MainActivity"
-
-val supabaseCli = createSupabaseClient(
-    supabaseUrl = "https://wbhyplodhfxcyeochnpf.supabase.co",
-    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndiaHlwbG9kaGZ4Y3llb2NobnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU0MjExNTUsImV4cCI6MjA0MDk5NzE1NX0.sqMEMPdCx9u-kC0TI0OLWKm1KXZjSkeDS1N3bQiG-jI",
-) {
-    install(Auth)
-    install(Postgrest)
-}
+import com.example.legalmatch.utils.TAG
 
 data class LoginState(
     val isAuthenticated: Boolean = false,
@@ -39,7 +24,7 @@ data class LoginState(
 )
 
 
-class LoginViewModel() : ViewModel() {
+class LoginViewModel : ViewModel() {
 
     private val _loginState = MutableStateFlow(LoginState())
     val loginState: StateFlow<LoginState> get() = _loginState
@@ -47,7 +32,7 @@ class LoginViewModel() : ViewModel() {
     fun cambioContraseña(password: String) {
         viewModelScope.launch {
             try {
-                supabaseCli.from("usuarios").update({
+                supabase.from("usuarios").update({
                     set("contraseña", password)
                 }) {
                     filter {
@@ -70,7 +55,7 @@ class LoginViewModel() : ViewModel() {
         viewModelScope.launch {
             Log.d(TAG, "Iniciando coroutine")  // Log dentro de la coroutine
             try {
-                val user = supabaseCli.from("usuarios")
+                val user = supabase.from("usuarios")
                     .select() { filter { eq("correo", username) } }
                         .decodeSingleOrNull<Usuario>()
 
@@ -83,14 +68,10 @@ class LoginViewModel() : ViewModel() {
                             isLoading = false
                         )
                         Log.d(TAG, "Usuario encontrado: ${user.correo}")
-                        //setUserID2(user.id)
+
                         // Dependiendo del rol del usuario te manda a otra pantalla, abogados y clientes.
-                        if(user.rol == "cliente"){
-                            onLoginSuccessCliente()
-                        }
-                        else{
-                            onLoginSuccessAbogado()
-                        }
+                        if(user.rol == "cliente"){ onLoginSuccessCliente() }
+                        else{ onLoginSuccessAbogado() }
                     } else {
                         Log.d(TAG, "Contraseña Incorrecta")
                         onLoginError()
@@ -122,11 +103,26 @@ class LoginViewModel() : ViewModel() {
     fun registerClient(newUsuario: SendUsuario) {
         viewModelScope.launch {
             try {
-                supabase.postgrest["usuarios"].insert(newUsuario)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d(TAG, e.message.toString())
+                val UsuarioExistente = supabase.from("usuarios")
+                    .select { filter { eq("correo", newUsuario.correo) } }
+                    .decodeSingleOrNull<Usuario>()
+                if(UsuarioExistente == null){
+                    try {
+                        supabase.postgrest["usuarios"].insert(newUsuario)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.d(TAG, e.message.toString())
+                    }
+                } else {
+                    _loginState.value = _loginState.value.copy(
+                        errorMessage = "Ya hay un usuario con ese correo"
+                    )
+                    Log.d(TAG,"fds")
+                }
+            } catch (e: Exception){
+                Log.d(TAG, "Error: ${e.message}")
             }
+
         }
     }
 
@@ -151,7 +147,7 @@ class LoginViewModel() : ViewModel() {
 
             try {
                 // Obtener una lista
-                val fetchedCasos = supabaseCasoCliente.from("asesorias")
+                val fetchedCasos = supabase.from("asesorias")
                     .select(){ filter{ _loginState.value.userClient?.let { eq("id_cliente", it.id) } }}
                     .decodeList<Asesoria>()
                 _loginState.value = _loginState.value.copy(asesoriasRelacionadas = fetchedCasos, isLoading = false)
@@ -176,7 +172,7 @@ class LoginViewModel() : ViewModel() {
 
             try {
                 // Obtener una lista
-                val fetchedCasos = supabaseCasoCliente.from("casos")
+                val fetchedCasos = supabase.from("casos")
                     .select(){ filter{ _loginState.value.userClient?.let { eq("id_cliente", it.id) } }}
                     .decodeList<Caso>()
                 _loginState.value = _loginState.value.copy(casosRelacionados = fetchedCasos, isLoading = false)
