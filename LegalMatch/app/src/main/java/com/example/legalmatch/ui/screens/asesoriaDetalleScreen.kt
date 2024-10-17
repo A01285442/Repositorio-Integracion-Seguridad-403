@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.SpacedInformation
 import com.example.legalmatch.utils.toSpanish
@@ -66,7 +67,10 @@ fun AsesoriaDetalleScreen(
         topBar = {
             CustomTopBar(title = "Asesoría #${asesoria.id}", navIcon = true, actIcon = false, navController = navController)
         },
-        bottomBar = { CustomBottomBar(navController=navController) }
+        bottomBar = {
+            if(rolUsuario == "cliente") CustomBottomBarClientes(navController = navController)
+            else CustomBottomBar(navController=navController)
+        }
     ) { InnerPadding ->
         Column(
             modifier = Modifier

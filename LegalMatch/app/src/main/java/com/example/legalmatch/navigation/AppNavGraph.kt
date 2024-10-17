@@ -46,8 +46,8 @@ fun AppNavGraph(navController: NavHostController) {
     val loginViewModel: LoginViewModel = viewModel()
     val casosViewModel : CasosViewModel = viewModel()
     val usuariosViewModel: UsuariosViewModel = viewModel()
-    val asesoriasViewModel: AsesoriaViewModel = viewModel()
     val searchBoxViewModel : SearchViewModel = viewModel()
+    val asesoriasViewModel: AsesoriaViewModel = viewModel()
 
 
     NavHost(
@@ -69,6 +69,7 @@ fun AppNavGraph(navController: NavHostController) {
 
         composable(Routes.Asesorias.route) {
             Log.d(TAG, "Navigating to Asesorias")
+            val asesoriasViewModel: AsesoriaViewModel = viewModel()
             AsesoriaScreen(navController, asesoriasViewModel,loginViewModel)
         }
         composable(Routes.Casos.route){

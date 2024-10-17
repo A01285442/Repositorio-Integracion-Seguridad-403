@@ -39,6 +39,13 @@ fun CustomBottomBar(
             R.drawable.profile,
             R.drawable.stats
         )
+        val sizes = listOf(
+            32.dp,
+            32.dp,
+            34.dp,
+            28.dp,
+            28.dp
+        )
         //var selectedItem by remember { mutableIntStateOf(0) }
         NavigationBar(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -51,7 +58,7 @@ fun CustomBottomBar(
                     icon = { Image(
                         painter = painterResource(id = item),
                         contentDescription = "",
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(sizes[index])
                     ) },
                     //label = {Text("item")},
                     //selected = selectedItem == index,
@@ -74,64 +81,6 @@ fun CustomBottomBar(
                     )
                 )
             }
-
-            /*
-            NavigationBarItem(
-                icon = { Image(
-                        painter = painterResource(id = R.drawable.calendar),
-                        contentDescription = "Asesorías",
-                        modifier = Modifier.size(32.dp)
-
-                    ) },
-
-                selected = false,
-                onClick = { navController.navigate("asesorias") }
-            )
-            NavigationBarItem(
-                icon = { Image(
-                    painter = painterResource(id = R.drawable.portfolio),
-                    contentDescription = "Casos",
-                    modifier = Modifier.size(32.dp)
-                ) },
-
-                selected = false,
-                onClick = { navController.navigate("casos") }
-            )
-            NavigationBarItem(
-                icon = { Image(
-                    painter = painterResource(id = R.drawable.news),
-                    contentDescription = "news",
-                    modifier = Modifier.size(34.dp)
-                ) },
-
-                selected = false,
-                onClick = { navController.navigate("Noticias") }
-            )
-
-            NavigationBarItem(
-                icon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile",
-                        modifier = Modifier.size(28.dp)
-                    )
-                },
-
-                selected = false,
-                onClick = { navController.navigate("perfil") }
-            )
-            NavigationBarItem(
-                icon = { Image(
-                    painter = painterResource(id = R.drawable.stats),
-                    contentDescription = "Stats",
-                    modifier = Modifier.size(28.dp)
-                )},
-
-                selected = false,
-                onClick = { navController.navigate("Stats") }
-            )
-
-             */
 
 
         }
