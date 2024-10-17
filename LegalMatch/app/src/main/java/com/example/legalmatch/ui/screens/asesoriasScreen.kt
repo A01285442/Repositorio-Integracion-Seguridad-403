@@ -33,7 +33,11 @@ private const val TAG = "MainActivity"
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SimpleDateFormat")
 @Composable
-fun AsesoriaScreen(navController: NavController, asesoriaViewModel: AsesoriaViewModel, loginViewModel: LoginViewModel) {
+fun AsesoriaScreen(
+    navController: NavController,
+    asesoriaViewModel: AsesoriaViewModel,
+    loginViewModel: LoginViewModel
+) {
 
     val state = asesoriaViewModel.state
     if (state.isLoading) {
