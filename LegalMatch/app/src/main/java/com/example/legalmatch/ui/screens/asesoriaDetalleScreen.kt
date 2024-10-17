@@ -110,6 +110,19 @@ fun AsesoriaDetalleScreen(
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Justify
             )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Descripción Modificada",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            Text(
+                text = asesoria.descripcion_modificada,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Justify
+            )
 
 
 

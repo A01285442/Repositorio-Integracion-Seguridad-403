@@ -116,6 +116,7 @@ fun CasoDetalleScreen(
             )
 
 
+
             // Informacioón del cliente
             Text(
                 text = "Información del cliente",
