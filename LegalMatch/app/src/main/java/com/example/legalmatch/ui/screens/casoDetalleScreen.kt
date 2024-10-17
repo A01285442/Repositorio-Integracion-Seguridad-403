@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.example.app.navigation.Routes
 import com.example.legalmatch.ui.components.CustomBottomBar
+import com.example.legalmatch.ui.components.CustomBottomBarClientes
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.SpacedInformation
 import com.example.legalmatch.viewmodel.UsuariosViewModel
@@ -65,12 +66,16 @@ fun CasoDetalleScreen(
     val cliente = usuariosVM.state.infoCliente
     usuariosVM.getAbogadoInfo(caso.id_abogado)
     val fiscalTitular = usuariosVM.state.infoAbogado
+    val rolUsuario = loginVM.loginState.value.userClient?.rol
 
     Scaffold(
         topBar = {
             CustomTopBar(title = "Caso #${caso.id}", navIcon = true, actIcon = false, navController = navController)
         },
-        bottomBar = { CustomBottomBar(navController=navController) }
+        bottomBar = {
+            if(rolUsuario == "cliente") CustomBottomBarClientes(navController = navController)
+            else CustomBottomBar(navController=navController)
+        }
     ) { InnerPadding ->
         Column(
             modifier = Modifier

@@ -53,34 +53,7 @@ fun CustomBottomBar(
             modifier = Modifier.height(75.dp)
         ) {
 
-            items.forEachIndexed {index, item ->
-                NavigationBarItem(
-                    icon = { Image(
-                        painter = painterResource(id = item),
-                        contentDescription = "",
-                        modifier = Modifier.size(sizes[index])
-                    ) },
-                    //label = {Text("item")},
-                    //selected = selectedItem == index,
-                    selected = false,
-                    onClick = {
-                        //selectedItem = index
-                        when (index) {
-                            0 -> navController.navigate(Routes.Asesorias.route)
-                            1 -> navController.navigate(Routes.Casos.route)
-                            2 -> navController.navigate(Routes.Noticias.route)
-                            3 -> navController.navigate(Routes.Perfil.route)
-                            4 -> navController.navigate(Routes.Stats.route)
-                        }
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,  // Color del ícono cuando está seleccionado
-                        unselectedIconColor = Color.Gray, // Color del ícono cuando NO está seleccionado
-                        selectedTextColor = Color.White,  // Color del texto cuando está seleccionado
-                        unselectedTextColor = Color.Gray  // Color del texto cuando NO está seleccionado
-                    )
-                )
-            }
+
 
 
         }
