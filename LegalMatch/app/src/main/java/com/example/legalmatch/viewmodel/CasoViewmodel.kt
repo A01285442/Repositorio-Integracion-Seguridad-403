@@ -133,7 +133,27 @@ class CasosViewModel() : ViewModel() {
         }
     }
 
-    fun updateCaso(casoAMandar: SendCaso) {
-        Log.d(TAG, "No se esta actualizando aun")
+    fun updateCaso(casoAMandar: SendCaso, id: Int) {
+        viewModelScope.launch {
+            try{
+                supabase.from("casos")
+                    .update({
+                        set("titulo", casoAMandar.titulo)
+                        set("descripcion", casoAMandar.descripcion)
+                        set("delito", casoAMandar.delito)
+                        set("c_investigacion", casoAMandar.c_investigacion)
+                        set("c_judicial", casoAMandar.c_judicial)
+                        set("fiscalia_virtual", casoAMandar.fiscalia_virtual)
+                        set("password_fv", casoAMandar.password_fv)
+                        set("unidad_investigacion", casoAMandar.unidad_investigacion)
+                        set("direccion_ui", casoAMandar.direccion_ui)
+                    }){ filter { eq("id",id) } }
+            } catch (e:Exception){
+                e.message?.let { Log.d("MainActivity", it) }
+            } finally {
+                fetchCasos()
+            }
+        }
+
     }
 }
