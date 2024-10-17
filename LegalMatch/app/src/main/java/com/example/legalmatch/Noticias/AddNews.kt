@@ -47,7 +47,7 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
     }
 
     Scaffold(
-        topBar = { CustomTopBar(title = "Agregar Noticia", navIcon = true, actIcon = false) }
+        topBar = { CustomTopBar(title = "Agregar Noticia", navIcon = false , actIcon = false) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -122,6 +122,17 @@ fun AddNewsScreen(noticiasViewModel: NoticiasViewModel, navController: NavHostCo
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("Guardar Noticia")
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = {
+                    navController.navigate("Noticias")
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("Salir")
             }
 
         }
