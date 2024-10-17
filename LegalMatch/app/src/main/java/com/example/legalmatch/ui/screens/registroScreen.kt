@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -379,6 +380,7 @@ fun PasswordScreen(
                 value = value,
                 onValueChange = onValueChange,
                 label = { Text("Contraseña") }, // Aseguramos que el texto del label sea un Text composable
+                visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -388,6 +390,7 @@ fun PasswordScreen(
                 value = contraseña2,
                 onValueChange = { contraseña2 = it },
                 label = { Text("Repite Contraseña") }, // Aseguramos que el texto del label sea un Text composable
+                visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),

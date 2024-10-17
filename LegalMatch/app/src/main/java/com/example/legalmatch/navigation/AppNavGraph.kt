@@ -125,7 +125,8 @@ fun AppNavGraph(navController: NavHostController) {
         }
         composable(Routes.Noticias.route){
             Log.d(TAG, "Navigating to Noticias")
-            NoticiasScreen(navController, NoticiasViewModel())
+            val notiicasVM: NoticiasViewModel = viewModel()
+            NoticiasScreen(navController, notiicasVM)
         }
         composable(Routes.AddNews.route){
             Log.d(TAG, "Navigating to Add News")
@@ -158,7 +159,8 @@ fun AppNavGraph(navController: NavHostController) {
         }
         composable(Routes.NoticiasCliente.route){
             Log.d(TAG, "Navigating to Noticias")
-            NoticiasScreenCliente(navController, NoticiasViewModel())
+            val noticiasVM: NoticiasViewModel = viewModel()
+            NoticiasScreenCliente(navController, noticiasVM)
         }
 
     }

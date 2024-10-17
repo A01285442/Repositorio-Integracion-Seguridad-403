@@ -98,10 +98,7 @@ fun FormCasoScreen(
     var sexo by remember { mutableStateOf("") }
 
     // Errores
-    var errorMessage1 by remember { mutableStateOf("") }
-    var errorMessage2 by remember { mutableStateOf("") }
-    var errorMessage3 by remember { mutableStateOf("") }
-    var errorMessage4 by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf(false)}
 
     // Actualización del estado usando copy
     val casoAMandar = SendCaso(
@@ -152,11 +149,13 @@ fun FormCasoScreen(
                 value = formState.value.titulo,
                 onValueChange = { formState.value = formState.value.copy(titulo = it) }
             )
+            if(formState.value.titulo.text.isBlank()){ error = true }
             InputField(
                 label = "*Delito:",
                 value = formState.value.delito,
                 onValueChange = { formState.value = formState.value.copy(delito = it) }
             )
+            if(formState.value.delito.text.isBlank()){ error = true }
             InputField(
                 label = "*Descripción del caso:",
                 value = formState.value.descripcion,
@@ -164,8 +163,8 @@ fun FormCasoScreen(
                 singleLine = false,
                 modifier = Modifier.height(200.dp)
             )
+            if(formState.value.descripcion.text.isBlank()){error = true}
 
-            if (errorMessage2.isNotBlank()){ Text(errorMessage2)}
             Text("Campos opcionales", style = MaterialTheme.typography.titleSmall)
 
             InputField(
@@ -184,8 +183,6 @@ fun FormCasoScreen(
                 value = formState.value.unidadInv,
                 onValueChange = { formState.value = formState.value.copy(unidadInv = it) }
             )
-
-            if(errorMessage3.isNotBlank()){Text(errorMessage3)}
 
             InputField(
                 label = "Número Único de Causa:",
@@ -207,6 +204,7 @@ fun FormCasoScreen(
                 onValueChange = { formState.value = formState.value.copy(drive = it) }
             )
             if(formState.value.drive.text.isNotBlank() && !formState.value.drive.text.startsWith("https://")){
+                error = true
                 Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
             }
             InputField(
@@ -215,6 +213,7 @@ fun FormCasoScreen(
                 onValueChange = { formState.value = formState.value.copy(fiscalia = it) }
             )
             if(formState.value.fiscalia.text.isNotBlank() && !formState.value.fiscalia.text.startsWith("https://")){
+                error = true
                 Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
             }
             InputField(
@@ -223,10 +222,9 @@ fun FormCasoScreen(
                 onValueChange = { formState.value = formState.value.copy(direccion = it) }
             )
             if(formState.value.direccion.text.isNotBlank() && !formState.value.direccion.text.startsWith("https://")){
+                error = true
                 Text("La URL debe comenzar con https://", color = Color.Red, style = MaterialTheme.typography.bodySmall)
             }
-
-            if(errorMessage4.isNotBlank()){Text(errorMessage4)}
 
             if(casoToEdit == null){
                 Text("Información del Cliente", style = MaterialTheme.typography.titleLarge)
@@ -236,11 +234,17 @@ fun FormCasoScreen(
                     value = nombre,
                     onValueChange = { nombre = it }
                 )
+                if(nombre.text.isBlank()){
+                    error = true
+                }
                 InputField(
                     label = "*Correo del cliente:",
                     value = correo,
                     onValueChange = { correo = it }
                 )
+                if(correo.text.isBlank()){
+                    error = true
+                }
                 Text("La contraseña del cliente será 'LEGALMATCH', se recomienda que el cliente la actualice lo antes posible.")
                 CustomDropdownMenu(
                     selectedValue = sexo,
@@ -250,6 +254,7 @@ fun FormCasoScreen(
                         sexo = selectedOption
                     }
                 )
+
             }
 
             /*
@@ -267,27 +272,17 @@ CustomDropdownMenu(
             // Botón para agendar asesoría
             Button(
                 onClick = {
-                    errorMessage1 = if(nombre.text.isBlank() || correo.text.isBlank()){
-                        "Nombre y correo son obligatorios" } else { "" }
 
-                    errorMessage2 = if(formState.value.titulo.text.isBlank() || formState.value.descripcion.text.isBlank()){
-                        "Titulo y descripcion son obligatorios" } else { "" }
-                    errorMessage3 = if(isUrlValid(formState.value.direccion.text)){
-                        "URL no válido" } else {""}
-                    errorMessage4 = if(isUrlValid(formState.value.drive.text)){
-                        "URL no válido"} else {""}
-
-
-                    if(errorMessage1.isBlank() && errorMessage2.isBlank()){
-
-                        if (isEditMode) {
-                            casosViewModel.updateCaso(casoAMandar) // Actualiza el caso existente
-                        } else {
-                            casosViewModel.createCaso(casoAMandar) // Crea un nuevo caso
-                        }
-                        navController.navigate(Routes.Casos.route)
-
+                    if (isEditMode) {
+                        if (casoId != null) {
+                            casosViewModel.updateCaso(casoAMandar, casoId)
+                        } // Actualiza el caso existente
+                    } else {
+                        casosViewModel.createCaso(casoAMandar) // Crea un nuevo caso
                     }
+                    navController.navigate(Routes.Casos.route)
+
+
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,

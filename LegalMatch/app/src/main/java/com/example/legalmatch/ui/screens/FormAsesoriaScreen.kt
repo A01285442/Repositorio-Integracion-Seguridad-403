@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.annotation.RestrictTo
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,6 +41,7 @@ import com.example.legalmatch.ui.components.CustomDropdownMenu
 import com.example.legalmatch.ui.components.CustomTopBar
 import com.example.legalmatch.ui.components.DatePicker
 import com.example.legalmatch.utils.GEMINI_KEY
+import com.example.legalmatch.utils.TAG
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,7 +56,6 @@ import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
-import com.example.legalmatch.utils.TAG
 
 
 @Serializable
@@ -95,7 +93,7 @@ fun FormAsesoriaScreen(
 
     //Estado para manejar eñ api
 
-    var apiResult by remember { mutableStateOf<correcion?>(null) }
+    val apiResult by remember { mutableStateOf<correcion?>(null) }
     val roles = listOf("Acusado", "Demandante")
     val horarios = listOf("10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm")
 
@@ -249,6 +247,13 @@ fun FormAsesoriaScreen(
     }
 }
 
+val prompt = "\"Proporcionaré una descripción de un caso penal." +
+        "Con esa informaión dame los siguientes elementos en formato JSON: titulo, " +
+        "el tipo de delito, y una descripción corregida menor a 250 palabras en caso de que la original " +
+        "tenga errores. No pongas la palabra " +
+        "json al inicio, solo dame el puro formato json, sin nada extra. El JSON debe " +
+        "tener exactamente los siguientes campos: 'titulo', 'tipoDelito' y 'descripcionModificada'.\""
+
 @OptIn(DelicateCoroutinesApi::class)
 fun makeApiRequest(ask: String, onResult: (correcion?) -> Unit) {
     // Se realiza en una corrutina para no bloquear el hilo principal
@@ -261,7 +266,7 @@ fun makeApiRequest(ask: String, onResult: (correcion?) -> Unit) {
                     {
                         "role": "user",
                         "parts": [
-                            {"text": "Proporcionaré una descripción de un caso penal. Necesito que me des los siguientes elementos en formato JSON: un título, el tipo de delito, y una descripción corregida en caso de que la original tenga errores de no mas de 200 palabras. Ojo, no tienes que poner la palabra json al inicio, solo dame el puro formato json, sin nada extra. El JSON debe tener exactamente los siguientes campos: 'titulo', 'tipoDelito' y 'descripcionModificada'."}
+                            {"text": ${prompt}}
                         ]
                     },
                     {
@@ -346,8 +351,10 @@ fun parseResponse(response: String): String {
 
 fun decodeJson(response: String): correcion? {
     return try {
+        Log.d("MainAtivity", response)
         // Convertimos el string JSON a un objeto JSON
         val jsonObject = JSONObject(response)
+
 
         // Extraemos los valores por sus llaves
         val titulo = jsonObject.getString("titulo")

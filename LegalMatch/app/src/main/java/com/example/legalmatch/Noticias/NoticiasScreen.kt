@@ -30,7 +30,10 @@ import com.example.legalmatch.ui.components.CustomTopBar
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoticiasScreen(navController: NavHostController, noticiasViewModel: NoticiasViewModel) {
+fun NoticiasScreen(
+    navController: NavHostController,
+    noticiasViewModel: NoticiasViewModel
+) {
     val noticiasState = noticiasViewModel.noticiasState.collectAsState().value
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     val isLoading by noticiasViewModel.isLoading.collectAsState()

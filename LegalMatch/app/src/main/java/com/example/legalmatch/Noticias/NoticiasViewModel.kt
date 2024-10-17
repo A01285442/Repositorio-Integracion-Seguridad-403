@@ -42,14 +42,6 @@ data class Noticia(
     val imagenurl: String? = null
 )
 
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun getCurrentDate(): String {
-    val current = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-    return current.format(formatter)
-}
-
 private const val TAG = "NoticiasViewModel"
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -63,7 +55,6 @@ class NoticiasViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            delay(500)
 
             fetchNoticias()
 
