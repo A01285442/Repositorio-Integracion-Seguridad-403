@@ -1,5 +1,6 @@
 package com.example.legalmatch.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -56,11 +57,13 @@ data class CasoFormState(
     var sexo: String = "sexo"
 )
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun FormCasoScreen(
     navController: NavController,
     casosViewModel: CasosViewModel,
     casoId: Int? = null,
+    loginViewModel: LoginViewModel
 ) {
     val casoToEdit = casoId?.let {
         casosViewModel.getCasoInfo(it) // Supón que tienes una función que busca el caso
@@ -97,6 +100,11 @@ fun FormCasoScreen(
     var correo by remember { mutableStateOf(TextFieldValue("")) }
     var sexo by remember { mutableStateOf("") }
 
+    if(loginViewModel.loginState.value.userClient == null){
+        Text("Ha ocurrido un error. Favor de reiniciar la aplicación")
+        return
+    }
+
     // Errores
     var error by remember { mutableStateOf(false)}
 
@@ -113,10 +121,11 @@ fun FormCasoScreen(
         nuc = formState.value.nuc.text,
         password_fv = formState.value.password.text,
         unidad_investigacion = formState.value.unidadInv.text,
-        id_cliente = 1,
-        id_abogado = 1,
+        id_cliente = loginViewModel.loginState.value.userClient!!.id,
+        id_abogado = loginViewModel.loginState.value.userClient!!.id,
         caso_cerrado = false,
     )
+
 
     Scaffold(
         topBar = {
