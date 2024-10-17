@@ -103,7 +103,7 @@ fun AppNavGraph(navController: NavHostController) {
             val itemId = backStackEntry.arguments?.getInt("itemId")
             if (itemId != null) {
                 Log.d(TAG, "Navigating to Edit Caso")
-                FormCasoScreen(navController, casosViewModel, itemId)
+                FormCasoScreen(navController, casosViewModel, itemId, loginViewModel)
             }
         }
         composable(
@@ -122,7 +122,7 @@ fun AppNavGraph(navController: NavHostController) {
         }
         composable(Routes.FormCaso.route){
             Log.d(TAG, "Navigating to Form Caso")
-            FormCasoScreen(navController, casosViewModel)
+            FormCasoScreen(navController, casosViewModel, loginViewModel = loginViewModel)
         }
         composable(Routes.Noticias.route){
             Log.d(TAG, "Navigating to Noticias")
