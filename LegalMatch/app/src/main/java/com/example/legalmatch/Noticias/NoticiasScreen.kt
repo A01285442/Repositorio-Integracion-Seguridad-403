@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomTopBar
@@ -30,7 +31,7 @@ import com.example.legalmatch.ui.components.CustomTopBar
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoticiasScreen(navController: NavHostController, noticiasViewModel: NoticiasViewModel) {
+fun NoticiasScreen(navController: NavHostController, noticiasViewModel: NoticiasViewModel=viewModel()) {
     val noticiasState = noticiasViewModel.noticiasState.collectAsState().value
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     val isLoading by noticiasViewModel.isLoading.collectAsState()
@@ -39,6 +40,8 @@ fun NoticiasScreen(navController: NavHostController, noticiasViewModel: Noticias
     val getImage = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         selectedImageUri = uri
     }
+
+
 
 
 
