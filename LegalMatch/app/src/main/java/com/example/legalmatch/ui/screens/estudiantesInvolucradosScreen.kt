@@ -166,6 +166,7 @@ fun EstudiantesInvolucradosScreen(
                             snackbarHostState.showSnackbar("Ese usuario ya está involurado.")
                             usuarioYaInvolucrado = false
                         }
+
                     }
                 }
             }

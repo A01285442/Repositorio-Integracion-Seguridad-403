@@ -36,6 +36,7 @@ import com.example.legalmatch.data.api.models.SendCaso
 import com.example.legalmatch.ui.components.CustomBottomBar
 import com.example.legalmatch.ui.components.CustomDropdownMenu
 import com.example.legalmatch.ui.components.CustomTopBar
+import com.example.legalmatch.viewmodel.UsuariosViewModel
 
 data class CasoFormState(
     var titulo: TextFieldValue = TextFieldValue(""),
@@ -59,11 +60,12 @@ data class CasoFormState(
 fun FormCasoScreen(
     navController: NavController,
     casosViewModel: CasosViewModel,
-    casoId: Int? = null
+    casoId: Int? = null,
 ) {
     val casoToEdit = casoId?.let {
         casosViewModel.getCasoInfo(it) // Supón que tienes una función que busca el caso
     }
+
 
     val isEditMode = casoToEdit != null
     val formState = remember {
@@ -226,27 +228,30 @@ fun FormCasoScreen(
 
             if(errorMessage4.isNotBlank()){Text(errorMessage4)}
 
-            Text("Información del Cliente", style = MaterialTheme.typography.titleLarge)
+            if(casoToEdit == null){
+                Text("Información del Cliente", style = MaterialTheme.typography.titleLarge)
 
-            InputField(
-                label = "*Nombre del cliente:",
-                value = nombre,
-                onValueChange = { nombre = it }
-            )
-            InputField(
-                label = "*Correo del cliente:",
-                value = correo,
-                onValueChange = { correo = it }
-            )
-            Text("La contraseña del cliente será 'LEGALMATCH', se recomienda que el cliente la actualice lo antes posible.")
-            CustomDropdownMenu(
-                selectedValue = sexo,
-                options = listOf("Hombre", "Mujer"),
-                label = "Sexo:",
-                onValueChangedEvent = { selectedOption ->
-                    sexo = selectedOption
-                }
-            )
+                InputField(
+                    label = "*Nombre del cliente:",
+                    value = nombre,
+                    onValueChange = { nombre = it }
+                )
+                InputField(
+                    label = "*Correo del cliente:",
+                    value = correo,
+                    onValueChange = { correo = it }
+                )
+                Text("La contraseña del cliente será 'LEGALMATCH', se recomienda que el cliente la actualice lo antes posible.")
+                CustomDropdownMenu(
+                    selectedValue = sexo,
+                    options = listOf("Hombre", "Mujer"),
+                    label = "Sexo:",
+                    onValueChangedEvent = { selectedOption ->
+                        sexo = selectedOption
+                    }
+                )
+            }
+
             /*
 CustomDropdownMenu(
     selectedValue = "xd",
